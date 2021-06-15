@@ -7,28 +7,29 @@ use routes\Routes;
 class HttpRequestHandler
 {
     private Routes $routes;
-    private array $routeBase=[];
+    private string $routeBase="";
 
     public function __construct()
     {
         $this-> routes = new Routes();
+        $this->setRootConstant();
         $this->analyzeRequest();
+    }
+
+    private function setRootConstant()
+    {
+        $filename = str_replace('/', '\\', $_SERVER['SCRIPT_NAME']);
+        $root = str_replace('index.php',"", strtolower($filename));
+        DEFINE("ROOT", $root);
     }
 
     private function analyzeRequest()
     {
-        var_dump($_SERVER['REQUEST_URI']);
-        $separator = DIRECTORY_SEPARATOR;
+        $request = strtolower($_SERVER['REQUEST_URI']);
         $urlStripper = str_replace($_SERVER['CONTEXT_DOCUMENT_ROOT'], "", ROOT);
-        $request = explode($separator, (str_replace($urlStripper, "", $_SERVER['REQUEST_URI'])));
-        var_dump($request);
-        foreach ($request as $value) {
-            if ($value !== '') {
-                $this->routeBase[] = $value;
-            }
-        }
-        var_dump($this->routeBase);
-
-//        if (empty($this->target)) $this->target = $this->defaultTarget;
+        $request = str_replace('/', '\\', $request);
+        $request = str_replace($urlStripper, "", $request);
+        $this->routeBase = $request;
+        echo json_encode($this->routeBase);
     }
 }

@@ -5,6 +5,8 @@
       "service\\":"service/",
       "routes\\":"routes/"
     }
+  },
+  "require": {
+    "ext-json": "*"
   }
-
 }
