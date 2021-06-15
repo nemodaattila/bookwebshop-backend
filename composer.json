@@ -1,0 +1,5 @@
+{
+  "ps-4": {
+    "service": "./service"
+  }
+}
