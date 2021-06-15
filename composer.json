@@ -1,5 +1,9 @@
+
 {
-  "ps-4": {
-    "service": "./service"
+  "autoload": {
+    "psr-4": {
+      "service\\":"service/"
+    }
   }
+
 }
