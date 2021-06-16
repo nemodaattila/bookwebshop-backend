@@ -14,9 +14,19 @@ class Routes
      * @param bool $authRequired - authentication level all/user/admin / ?? check PHP JWT
      */
 
-    public array $routes =[
+    private array $routes =[
+        ['GET', 'metadata/$1', 'BookMetaData', 'getBookMetaData', 'all'],
         ['GET', 'metadata', 'BookMetaData', 'getBookMetaData', 'all'],
     ];
+
+    /**
+     * @return array|\string[][]
+     */
+    public function getRoutes(): array
+    {
+        return $this->routes;
+    }
+
 
 
 

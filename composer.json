@@ -4,7 +4,8 @@
     "psr-4": {
       "service\\":"service/",
       "routes\\":"routes/",
-      "exception\\": "exception/"
+      "exception\\": "exception/",
+      "model\\": "model"
     }
   },
   "require": {
