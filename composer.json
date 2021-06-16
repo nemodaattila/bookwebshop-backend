@@ -5,7 +5,8 @@
       "service\\":"service/",
       "routes\\":"routes/",
       "exception\\": "exception/",
-      "model\\": "model"
+      "model\\": "model",
+      "helper\\": "helper"
     }
   },
   "require": {

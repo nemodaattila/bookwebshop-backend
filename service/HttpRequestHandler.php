@@ -3,19 +3,23 @@
 namespace service;
 
 use exception\HttpResponseTriggerException;
+use helper\VariableHelper;
+use model\RequestParameters;
 
 class HttpRequestHandler
 {
     private string $routeBase = "";
     private RouteAnalyser $routeAnalyser;
+    private RequestParameters $parameters;
 
     public function __construct()
     {
         try {
-
             $this->setRootConstant();
             $this->getRouteBaseFromRequest();
             $this->searchForExistingRoute();
+            $this->getHttpRequestData();
+//            $this->checkAndLoadRestClass();
         } catch (HttpResponseTriggerException $e) {
             $this->sendResponseBasedOnTriggerException($e);
         }
@@ -52,7 +56,6 @@ class HttpRequestHandler
         if (!$routeExists) {
             throw new \Exception('Route not exists: ' . $this->routeBase);
         }
-
     }
 
     private function sendResponseBasedOnTriggerException(HttpResponseTriggerException $e)
@@ -68,4 +71,18 @@ class HttpRequestHandler
         header($_SERVER['SERVER_PROTOCOL'] . ' ' . 500);
         echo $message;
     }
+
+    private function getHttpRequestData()
+    {
+        $this->parameters = $this->routeAnalyser->getParameters();
+        if (isset($_SERVER['CONTENT_TYPE']) && str_contains($_SERVER['CONTENT_TYPE'], 'application/json')) {
+            if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
+                $putvars = [];
+                parse_str(file_get_contents("php://input"), $putvars);
+                $this->parameters->setRequestData($putvars);
+            } else
+                $this->parameters->setRequestData(VariableHelper::convertStdClassToArray(json_decode(file_get_contents('php://input'))));
+        }
+    }
+
 }
