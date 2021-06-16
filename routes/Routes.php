@@ -12,20 +12,13 @@ class Routes
      * @param string $classname called resthandler class
      * @param string $task - function to be called
      * @param bool $authRequired - authentication level all/user/admin / ?? check PHP JWT
-     * @param bool $response is encoded
      */
 
-    private array $routes =[
-        ['GET', 'metadata', 'BookMetaData', 'getBookMetaData', 'all', true],
+    public array $routes =[
+        ['GET', 'metadata', 'BookMetaData', 'getBookMetaData', 'all'],
     ];
 
-    /**
-     * @return array
-     */
-    public function getRoutes(): array
-    {
-        return $this->routes;
-    }
+
 
 
 }

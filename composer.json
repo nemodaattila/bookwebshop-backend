@@ -3,7 +3,8 @@
   "autoload": {
     "psr-4": {
       "service\\":"service/",
-      "routes\\":"routes/"
+      "routes\\":"routes/",
+      "exception\\": "exception/"
     }
   },
   "require": {

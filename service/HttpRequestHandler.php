@@ -2,18 +2,24 @@
 
 namespace service;
 
-use routes\Routes;
+use exception\HttpResponseTriggerException;
 
 class HttpRequestHandler
 {
-    private Routes $routes;
     private string $routeBase="";
 
     public function __construct()
     {
-        $this-> routes = new Routes();
-        $this->setRootConstant();
-        $this->analyzeRequest();
+        try {
+
+            $this->setRootConstant();
+            $this->getRouteBaseFromRequest();
+            $this->searchForExistingRoute();
+        }
+        catch(HttpResponseTriggerException $e)
+        {
+            $this->sendResponseBasedOnTriggerException($e);
+        }
     }
 
     private function setRootConstant()
@@ -23,15 +29,25 @@ class HttpRequestHandler
         DEFINE("ROOT", $root);
     }
 
-    private function analyzeRequest()
+    private function getRouteBaseFromRequest()
     {
         $request = strtolower($_SERVER['REQUEST_URI']);
         $urlStripper = str_replace($_SERVER['CONTEXT_DOCUMENT_ROOT'], "", ROOT);
         $request = str_replace(['//','/'], "\\", $request);
         $request = str_replace($urlStripper, "", $request);
-//        echo $request;
         $this->routeBase = $request;
-        echo json_encode($this->routeBase);
-        //a\metadata
+    }
+
+    private function searchForExistingRoute()
+    {
+        $ra = new RouteAnalyser($this->routeBase);
+    }
+
+    private function sendResponseBasedOnTriggerException(HttpResponseTriggerException $e)
+    {
+        header($_SERVER['SERVER_PROTOCOL'] . ' ' . $e->getCode());
+        $data = ['success'=>$e->isSuccess(), "data"=>$e->getData()];
+        echo json_encode($data);
+        die();
     }
 }
