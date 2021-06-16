@@ -27,9 +27,11 @@ class HttpRequestHandler
     {
         $request = strtolower($_SERVER['REQUEST_URI']);
         $urlStripper = str_replace($_SERVER['CONTEXT_DOCUMENT_ROOT'], "", ROOT);
-        $request = str_replace('/', '\\', $request);
+        $request = str_replace(['//','/'], "\\", $request);
         $request = str_replace($urlStripper, "", $request);
+//        echo $request;
         $this->routeBase = $request;
         echo json_encode($this->routeBase);
+        //a\metadata
     }
 }
