@@ -2,13 +2,7 @@
 
 namespace database;
 
-use core\backend\database\queryProcessor\simple\SimpleInsertPDOProcessor;
-use core\backend\database\queryProcessor\simple\SimpleSelectPDOProcessor;
-use core\backend\database\queryProcessor\simple\SimpleUpdatePDOProcessor;
-use core\backend\database\querySource\PDOQueryDataSource;
-use core\backend\interfaces\IPDOQueryProcessorInterface;
-use core\backend\model\RequestResultException;
-use JetBrains\PhpStorm\Pure;
+use simpleDatabaseProcessor\SimpleSelectPDOProcessor;
 
 /**
  * Class PDOProcessorBuilder builder osztály a megfelelő PDO segítő osztály létrehozásához és visszadásához
@@ -59,7 +53,7 @@ final class PDOProcessorBuilder
      * visszad egy PDO adatforrást
      * @return querySource\PDOQueryDataSource az adatforrás
      */
-    #[Pure] public function getDataSource(): PDOQueryDataSource
+    public function getDataSource(): PDOQueryDataSource
     {
         return new querySource\PDOQueryDataSource();
     }

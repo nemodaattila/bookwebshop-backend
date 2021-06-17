@@ -23,13 +23,9 @@ class HttpRequestHandler
             $this->loadRestClass();
         } catch (HttpResponseTriggerException $e) {
             $this->sendResponseBasedOnTriggerException($e);
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             $this->sendResponseBasedOnError($e->getMessage());
-        }
-        catch (\Error $e)
-        {
+        } catch (\Error $e) {
             $this->sendResponseBasedOnError($e->getMessage());
         }
     }
@@ -61,7 +57,7 @@ class HttpRequestHandler
 
     private function sendResponseBasedOnTriggerException(HttpResponseTriggerException $e)
     {
-        header($_SERVER['SERVER_PROTOCOL'] . ' ' . $e->getCode());
+        header($_SERVER['SERVER_PROTOCOL'] . ' ' . $e->getHttpCode());
         $data = ['success' => $e->isSuccess(), "data" => $e->getData()];
         echo json_encode($data);
         die();
@@ -88,8 +84,8 @@ class HttpRequestHandler
 
     private function loadRestClass()
     {
-        ['className'=>$restClass, 'functionName'=>$functionName] = $this->routeAnalyser->getRestData();
-        $restClass = "\\rest\\".$restClass;
+        ['className' => $restClass, 'functionName' => $functionName] = $this->routeAnalyser->getRestData();
+        $restClass = "\\rest\\" . $restClass;
         $class = new $restClass();
         $class->$functionName($this->parameters);
     }

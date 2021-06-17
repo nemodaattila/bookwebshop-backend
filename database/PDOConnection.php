@@ -2,6 +2,8 @@
 
 namespace database;
 
+
+
 use PDO;
 
 /**
@@ -34,7 +36,7 @@ final class PDOConnection
      */
     private static function createPDO(): PDO
     {
-        $config = parse_ini_file(ROOT . '\project\config\PDOConfig.php');
+        $config = parse_ini_file( '.\config\PDOConfig.php');
         return new PDO("mysql:host=" . $config['dbHost'] . ";dbname=" . $config['dbName']
             . ";charset=utf8", $config['dbUser'], $config['dbPassword'], [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
