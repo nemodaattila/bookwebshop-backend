@@ -1,6 +1,6 @@
 <?php
 
-namespace core\backend\database;
+namespace database;
 
 use core\backend\database\queryProcessor\simple\SimpleInsertPDOProcessor;
 use core\backend\database\queryProcessor\simple\SimpleSelectPDOProcessor;
@@ -48,9 +48,9 @@ final class PDOProcessorBuilder
             throw new RequestResultException(400, ['errorcode' => 'PDOPBBP']);
         }
         if ($simple) {
-            $proc = 'core\backend\database\queryProcessor\simple\Simple' . $type . 'PDOProcessor';
+            $proc = '\simpleDatabaseProcessor\Simple' . $type . 'PDOProcessor';
         } else {
-            $proc = 'core\backend\database\queryProcessor\complex\PDO' . $type . 'Processor';
+            $proc = '\complexDatabaseProcessor\complex\PDO' . $type . 'Processor';
         }
         return new $proc(PDOConnection::getInstance());
     }

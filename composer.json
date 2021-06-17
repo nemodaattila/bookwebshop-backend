@@ -8,7 +8,11 @@
       "classModel\\": "model/class",
       "classDbHandler\\": "model/classDBHandler",
       "helper\\": "helper/",
-      "rest\\": "rest/"
+      "rest\\": "rest/",
+      "database\\": "database/",
+      "databaseSource\\": "database/querySource",
+      "simpleDatabaseProcessor\\": "database/queryProcessor/simple",
+      "complexDatabaseProcessor\\": "database/queryProcessor/complex"
     }
   },
   "require": {

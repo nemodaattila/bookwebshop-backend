@@ -1,6 +1,6 @@
 <?php
 
-namespace core\backend\database;
+namespace database;
 
 use PDO;
 

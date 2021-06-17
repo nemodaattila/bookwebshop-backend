@@ -1,6 +1,6 @@
 <?php
 
-namespace core\backend\database\queryProcessor\simple;
+namespace simpleDatabaseProcessor;
 
 use core\backend\model\RequestResultException;
 use PDO;

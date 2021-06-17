@@ -2,8 +2,8 @@
 
 namespace classDbHandler;
 
-use core\backend\database\PDOProcessorBuilder;
 use core\backend\model\RequestResultException;
+use database\PDOProcessorBuilder;
 use JetBrains\PhpStorm\ArrayShape;
 
 /**
