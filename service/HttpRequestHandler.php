@@ -2,9 +2,9 @@
 
 namespace service;
 
+use classModel\RequestParameters;
 use exception\HttpResponseTriggerException;
 use helper\VariableHelper;
-use model\RequestParameters;
 
 class HttpRequestHandler
 {
@@ -12,6 +12,7 @@ class HttpRequestHandler
     private RouteAnalyser $routeAnalyser;
     private RequestParameters $parameters;
 
+    //DO authentication
     public function __construct()
     {
         try {
@@ -19,7 +20,7 @@ class HttpRequestHandler
             $this->getRouteBaseFromRequest();
             $this->searchForExistingRoute();
             $this->getHttpRequestData();
-//            $this->checkAndLoadRestClass();
+            $this->loadRestClass();
         } catch (HttpResponseTriggerException $e) {
             $this->sendResponseBasedOnTriggerException($e);
         }
@@ -83,6 +84,14 @@ class HttpRequestHandler
             } else
                 $this->parameters->setRequestData(VariableHelper::convertStdClassToArray(json_decode(file_get_contents('php://input'))));
         }
+    }
+
+    private function loadRestClass()
+    {
+        ['className'=>$restClass, 'functionName'=>$functionName] = $this->routeAnalyser->getRestData();
+        $restClass = "\\rest\\".$restClass;
+        $class = new $restClass();
+        $class->$functionName($this->parameters);
     }
 
 }

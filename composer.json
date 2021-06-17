@@ -5,8 +5,10 @@
       "service\\":"service/",
       "routes\\":"routes/",
       "exception\\": "exception/",
-      "model\\": "model",
-      "helper\\": "helper"
+      "classModel\\": "model/class",
+      "classDbHandler\\": "model/classDBHandler",
+      "helper\\": "helper/",
+      "rest\\": "rest/"
     }
   },
   "require": {

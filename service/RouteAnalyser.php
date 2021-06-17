@@ -2,7 +2,7 @@
 
 namespace service;
 
-use model\RequestParameters;
+use classModel\RequestParameters;
 use routes\Routes;
 
 class RouteAnalyser
@@ -10,6 +10,7 @@ class RouteAnalyser
     private array $routes;
     private string $routeBase;
     private RequestParameters $parameters;
+    private array $restData;
 
     /**
      * @return RequestParameters
@@ -26,7 +27,6 @@ class RouteAnalyser
     {
         return $this->restData;
     }
-    private array $restData;
 
     public function __construct($routeBase)
     {

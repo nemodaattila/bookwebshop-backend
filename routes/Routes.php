@@ -15,7 +15,6 @@ class Routes
      */
 
     private array $routes =[
-        ['GET', 'metadata/$1', 'BookMetaData', 'getBookMetaData', 'all'],
         ['GET', 'metadata', 'BookMetaData', 'getBookMetaData', 'all'],
     ];
 

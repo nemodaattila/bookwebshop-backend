@@ -1,6 +1,6 @@
 <?php
 
-namespace model;
+namespace classModel;
 
 /**
  * Class RequestParameters http request paraméterei mentődnek le ide
