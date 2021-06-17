@@ -25,10 +25,13 @@ class HttpRequestHandler
             $this->sendResponseBasedOnTriggerException($e);
         } catch (\Exception $e) {
             $this->sendResponseBasedOnError($e->getMessage());
-        } catch (\Error $e) {
+        }
+        catch (\Error $e) {
             $this->sendResponseBasedOnError($e->getMessage());
         }
     }
+
+
 
     private function setRootConstant()
     {
@@ -58,27 +61,33 @@ class HttpRequestHandler
     private function sendResponseBasedOnTriggerException(HttpResponseTriggerException $e)
     {
         header($_SERVER['SERVER_PROTOCOL'] . ' ' . $e->getHttpCode());
+
         $data = ['success' => $e->isSuccess(), "data" => $e->getData()];
         echo json_encode($data);
+
         die();
     }
 
     private function sendResponseBasedOnError(string $message)
     {
         header($_SERVER['SERVER_PROTOCOL'] . ' ' . 500);
+
+
         echo $message;
     }
 
     private function getHttpRequestData()
     {
+
         $this->parameters = $this->routeAnalyser->getParameters();
         if (isset($_SERVER['CONTENT_TYPE']) && str_contains($_SERVER['CONTENT_TYPE'], 'application/json')) {
-            if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
+            if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
                 $putvars = [];
                 parse_str(file_get_contents("php://input"), $putvars);
                 $this->parameters->setRequestData($putvars);
-            } else
+            } else {
                 $this->parameters->setRequestData(VariableHelper::convertStdClassToArray(json_decode(file_get_contents('php://input'))));
+            }
         }
     }
 

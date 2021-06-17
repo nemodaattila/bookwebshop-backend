@@ -16,6 +16,7 @@ class Routes
 
     private array $routes =[
         ['GET', 'metadata', 'BookMetaData', 'getBookMetaData', 'all'],
+        ['POST', 'booklist', 'BookListGetter', 'getBookList', 'all'],
     ];
 
     /**
