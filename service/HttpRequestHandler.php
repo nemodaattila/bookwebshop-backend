@@ -25,9 +25,9 @@ class HttpRequestHandler
         } catch (HttpResponseTriggerException $e) {
             $this->sendResponseBasedOnTriggerException($e);
         } catch (\Exception $e) {
-            $this->sendResponseBasedOnError($e->getMessage());
+            $this->sendResponseBasedOnError($e->getMessage(), $e->getFile(), $e->getLine());
         } catch (\Error $e) {
-            $this->sendResponseBasedOnError($e->getMessage());
+            $this->sendResponseBasedOnError($e->getMessage(), $e->getFile(), $e->getLine());
         }
     }
 
@@ -73,11 +73,12 @@ class HttpRequestHandler
         die();
     }
 
-    private function sendResponseBasedOnError(string $message)
+    //DO save message to log instead of echo
+    private function sendResponseBasedOnError(string $message, string $file, int $line)
     {
         header($_SERVER['SERVER_PROTOCOL'] . ' ' . 500);
 
-        echo $message;
+        echo $message.' - '.$file.':'.$line;
     }
 
     private function getHttpRequestData()

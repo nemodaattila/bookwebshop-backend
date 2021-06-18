@@ -1,12 +1,7 @@
 <?php
 
-namespace core\backend\database\querySource;
+namespace databaseSource;
 
-use core\backend\database\queryProcessor\complex\PDOQueryProcessorParent;
-use core\backend\interfaces\IPDOQueryProcessorInterface;
-use core\backend\model\RequestResultException;
-use JetBrains\PhpStorm\Pure;
-use PDO;
 
 /**
  * Class PDOQueryDataSource adatforrás PDO komplex PDO műveletekhet

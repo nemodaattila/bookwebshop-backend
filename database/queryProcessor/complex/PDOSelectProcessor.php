@@ -1,15 +1,14 @@
 <?php
 
-namespace core\backend\database\queryProcessor\complex;
+namespace complexDatabaseProcessor;
 
-use core\backend\database\querySource\PDOQueryDataSource;
-use core\backend\model\RequestResultException;
-use JetBrains\PhpStorm\Pure;
+
+use databaseSource\PDOQueryDataSource;
 use PDO;
 
 /**
  *
- * Class PDOSelectProcessor PDO select utasítás létrehozására és feldolgozására szolgáló osztály
+ * Class ComplexPDOSelectProcessor PDO select utasítás létrehozására és feldolgozására szolgáló osztály
  * @package core\backend\database\queryProcessor\complex
  */
 class PDOSelectProcessor extends PDOQueryProcessorParent

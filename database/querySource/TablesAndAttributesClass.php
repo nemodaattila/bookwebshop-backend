@@ -1,8 +1,7 @@
 <?php
 
-namespace core\backend\database\querySource;
+namespace databaseSource;
 
-use core\backend\model\RequestResultException;
 
 /**
  * Class TablesAndAttributesClass PDO lekérdezéshez tárolja a táblaneveket és attributumokat

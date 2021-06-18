@@ -9,10 +9,11 @@
       "classDbHandler\\": "model/classDBHandler",
       "helper\\": "helper/",
       "rest\\": "rest/",
-      "database\\": "database/",
+      "database\\": "database",
       "databaseSource\\": "database/querySource",
       "simpleDatabaseProcessor\\": "database/queryProcessor/simple",
-      "complexDatabaseProcessor\\": "database/queryProcessor/complex"
+      "complexDatabaseProcessor\\": "database/queryProcessor/complex",
+      "interfaces\\": "interfaces"
     }
   },
   "require": {

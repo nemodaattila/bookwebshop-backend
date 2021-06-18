@@ -1,12 +1,12 @@
 <?php
 
-namespace core\backend\database\queryProcessor\complex;
-use core\backend\database\querySource\PDOQueryDataSource;
-use core\backend\interfaces\IPDOQueryProcessorInterface;
+namespace complexDatabaseProcessor;
+use databaseSource\PDOQueryDataSource;
+use interfaces\IPDOQueryProcessorInterface;
 use PDO;
 
 /**
- * Class PDOQueryProcessorParent komplex PDO kezelő osztályok őse
+ * Class ComplexPDOQueryProcessorParent komplex PDO kezelő osztályok őse
  * @package core\backend\database\queryProcessor\complex
  * @todo named placeholder megvalósítása
  */

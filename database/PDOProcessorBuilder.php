@@ -2,7 +2,9 @@
 
 namespace database;
 
+use databaseSource\PDOQueryDataSource;
 use simpleDatabaseProcessor\SimpleSelectPDOProcessor;
+use complexDatabaseProcessor\PDOSelectProcessor;
 
 /**
  * Class PDOProcessorBuilder builder osztály a megfelelő PDO segítő osztály létrehozásához és visszadásához
@@ -22,8 +24,8 @@ final class PDOProcessorBuilder
         if (!in_array($type, ['Insert', 'Select', 'Update', 'Delete'])) {
             throw new RequestResultException(400, ['errorcode' => 'PDOPBBP']);
         }
-        $proc = 'core\backend\database\queryProcessor\complex\PDO' . $type . 'Processor';
-        return [new $proc(PDOConnection::getInstance()), new querySource\PDOQueryDataSource()];
+        $proc = 'complexDatabaseProcessor\PDO' . $type . 'Processor';
+        return [new $proc(PDOConnection::getInstance()), new PDOQueryDataSource()];
     }
 
     /**
@@ -44,7 +46,7 @@ final class PDOProcessorBuilder
         if ($simple) {
             $proc = '\simpleDatabaseProcessor\Simple' . $type . 'PDOProcessor';
         } else {
-            $proc = '\complexDatabaseProcessor\complex\PDO' . $type . 'Processor';
+            $proc = '\complexDatabaseProcessor\ComplexPDO' . $type . 'Processor';
         }
         return new $proc(PDOConnection::getInstance());
     }
@@ -53,7 +55,7 @@ final class PDOProcessorBuilder
      * visszad egy PDO adatforrást
      * @return querySource\PDOQueryDataSource az adatforrás
      */
-    public function getDataSource(): PDOQueryDataSource
+    public function getDataSource(): DPOQueryDataSource
     {
         return new querySource\PDOQueryDataSource();
     }

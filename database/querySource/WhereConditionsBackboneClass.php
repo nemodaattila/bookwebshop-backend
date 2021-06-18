@@ -1,9 +1,8 @@
 <?php
 
-namespace core\backend\database\querySource;
+namespace databaseSource;
 
-use core\backend\interfaces\IPDOWhereConditionInterface;
-use core\backend\model\RequestResultException;
+use interfaces\IPDOWhereConditionInterface;
 
 /**
  * Class WhereConditionsBackboneClass több, egy PDO query-hez tartozó where feltétel tárolására, valamint a
