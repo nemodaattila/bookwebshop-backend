@@ -51,6 +51,9 @@ class RouteAnalyser
 
     private function identifyHeader($httpMethod, $path): bool
     {
+        if ($httpMethod !== $_SERVER['REQUEST_METHOD'])
+            return false;
+
         $path = str_replace(['//','/'], "\\", $path);
         $url = explode('\\', $this->routeBase);
         $path = explode('\\', $path);

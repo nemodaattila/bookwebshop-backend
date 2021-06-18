@@ -16,6 +16,7 @@ class HttpRequestHandler
     public function __construct()
     {
         try {
+            $this->addCorsHeaders();
             $this->setRootConstant();
             $this->getRouteBaseFromRequest();
             $this->searchForExistingRoute();
@@ -25,13 +26,17 @@ class HttpRequestHandler
             $this->sendResponseBasedOnTriggerException($e);
         } catch (\Exception $e) {
             $this->sendResponseBasedOnError($e->getMessage());
-        }
-        catch (\Error $e) {
+        } catch (\Error $e) {
             $this->sendResponseBasedOnError($e->getMessage());
         }
     }
 
-
+    private function addCorsHeaders()
+    {
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Headers: X-Requested-With, Content-Type, Origin, Cache-Control, Pragma, Authorization, Accept, Accept-Encoding");
+        header("Access-Control-Allow-Methods: PUT, POST, GET, OPTIONS, DELETE");
+    }
 
     private function setRootConstant()
     {
@@ -72,7 +77,6 @@ class HttpRequestHandler
     {
         header($_SERVER['SERVER_PROTOCOL'] . ' ' . 500);
 
-
         echo $message;
     }
 
@@ -80,13 +84,29 @@ class HttpRequestHandler
     {
 
         $this->parameters = $this->routeAnalyser->getParameters();
-        if (isset($_SERVER['CONTENT_TYPE']) && str_contains($_SERVER['CONTENT_TYPE'], 'application/json')) {
-            if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
-                $putvars = [];
-                parse_str(file_get_contents("php://input"), $putvars);
-                $this->parameters->setRequestData($putvars);
-            } else {
-                $this->parameters->setRequestData(VariableHelper::convertStdClassToArray(json_decode(file_get_contents('php://input'))));
+        if (isset($_SERVER['CONTENT_TYPE'])) {
+            switch ($_SERVER['REQUEST_METHOD']) {
+                case "PUT":
+                    $putvars = [];
+                    parse_str(file_get_contents("php://input"), $putvars);
+                    $this->parameters->setRequestData($putvars);
+                    break;
+                case "POST":
+                    $requestData = file_get_contents('php://input');
+                    $decodedData = json_decode($requestData);
+                    if ($decodedData === null) {
+                        $this->parameters->setRequestData([$requestData]);
+                    } else {
+                        if (gettype($decodedData) === 'array') {
+                            $this->parameters->setRequestData($decodedData);
+                        }
+                        elseif (gettype($decodedData) === 'object') {
+                            $this->parameters->setRequestData(VariableHelper::convertStdClassToArray($decodedData));
+                        }
+                        else throw new \Exception('POST REQUEST DATA INCORRECT FORMAT');
+
+                    }
+                    break;
             }
         }
     }
