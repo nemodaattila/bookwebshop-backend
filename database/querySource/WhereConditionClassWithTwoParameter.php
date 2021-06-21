@@ -1,9 +1,8 @@
 <?php
 
-namespace core\backend\database\querySource;
+namespace databaseSource;
 
-use core\backend\interfaces\IPDOWhereConditionInterface;
-use core\backend\model\RequestResultException;
+use interfaces\IPDOWhereConditionInterface;
 
 /**
  * Class WhereConditionClassWithTwoParameter azon PDO WHERE feltételek osztálya, melyek 2 paraméterből állnak és

@@ -3,6 +3,8 @@
 namespace databaseSource;
 
 
+use PDO;
+
 /**
  * Class PDOQueryDataSource adatforrás PDO komplex PDO műveletekhet
  * @package core\backend\database\querySource

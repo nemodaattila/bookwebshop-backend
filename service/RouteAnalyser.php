@@ -35,7 +35,7 @@ class RouteAnalyser
         $this->parameters = new RequestParameters();
     }
 
-    public function processGivenRoute()
+    public function processGivenRoute(): bool
     {
         foreach ($this->routes as $route)
         {
@@ -69,7 +69,7 @@ class RouteAnalyser
                     $this->parameters->reset();
                     return false;
                 }
-                $this->parameters->addUrlParameter(filter_var($path[$i], FILTER_SANITIZE_STRING));
+                $this->parameters->addUrlParameter(filter_var($url[$i], FILTER_SANITIZE_STRING));
             }
         }
         return true;

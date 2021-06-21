@@ -2,6 +2,7 @@
 
 namespace rest;
 
+use classDbHandler\BookDataDBHAndler;
 use classDbHandler\BookMetaDataDBHandler;
 use classModel\RequestParameters;
 use exception\HttpResponseTriggerException;
@@ -10,9 +11,8 @@ class BookDataGetter
 {
     public function getBookPrimaryData(RequestParameters $parameters )
     {
-        var_dump($parameters);
-//        $metaDataGetter = new BookMetaDataDBHandler();
-//        $result = $metaDataGetter->getAllMetaData();
-//        throw new HttpResponseTriggerException(true, $result);
+        $bookDataGetter = new BookDataDBHAndler();
+        $result = $bookDataGetter->getPrimaryData($parameters->getUrlParameters()[0]);
+        throw new HttpResponseTriggerException(true, $result);
     }
 }

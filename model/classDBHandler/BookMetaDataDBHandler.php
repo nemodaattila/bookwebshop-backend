@@ -17,7 +17,6 @@ class BookMetaDataDBHandler
      * @return array a metaadatok asszociativ tömbje
      * @throws RequestResultException PDOProcesszor hiba
      */
-    #[ArrayShape(['format' => "array", 'language' => "array", 'mainCategory' => "array", 'subCategory' => "array", 'tag' => "array", 'targetAudience' => "array", 'type' => "array"])]
     public function getAllMetaData(): array
     {
         return [
