@@ -15,4 +15,5 @@ class BookDataGetter
         $result = $bookDataGetter->getPrimaryData($parameters->getUrlParameters()[0]);
         throw new HttpResponseTriggerException(true, $result);
     }
+
 }
