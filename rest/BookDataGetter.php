@@ -39,7 +39,7 @@ class BookDataGetter
         {
             $result[$value]= $authorGetter->getNameByID($value);
         }
-        sort($result);
+        asort($result);
         return $result;
     }
 
