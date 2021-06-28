@@ -2,35 +2,35 @@
 
 namespace complexDatabaseProcessor;
 
-
 use databaseSource\PDOQueryDataSource;
+use exception\HttpResponseTriggerException;
 use PDO;
 
 /**
  *
- * Class ComplexPDOSelectProcessor PDO select utasítás létrehozására és feldolgozására szolgáló osztály
- * @package core\backend\database\queryProcessor\complex
+ * Class ComplexPDOSelectProcessor class for creating and running PDO Select queries
+ * @package complexDatabaseProcessor
  */
 class PDOSelectProcessor extends PDOQueryProcessorParent
 {
     /**
-     * @var string a query eredmény fetchelési módja |
-     * fetch vagy fetchAll
+     * @var string fetching type of query result |
+     * fetch or fetchAll
      */
     protected string $fetchType = 'fetchAll';
     /**
-     * @var int eredmény fetchelési módja |
+     * @var int fetch method of query result |
      * pl: PDO::FETCH_ASSOC, PDO::FETCH_ARRAY
      */
     protected int $fetchMode = PDO::FETCH_ASSOC;
 
     /**
-     * a PDO lekérdezés paramétereinek mentése, majd feldolgozása
-     * @param PDOQueryDataSource $source - query adatforrás
-     * @param string $fetchType - fetch típus
-     * @param int $fetchMode - fetch mód
-     * @return array a lekérdezés eredménye
-     * @throws RequestResultException ha a fetchType nem fetch vagy fetchAll
+     * saving and running PDO query
+     * @param PDOQueryDataSource $source - query datasource
+     * @param string $fetchType - fetch type
+     * @param int $fetchMode - fetch method
+     * @return array result of query
+     * @throws HttpResponseTriggerException if the fetch type is not fetch or fetchAll
      * @example selectProc->query($source, 'fetch', PDO::FETCH_LAZY)
      */
     public function query(PDOQueryDataSource $source, string $fetchType = 'fetchAll', int $fetchMode = PDO::FETCH_ASSOC): array
@@ -38,14 +38,14 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
         $this->setSource($source);
         $this->fetchMode = $fetchMode;
         if (!in_array($fetchType, ['fetch', 'fetchAll']))
-            throw new RequestResultException(400, ['errorCode' => 'PDOFTBT']);
+            throw new HttpResponseTriggerException(false, ['errorCode' => 'PDOFTBT'], 500);
         $this->fetchType = $fetchType;
         return $this->runQuery($this->createQuery());
     }
 
     /**
-     * összeállítja és visszaadja egy lekérdezés query stringjét adatObjektumból
-     * @return string querystring
+     * creates and returns a query string from query data source
+     * @return string query string
      */
     public function createQuery(): string
     {
@@ -53,15 +53,15 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
         $where = $this->source->getQueryWhere();
         if ($where !== '')
             $query .= ' WHERE ' . $where;
-//        $query .= $this->getGroupGuery();
+//        $query .= $this->getGroupQuery();
         $query .= $this->getOrderByQuery();
         $query .= $this->getLimitAndOffsetQuery();
-        //        var_dump($query);
         return trim(str_replace('  ', ' ', $query));
     }
 
     /**
-     * @return string összeállítja és visszaadja egy darabszámlekérdező query stringjét adatObjektumból
+     * creates and returns a counter query string from query data source
+     * @return string query string
      */
     private function createCountQuery(): string
     {
@@ -74,10 +74,10 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
     }
 
     /**
-     * lefuttat egy összdarabszám lekérdező select query-t
-     * @param PDOQueryDataSource|null $source query adatForrás
-     * @return int a darabszám - a lekérdezés eredménye
-     * @throws RequestResultException ha a source null | !!! korábbi source újrafelhasználható, akkor nem kell megadni
+     * runs a query that results in count number, an earlier data source can be used
+     * @param PDOQueryDataSource|null $source query data source
+     * @return int count - tha result of the query
+     * @throws HttpResponseTriggerException if the data source is null
      */
     public function countQuery(?PDOQueryDataSource $source = null): int
     {
@@ -86,13 +86,12 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
         if ($this->source !== null) {
             return $this->runCountQuery($this->createCountQuery());
         }
-        throw new RequestResultException(500, ['errorCode' => 'PDOSPCQSE']);
+        throw new HttpResponseTriggerException(false, ['errorCode' => 'PDOSPCQSE'], 500);
     }
 
     /**
-     * visszaadja az adatosztály alapján a select querystring azon szakaszát, mely tartalmazza
-     * a résztvevő táblákat és attribumokat | pl: SELECT p.name FROM person as P
-     * @return string a query string szakasz
+     * returns the part of the query which contains the attributes and tables (p.id, p.name from person as p)
+     * @return string query part
      */
     private function getTableAndAttributesQuery(): string
     {
@@ -114,13 +113,12 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
     }
 
     /**
-     * visszaadja az adatosztály alapján a select querystring azon szakaszát, mely az
-     * ORDER BY paramétereit (attributum, irány) tartalmazza |
-     * pl: ORDER BY p.name ASC
-     * @return string az orderby queryszakasz
+     * returns the part of the query which contains the order and the order direction parameters
+     * eg: ORDER BY p.name ASC
+     * @return string query part
      * @todo több paraméter alapján rendezés
      */
-    #[Pure] private function getOrderByQuery(): string
+    private function getOrderByQuery(): string
     {
         $query = '';
         $order = $this->source->getOrder();
@@ -135,12 +133,11 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
     }
 
     /**
-     * visszaadja az adatosztály alapján a select querystring azon szakaszát, mely az
-     * mely az OFFSET-et és a LIMIT-et tartalmazza |
-     * pl: 'LIMIT 10 5'
-     * @return string
+     * returns the part of the query which contains the OFFSET and LIMIT parameters
+     * e.g.: 'LIMIT 10 5'
+     * @return string query part
      */
-    #[Pure] private function getLimitAndOffsetQuery(): string
+    private function getLimitAndOffsetQuery(): string
     {
         $limit = $this->source->hasLimit();
         $offset = $this->source->hasOffset();
@@ -154,14 +151,14 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
     }
 
     /**
-     * a megkapott querystring és a mentett adatForrás alapján lefuttatja a query-t
-     * @param string $queryString query szövege
-     * @return array a query eredménye
+     * runs a query from a querystring with the saved values (boundValues)
+     * @param string $queryString query string
+     * @return array result of query
      */
     private function runQuery(string $queryString): array
     {
         $query = $this->pdo->prepare($queryString);
-        $values = $this->source->getBindedValues();
+        $values = $this->source->getBoundValues();
         if (!empty($values)) {
             foreach ($values as $key => $value) {
                 $id = ($value[2] !== null) ? $value[2] : $key + 1;
@@ -174,14 +171,14 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
     }
 
     /**
-     * a megkapott querystring és a mentett adatForrás alapján lefuttatja a összdarabszám lekérdező query-t
-     * @param string $queryString query szövege
-     * @return int darabszám
+     * runs a counter query from a querystring with the saved values (boundValues)
+     * @param string $queryString query string
+     * @return int count
      */
     private function runCountQuery(string $queryString): int
     {
         $query = $this->pdo->prepare($queryString);
-        $values = $this->source->getBindedValues();
+        $values = $this->source->getBoundValues();
         if (!empty($values)) {
             $count = count($values) - $this->source->countOfActiveLimitAndOffset();
             for ($i = 0; $i < $count; $i++) {
@@ -193,7 +190,7 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
     }
 
     /**
-     * ha van al-lekérdezés az adatOsztályban összeállítj a query stringjét és visszadja
+     * if a sub-query exists, compiles and returns it
      * @return string al-query string
      */
     private function getSubQueryAsAttribute(): string

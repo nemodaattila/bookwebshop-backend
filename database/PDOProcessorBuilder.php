@@ -3,45 +3,47 @@
 namespace database;
 
 use databaseSource\PDOQueryDataSource;
+use exception\HttpResponseTriggerException;
+use interfaces\IPDOQueryProcessorInterface;
+use simpleDatabaseProcessor\SimpleInsertPDOProcessor;
 use simpleDatabaseProcessor\SimpleSelectPDOProcessor;
-use complexDatabaseProcessor\PDOSelectProcessor;
+use simpleDatabaseProcessor\SimpleUpdatePDOProcessor;
 
 /**
- * Class PDOProcessorBuilder builder osztály a megfelelő PDO segítő osztály létrehozásához és visszadásához
- * @package backend
+ * Class PDOProcessorBuilder builder class for creating the appropriate PDO helper class
+ * @package database
  */
 final class PDOProcessorBuilder
 {
     /**
-     * visszaa egy, a paraméternek megfelelő komplex PDO query kezelő osztályt, és egy PDO adatforrást
-     * @param string $type a kért osztály/művelet tipusa ['Insert','Select','Update','Delete']
-     * @return array [IPDOQueryProcessorInterface <queryHelper class példány>, PDOQueryDataSource <adatforrás>]
-     * @throws RequestResultException ha a $type nem valamelyik: ['Insert','Select','Update','Delete']
+     * return a complex PDO handler class, and a PDO data source, based on parameters
+     * @param string $type type of class/method ['Insert','Select','Update','Delete']
+     * @return array [IPDOQueryProcessorInterface <queryHelper class instance>, PDOQueryDataSource <datasource>]
+     * @throws HttpResponseTriggerException if the type not: 'Insert','Select','Update' or 'Delete'
      */
     public static function getProcessorAndDataSource(string $type): array
     {
         $type = ucfirst(strtolower($type));
         if (!in_array($type, ['Insert', 'Select', 'Update', 'Delete'])) {
-            throw new RequestResultException(400, ['errorcode' => 'PDOPBBP']);
+            throw new HttpResponseTriggerException(false, ['errorCode' => 'PDOPBBP'], 500);
         }
         $proc = 'complexDatabaseProcessor\PDO' . $type . 'Processor';
         return [new $proc(PDOConnection::getInstance()), new PDOQueryDataSource()];
     }
 
     /**
-     * visszad egy, a paraméternek megfelelő komplex PDO query kezelő osztályt
-     * @param string $type az osztály/művelet tipusa ['Insert','Select','Update','Delete']
-     * @param bool $simple ha true az osztály egyszerűsített lesz (\database\queryProcessor\simple)
-     *  ha false akkor komplex (\database\queryProcessor\complex)
-     * @return IPDOQueryProcessorInterface|SimpleSelectPDOProcessor|SimpleUpdatePDOProcessor|SimpleInsertPDOProcessor a PDO kezelő osztály
-     * @throws RequestResultException ha a $type nem valamelyik: ['Insert','Select','Update','Delete']
+     * return a PDO handler class, based on parameter
+     * @param string $type type of class/method ['Insert','Select','Update','Delete']
+     * @param bool $simple is simplified , if true: namespace simpleDatabaseProcessor, if false: namespace complexDatabaseProcessor
+     * @return IPDOQueryProcessorInterface|SimpleSelectPDOProcessor|SimpleUpdatePDOProcessor|SimpleInsertPDOProcessor PDO handler class
+     * @throws HttpResponseTriggerException if the type not: 'Insert','Select','Update' or 'Delete
      */
     public static function getProcessor(string $type, bool $simple = false):
     IPDOQueryProcessorInterface|SimpleSelectPDOProcessor|SimpleUpdatePDOProcessor|SimpleInsertPDOProcessor
     {
         $type = ucfirst(strtolower($type));
         if (!in_array($type, ['Insert', 'Select', 'Update', 'Delete'])) {
-            throw new RequestResultException(400, ['errorcode' => 'PDOPBBP']);
+            throw new HttpResponseTriggerException(400, ['errorCode' => 'PDOPBBP']);
         }
         if ($simple) {
             $proc = '\simpleDatabaseProcessor\Simple' . $type . 'PDOProcessor';
@@ -52,11 +54,11 @@ final class PDOProcessorBuilder
     }
 
     /**
-     * visszad egy PDO adatforrást
-     * @return querySource\PDOQueryDataSource az adatforrás
+     * return a PDO data source
+     * @return PDOQueryDataSource data source
      */
-    public function getDataSource(): DPOQueryDataSource
+    public function getDataSource(): PDOQueryDataSource
     {
-        return new querySource\PDOQueryDataSource();
+        return new PDOQueryDataSource();
     }
 }

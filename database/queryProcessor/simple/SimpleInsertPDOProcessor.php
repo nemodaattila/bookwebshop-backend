@@ -1,9 +1,9 @@
 <?php
 
-namespace core\backend\database\queryProcessor\simple;
+namespace simpleDatabaseProcessor;
 
 /**
- * Class SimpleInsertPDOProcessor egyszerűsített insert PDO segédosztály
- * @package core\backend\database\queryProcessor\simple
+ * Class SimpleInsertPDOProcessor helper class for simplified insert PDO queries
+ * @package simpleDatabaseProcessor
  */
 class SimpleInsertPDOProcessor extends SimplePDOProcessorParent{}

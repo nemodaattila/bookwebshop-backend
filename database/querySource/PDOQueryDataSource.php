@@ -2,51 +2,52 @@
 
 namespace databaseSource;
 
-
+use exception\HttpResponseTriggerException;
+use interfaces\IPDOQueryProcessorInterface;
 use PDO;
 
 /**
- * Class PDOQueryDataSource adatforrás PDO komplex PDO műveletekhet
- * @package core\backend\database\querySource
+ * Class PDOQueryDataSource datasource for complex PDO queries
+ * @package databaseSource
  * @see PDOQueryProcessorParent
  */
 class PDOQueryDataSource
 {
     /**
-     * @var TablesAndAttributesClass objektum mely a lekérdezés tábláit és attributumait tartalmazza
+     * @var TablesAndAttributesClass class which contains the tables and attributes of the query
      */
     private TablesAndAttributesClass $tablesAndAttributes;
     /**
-     * @var bool van e bállitva limit
+     * @var bool limit is enabled
      */
     private bool $hasLimit = false;
     /**
-     * @var bool van e beállitva offset
+     * @var bool offset is enabled
      */
     private bool $hasOffset = false;
     /**
-     * @var array allekérdezések mint attributum | array of PDOQueryDataSource
+     * @var array sub queries as attributes | array of PDOQueryDataSource
      */
     private array $subQueryAsAttribute = [];
     /**
-     * @var WhereConditionsBackboneClass where feltételek gyüjtőosztálya
+     * @var WhereConditionsBackboneClass collector class of where conditions
      */
     private WhereConditionsBackboneClass $whereConditions;
     /**
-     * @var array lekérdezésnek megadandó értékek
+     * @var array values to be bound in the query
      */
-    private array $bindedValues = [];
+    private array $boundValues = [];
     /**
-     * @var string ORDER BY attributum
+     * @var string ORDER BY attribute
      * @todo több paraméter megadása
      */
     private string $order;
     /**
-     * @var string rendezés iránya ASC/DESC
+     * @var string direction of the order ASC/DESC
      */
     private string $orderDirection;
     /**
-     * @var bool SELECT DISTINCT engedélyezése
+     * @var bool enable SELECT DISTINCT
      */
     private bool $distinct = false;
 
@@ -71,9 +72,9 @@ class PDOQueryDataSource
         return $this->hasOffset;
     }
 
-    public function getBindedValues(): array
+    public function getBoundValues(): array
     {
-        return $this->bindedValues;
+        return $this->boundValues;
     }
 
     public function getOrder(): ?string
@@ -90,6 +91,10 @@ class PDOQueryDataSource
         return null;
     }
 
+    /**
+     * sets the order parameter
+     * @throws HttpResponseTriggerException if table of the order parameter not exists
+     */
     public function setOrder(string $order): void
     {
         $order = $this->checkTableExists($order);
@@ -101,14 +106,14 @@ class PDOQueryDataSource
         $this->orderDirection = $orderDirection;
     }
 
-    #[Pure] public function __construct()
+    public function __construct()
     {
         $this->tablesAndAttributes = new TablesAndAttributesClass();
         $this->whereConditions = new WhereConditionsBackboneClass();
     }
 
     /**
-     * limit engedélyezése
+     * enable limit
      */
     public function enableLimit()
     {
@@ -116,7 +121,7 @@ class PDOQueryDataSource
     }
 
     /**
-     * offset engedélyezése
+     * enable offset
      */
     public function enableOffset()
     {
@@ -124,21 +129,20 @@ class PDOQueryDataSource
     }
 
     /**
-     * egy érték hozzáadása későbbi bindelésre
-     * @param mixed $value mentendő érték
-     * @param int|null $bindType az érték tipusa | default PDO::PARAM_STR
-     * @param string|null $bindName placeholdername - még nem működuk !
+     * add value to be bound in query
+     * @param mixed $value the value
+     * @param int|null $bindType type of the value | default PDO::PARAM_STR
+     * @param string|null $bindName placeholderName - not yet working !
      * @example $dataSource->bindValue(1, PDO::PARAM_INT);
      */
     public function bindValue(mixed $value, ?int $bindType = PDO::PARAM_STR, ?string $bindName = null)
     {
-        $this->bindedValues[] = [$value, $bindType, $bindName];
+        $this->boundValues[] = [$value, $bindType, $bindName];
     }
 
     /**
-     * visszadja a limitet és az offsetet mint darabszámot (bool -> int)
-     * ez összdarabszám lekérdező függvénynél fontos, mivel ott nem kell ezeket bindelni
-     * @return int darabszám
+     * returns offset and limit as count (bool -> int) (true, true) -> 2
+     * @return int count
      */
     public function countOfActiveLimitAndOffset(): int
     {
@@ -146,23 +150,23 @@ class PDOQueryDataSource
     }
 
     /**
-     * al-lekérdezés (mint attributum) hozzáadása
-     * @param IPDOQueryProcessorInterface $pdoProcessor a feldolgozó osztály
-     * @param PDOQueryDataSource $dataSource - adatforrás
-     * @param string $alias alias az allekérdezésnek
-     * @throws RequestResultException ha nincs alias
+     * add sub query as attribute
+     * @param IPDOQueryProcessorInterface $pdoProcessor a query processor class
+     * @param PDOQueryDataSource $dataSource - data source
+     * @param string $alias alias for sub - query
+     * @throws HttpResponseTriggerException if there is no alias
      */
     public function addSubQueryAsAttribute(IPDOQueryProcessorInterface $pdoProcessor, PDOQueryDataSource $dataSource, string $alias)
     {
         if ($alias === null) {
-            throw new RequestResultException(500, ['errorCode' => 'PDOASQA']);
+            throw new  HttpResponseTriggerException(false, ['errorCode' => 'PDOASQA'], 500);
         }
         $this->subQueryAsAttribute[] = [$pdoProcessor, $dataSource, $alias];
     }
 
     /**
-     * visszaadja az al-lekérdezések objektumait
-     * @return array a lekérdezések tömbje
+     * return sub-queries
+     * @return array array of sub queries
      */
     public function getSubQueryAsAttribute(): array
     {
@@ -170,9 +174,9 @@ class PDOQueryDataSource
     }
 
     /**
-     * tábla hozzáadása az adatforráshoz
-     * @param string $name a tábla neve
-     * @param string $alias tábla aliasa
+     * adds new table to the data source
+     * @param string $name table name
+     * @param string $alias table alias
      * @example $dataSource->addTable('person','p');
      */
     public function addTable(string $name, string $alias)
@@ -181,10 +185,9 @@ class PDOQueryDataSource
     }
 
     /**
-     * attributumok hozzáadaása adatforráshoz
-     * @param string $tableName a tábla teljes neve
-     * @param array $attributes attributumok
-     * @throws RequestResultException ha a tábla korábban nem lett felvéve
+     * adding attributes to datasource
+     * @param string $tableName full name of table
+     * @param array $attributes attributes
      * @example $dataSource->addAttributes('book',['isbn']);
      */
     public function addAttributes(string $tableName, array $attributes)
@@ -193,21 +196,21 @@ class PDOQueryDataSource
     }
 
     /**
-     * visszad minden hozzáadott táblát és attributumot
+     * return all saved tables and attributes
      * @return array
      */
-    #[Pure] public function getTablesAndAttributes(): array
+    public function getTablesAndAttributes(): array
     {
         return $this->tablesAndAttributes->getAll();
     }
 
     /**
-     * WHERE feltétel hozzáadása az adatforráshoz
-     * @param string $type feltétel operátora pl: '=' , 'LIKE'
-     * @param mixed $parameters paraméterek, lehet array: ['person.id', '?'] vagy egy al-feltétel (IPDOWhereConditionInterface)
-     * @param null $conditionOperator 2 feltétel közti operátor - (a=1 AND b=2) az első feltétel hozzádásakor nem veszi figyelembe
-     * @param false $isBracketed ha true zárójelbe rakja
-     * @throws RequestResultException pl. a többféle hiba lehet: ha a where paraméter nem szerepel már megadott táblában, vagy a kondiciók száma nem megfelelő
+     * add where condition to the database
+     * @param string $type condition operator pl: '=' , 'LIKE'
+     * @param mixed $parameters parameters, can be array: ['person.id', '?'] or a sub-query (IPDOWhereConditionInterface)
+     * @param null $conditionOperator operator between 2 conditions - (a=1 AND b=2)
+     * @param false $isBracketed if true the condition will be bracketed
+     * @throws HttpResponseTriggerException if on of the parameter's table not exists
      * @example $dataSource->addWhereCondition('=',['person.id', '?'],'AND');
      */
     public function addWhereCondition(string $type, mixed $parameters, $conditionOperator = null, bool $isBracketed = false)
@@ -222,11 +225,10 @@ class PDOQueryDataSource
     }
 
     /**
-     * al-feltétel hozzáadása az adatforráshoz
-     * @param WhereConditionsBackboneClass $class az alfeltétel objektum
-     * @param null $conditionOperator 2 feltétel közti operátor
-     * @param false $isBracketed - zárójelezett-e
-     * @todo tesztelni
+     * add qub query to the data source
+     * @param WhereConditionsBackboneClass $class condition class
+     * @param null $conditionOperator operator between 2 condition
+     * @param false $isBracketed if true the condition will be bracketed
      */
     public function addConditionObject(WhereConditionsBackboneClass $class, $conditionOperator = null, bool $isBracketed = false)
     {
@@ -234,11 +236,13 @@ class PDOQueryDataSource
     }
 
     /**
-     * ellenőrzi hogy a megadott attributum táblája szerepel a táblák között, ha igen aliasnévvel visszadja, egyébként hibaüzenet
-     * ha az attributum táblanév nélküli, szimplán visszadja
-     * @param string $attribute az attributumnév: person.name
-     * @return string ha meg van adva táblanév (person.id) akkor aliassal: (p.id), ha nincs (id), változatlan
-     * @throws RequestResultException ha meg van adva táblanév, de a tábla nem létezik
+     * checks if the given attribute's table exists
+     * if exists returns it with alias name
+     * if not exception
+     * if no table name was added, simply returns ot
+     * @param string $attribute az attribute: person.name
+     * @return string attribute with table alias, or simply the attribute
+     * @throws HttpResponseTriggerException if table doesn't exists
      */
     public function checkTableExists(string $attribute): string
     {
@@ -252,15 +256,15 @@ class PDOQueryDataSource
                     $newName = $alias . '.' . $explodedAttrib[1];
                 }
             } else {
-                throw new RequestResultException(500, ['errorcode' => 'QSTACNE', 'value' => $attribute]);
+                throw new HttpResponseTriggerException(false, ['errorCode' => 'QSTACNE', 'value' => $attribute], 400);
             }
         }
         return $newName;
     }
 
     /**
-     * visszadja a WHERE feltétekből összeállított query-stringet
-     * @return string az összeállított  query string
+     * returns the query string of the where conditions
+     * @return string complied query string
      */
     public function getQueryWhere(): string
     {

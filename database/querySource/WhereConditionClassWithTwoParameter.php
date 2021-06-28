@@ -2,49 +2,48 @@
 
 namespace databaseSource;
 
+use exception\HttpResponseTriggerException;
 use interfaces\IPDOWhereConditionInterface;
 
 /**
- * Class WhereConditionClassWithTwoParameter azon PDO WHERE feltételek osztálya, melyek 2 paraméterből állnak és
- * erre a formára épülnek: <paraméter1> <operátor> <parameter2> pl: id = 11
- * @package core\backend\database\querySource
+ * Class WhereConditionClassWithTwoParameter class for where conditions with 2 parameters, and which
+ * format is: <parameter1> <operator> <parameter2> e.g.: id = 11
+ * @package databaseSource
  */
 class WhereConditionClassWithTwoParameter extends WhereConditionParentClass implements IPDOWhereConditionInterface
 {
     /**
-     * @var string a feltétel operátora pl: '=', 'LIKE'
+     * @var string operator of the condition e.g.: '=', 'LIKE'
      */
     private string $operator;
 
     /**
-     * @var array a feltétel két paramétere, lehetnek skaláris változók, vagy olyan osztályok, melyek a IPDOWhereConditionInterface-t
-     * implementálják , vagyis bármilyen WHERE feltételt valósítanak meg
+     * @var array the two parameters of the condition , can be scalar or can implement IPDOWhereConditionInterface
      */
     private array $parameters;
 
     /**
-     * WhereConditionClassWithTwoParameter constructor. ellenőrzi és menti az operátort és a paramétereket
-     * @param string $operator feltétel operátora
-     * @param array $parameters a feltétel paraméterei (2 db)
-     * @throws RequestResultException ha a feltételek száma nem 2
+     *  checks as saves the condition parameters and operator
+     * @param string $operator condition operator
+     * @param array $parameters condition parameters (2)
+     * @throws HttpResponseTriggerException if the count of parameters are not 2
      * @example ('=', ['person.id', 'customer_id']), ('LIKE', ['book.isbn', %963%])
      */
     public function __construct(string $operator, array $parameters)
     {
         if (count($parameters) !== 2) {
-            throw new RequestResultException('500', ['errorCode' => 'PDOWC2PC']);
+            throw new HttpResponseTriggerException(false, ['errorCode' => 'PDOWC2PC'], 500);
         }
         $this->operator = $operator;
         $this->parameters = $parameters;
     }
 
     /**
-     * @return string visszaadja a feltételt stringként
-     * @throws RequestResultException ha valamely paraméter tipusa nem megfelelő
+     * @return string returns the parameter as string
      */
     public function getQueryString(): string
     {
-        return $this->getQueryStringPart($this->parameters[0]) . ' ' . $this->operator . ' ' . $this->getQueryStringPart($this->parameters[1]);
+        return $this->getQueryStringPart($this->getQueryStringPart($this->parameters[0]) . ' ' . $this->operator . ' ' . $this->getQueryStringPart($this->parameters[1]));
     }
 
 }

@@ -1,39 +1,38 @@
 <?php
 
-namespace core\backend\database\querySource;
+namespace databaseSource;
 
-use core\backend\interfaces\IPDOWhereConditionInterface;
-use core\backend\model\RequestResultException;
+use exception\HttpResponseTriggerException;
+use interfaces\IPDOWhereConditionInterface;
 
 /**
- * Class WhereBetweenConditionClass PDO BETWEEN SQL WHERE paraméterek megadására
+ * Class WhereBetweenConditionClass adding PDO BETWEEN WHERE SQL parameters
  * @package core\backend\database\querySource
  */
 class WhereBetweenConditionClass extends WhereConditionParentClass implements IPDOWhereConditionInterface
 {
 
     /**
-     * @var array BETWEEN feltétel paraméterei;
+     * @var array parameters of the between condition
      */
     private array $parameters;
 
     /**
-     * WhereConditionClassWithTwoParameter constructor. BETWEEN paraméterek mentése, paraméter darabszám ellenőrzés
-     * @param array $parameters BETWEEN feltétel paraméterei, formátum: [<összehasonlítandó érték>,<minimum érték>, <maximum érték>]
-     * @throws RequestResultException ha paraméterek száma nem 3
+     * saving parameters, parameter count check
+     * @param array $parameters parameters, format: [<value to be checked>,<minimum value>, <maximum value>]
+     * @throws HttpResponseTriggerException if parameter count is not 3
      */
     public function __construct(array $parameters)
     {
         if (count($parameters) !== 3) {
-            throw new RequestResultException('500', ['errorCode' => 'PDOWBCPC']);
+            throw new HttpResponseTriggerException(false, ['errorCode' => 'PDOWBCPC'], 500);
         }
         $this->parameters = $parameters;
     }
 
     /**
-     * visszaadja a BETWEEN feltételt stringként
-     * @return string BETWEEN feltétel string-szakasz
-     * @throws RequestResultException ha valamelyik paraméter tipus nem megfelelő
+     * return the parameters as where query string part
+     * @return string string part
      */
     public function getQueryString(): string
     {

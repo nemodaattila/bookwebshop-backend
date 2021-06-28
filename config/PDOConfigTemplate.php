@@ -1,7 +1,10 @@
 <?php
-//edit parameters, rename file to PDOConfig.php
+/**
+ *  parameters for database connection
+ *  edit parameters, rename file to PDOConfig.php
+ */
 exit; ?>
 dbHost = 'host url';
-dbName = 'databasename';
+dbName = 'dataBaseName';
 dbUser = 'username';
 dbPassword = 'password';

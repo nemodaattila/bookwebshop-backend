@@ -11,9 +11,11 @@ class BookListGetter
 {
     public function getBookList(RequestParameters $requestData): array
     {
+
+        //DO parameter validation
         $parameters= $requestData->getRequestData();
         if (gettype($parameters) === 'object')
-            $parameters['criterium'] = $this->checkAndConvertSearchCriterium($parameters['criterium']);
+            $parameters['criteria'] = $this->checkAndConvertSearchCriterium($parameters['criteria']);
         [$PDOLink, $dataSource] = PDOProcessorBuilder::getProcessorAndDataSource('select');
         switch ($parameters['order']) {
             case 'Title':
@@ -50,7 +52,7 @@ class BookListGetter
         switch ($parameters['order']) {
             case 'Title':
             case 'Author':
-                foreach ($parameters['criterium'] as $key => $value) {
+                foreach ($parameters['criteria'] as $key => $value) {
                     switch ($key) {
                         case 'Author':
                             $dataSource->addTable('book_author', 'ba');
@@ -90,7 +92,7 @@ class BookListGetter
                 }
                 break;
             case 'Year':
-                foreach ($parameters['criterium'] as $key => $value) {
+                foreach ($parameters['criteria'] as $key => $value) {
                     switch ($key) {
                         case "Quick":
                         case"ISBN":
@@ -126,7 +128,7 @@ class BookListGetter
                 }
                 break;
             case 'Price':
-                foreach ($parameters['criterium'] as $key => $value) {
+                foreach ($parameters['criteria'] as $key => $value) {
                     switch ($key) {
                         case "Quick":
                         case"ISBN":
@@ -166,8 +168,8 @@ class BookListGetter
             default => throw new RequestResultException(500, ['errorCode' => 'PDOPTTA', 'type' => $parameters['order']])
         };
         $parameters['order'] = $newOrder;
-        if ($parameters['criterium'] !== []) {
-            foreach ($parameters['criterium'] as $key => $value) {
+        if ($parameters['criteria'] !== []) {
+            foreach ($parameters['criteria'] as $key => $value) {
                 switch ($key) {
                     case 'Quick':
                         $dataSource->setDistinct();

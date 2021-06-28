@@ -2,24 +2,23 @@
 
 namespace databaseSource;
 
+use exception\HttpResponseTriggerException;
 use interfaces\IPDOWhereConditionInterface;
 
 /**
- * Class WhereConditionsBackboneClass több, egy PDO query-hez tartozó where feltétel tárolására, valamint a
- * query string összeállítására szolgáló osztály
- * al-where feltételként is példányosítható
- * @package core\backend\database\querySource
+ * Class WhereConditionsBackboneClass class for storing and processing multiple where conditions,
+ * which belongs to the same PDO query, can be a sub-query
+ * @package databaseSource
  */
 class WhereConditionsBackboneClass extends WhereConditionParentClass implements IPDOWhereConditionInterface
 {
     /**
-     * új where feltétel hozzáadása (tömb tipusú feltételparaméter), adatok mentése
-     * ,megfelelő osztályok létrehozása, az első feltétel $conditionOperator-át nem menti
-     * @param string $operator a feltétel operátora pl: '='
-     * @param array $parameters feltétel paraméterei pl: ['book_author.author_id','author.ID']
-     * @param string|null $conditionOperator két feltétel közötti operátor pl: 'AND'
-     * @param false $isBracketed ha true lekérdezésnél az egészet zárójelbe rakja
-     * @throws RequestResultException ha nincs megadva $conditionOperátor (az első feltétel kivételével)
+     * adds new where condition (array), creates where class, saves data
+     * @param string $operator condition operator e.g: '='
+     * @param array $parameters condition parameters e.g: ['book_author.author_id','author.ID']
+     * @param string|null $conditionOperator operator between two conditions pl: 'AND'
+     * @param false $isBracketed if true the conditions will be bracketed
+     * @throws HttpResponseTriggerException missing operator, not right parameter number
      * @example $x->addWhereCondition('=',['book_author.author_id','author.ID'],'AND');
      */
     public function addWhereCondition(string $operator, array $parameters, ?string $conditionOperator = null, bool $isBracketed = false)
@@ -33,16 +32,16 @@ class WhereConditionsBackboneClass extends WhereConditionParentClass implements 
         if (count($this->conditions) > 1) {
             $this->operators[] = $conditionOperator;
             if ($conditionOperator === null) {
-                throw new RequestResultException(500, ['errorcode' => 'PDOACNCO']);
+                throw new HttpResponseTriggerException(false, ['errorCode' => 'PDOACNCO'], 500);
             }
         }
     }
 
     /**
-     * új where feltétel (alfeltétel) hozzáadása (objektum tipusú feltételparaméter),az első feltétel $conditionOperator-át nem menti
-     * @param WhereConditionsBackboneClass $class feltételobjektum
-     * @param string|null $conditionOperator két feltétel közötti operátor pl: 'AND'
-     * @param false $isBracketed ha true lekérdezésnél az egészet zárójelbe rakja
+     * add new condition (sub-condition as object)
+     * @param WhereConditionsBackboneClass $class condition class
+     * @param string|null $conditionOperator operator between two component pl: 'AND'
+     * @param false $isBracketed if true the condition will be bracketed
      * @todo tesztelni
      */
     public function addConditionObject(WhereConditionsBackboneClass $class, ?string $conditionOperator = null, bool $isBracketed = false)
@@ -54,7 +53,8 @@ class WhereConditionsBackboneClass extends WhereConditionParentClass implements 
     }
 
     /**
-     * @return array visszaadja az összes feltételt és operátort
+     * returns all conditions and operators
+     * @return array [conditions, operators]
      */
     public function getAll(): array
     {

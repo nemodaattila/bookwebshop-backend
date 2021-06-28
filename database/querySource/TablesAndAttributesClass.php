@@ -3,22 +3,25 @@
 namespace databaseSource;
 
 
+use exception\HttpResponseTriggerException;
+
 /**
- * Class TablesAndAttributesClass PDO lekérdezéshez tárolja a táblaneveket és attributumokat
- * @package core\backend\database\querySource
+ * Class TablesAndAttributesClass class for storing the PDO query's tables and attributes
+ * @package databaseSource
  */
 class TablesAndAttributesClass
 {
     /**
-     * @var array táblák és attributumok tömbje: formátum:
-     * (<táblanév>=>[alias=><aliasnév>, attributes=>[name=><attributenév>, alias=><aliasnév>]])[]
+     * @var array array of tables and attributes, format:
+     * (<table name>=>[alias=><alias name>, attributes=>[name=><attribute name>, alias=><aliasname>]])[]
      */
     private array $tables = [];
 
     /**
-     * új tábla hozzáadása - ha még nem létezik létrehozza, beállítja az aliast, és üres attributum tömböt hoz létre
-     * @param string $name tábla neve
-     * @param string|null $alias tábla aliasa
+     * adding new table
+     * if it not exists , sets alias and an empty attribute array
+     * @param string $name table name
+     * @param string|null $alias table alias
      * @example $x->addTable('person', 'p')
      */
     public function addTable(string $name, ?string $alias = null)
@@ -30,15 +33,15 @@ class TablesAndAttributesClass
     }
 
     /**
-     * új attribute hozzáadása
-     * @param string $tableName a tábla neve, korábban fel kell venni addTable-vel
-     * @param array $attributes attributumok tömbje, formátum: ((<aliasNév> | int) => <attributeNév>)[]
-     * @throws RequestResultException ha a tableName nem létezik
+     * adding new attributes
+     * @param string $tableName name of the table
+     * @param array $attributes array of attributes, format: ((<alias name> | int) => <attribute name>)[]
+     * @throws HttpResponseTriggerException if table not exists
      */
     public function addAttributes(string $tableName, array $attributes)
     {
         if (!array_key_exists($tableName, $this->tables)) {
-            throw new RequestResultException(400, ['errorCode' => 'PDOTACN']);
+            throw new HttpResponseTriggerException(false, ['errorCode' => 'PDOTACN'], 500);
         }
         foreach ($attributes as $key => $attribute) {
             if (is_int($key)) {
@@ -49,8 +52,8 @@ class TablesAndAttributesClass
     }
 
     /**
-     * visszaadja a teljes attributum array-t
-     * @return array - attributumok tömbje
+     * return all attributes
+     * @return array array of attributes
      */
     public function getAll(): array
     {

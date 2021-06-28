@@ -2,33 +2,33 @@
 
 namespace databaseSource;
 
-use core\backend\model\RequestResultException;
+use exception\HttpResponseTriggerException;
 use interfaces\IPDOWhereConditionInterface;
 
 /**
- * Class WhereConditionParentClass a PDO where feltételeket megvalósító osztályok ősosztálya
- * @package core\backend\database\querySource
+ * Class WhereConditionParentClass parent for where condition classes
+ * @package databaseSource
  */
 abstract class WhereConditionParentClass implements IPDOWhereConditionInterface
 {
 
     /**
-     * @var array where feltételek tömbje | (IPDOWhereConditionInterface)[]
+     * @var array array of where conditions| (IPDOWhereConditionInterface)[]
      */
     protected array $conditions = [];
 
     /**
-     * @var array feltételek közti operátorok tömbje pl: [AND,AND,OR]
+     * @var array array for conditional operator pl: [AND,AND,OR]
      */
     protected array $operators = [];
 
     /**
-     * visszadja a vizsgált elemet stringként, mely a query string része lesz
-     * ha a $condotion string egyszerűen visszadja, ha viszont az IPDOWhereConditionInterface-t megvalósító class
-     * akkor annak kéri le a query-stringjét, és adja vissza
-     * @param string|IPDOWhereConditionInterface $condition a feltételrészt taralmazó szrting vagy objektum
-     * @return string a query string szakasz
-     * @throws RequestResultException ha a $condition nem string vagy IPDOWhereConditionInterface class
+     * checks the type of condition,
+     * if string return it, if implements IPDOWhereConditionInterface ,
+     * creates string from it
+     * @param string|IPDOWhereConditionInterface $condition condition
+     * @return string query as string
+     * @throws HttpResponseTriggerException if condition is not string or IPDOWhereConditionInterface
      */
     protected function getQueryStringPart(string|IPDOWhereConditionInterface $condition): string
     {
@@ -38,11 +38,11 @@ abstract class WhereConditionParentClass implements IPDOWhereConditionInterface
         if (in_array('core\backend\interfaces\IPDOWhereConditionInterface', class_implements($condition))) {
             return $condition->getQueryString();
         }
-        throw new RequestResultException(500, ['errorCode' => 'PDOWCPCBCT']);
+        throw new HttpResponseTriggerException(500, ['errorCode' => 'PDOWCPCBCT']);
     }
 
     /**
-     * @return string query WHERE string szakasz összeállítása
+     * @return string creates query string from the where condition class
      */
     public function getQueryString(): string
     {

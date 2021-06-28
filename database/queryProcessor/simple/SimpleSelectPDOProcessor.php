@@ -2,22 +2,22 @@
 
 namespace simpleDatabaseProcessor;
 
-use core\backend\model\RequestResultException;
+use exception\HttpResponseTriggerException;
 use PDO;
 
 /**
- * Class SimpleSelectPDOProcessor segédosztály select PDO query létrehozására és futtatására
- * @package core\backend\database\queryProcessor\simple
+ * Class SimpleSelectPDOProcessor helper class for handling simplified select PDO queries
+ * @package simpleDatabaseProcessor
  */
 class SimpleSelectPDOProcessor extends SimplePDOProcessorParent
 {
     /**
-     * @var string hogyan fetcheljük a query eredményét - egyelőre fetch és fetchAll
+     * @var string type of fetching | fetch or fetchAll
      */
     protected string $fetchType = 'fetchAll';
 
     /**
-     * @var int a query fetchelés módja pl: PDO::FETCH_ASSOC vagy 1
+     * @var int query method e.g: PDO::FETCH_ASSOC or 1
      */
     protected int $fetchMode = PDO::FETCH_ASSOC;
 
@@ -31,37 +31,34 @@ class SimpleSelectPDOProcessor extends SimplePDOProcessorParent
         return $this->fetchMode;
     }
 
-    /** beállitja hogyan adja vissza az eredményt a query
-     * @param string $fetchType feth vagy fetchAll
-     * @throws RequestResultException ha a $fetchType nem nem fetch vagy fetchAll
+    /**
+     * sets the type of fetching
+     * @param string $fetchType fetch or fetchAll
+     * @throws HttpResponseTriggerException if fetchType is not fetch or fetchAll
      */
     public function setFetchType(string $fetchType): void
     {
         if (!in_array($fetchType, ['fetch', 'fetchAll']))
-            throw new RequestResultException(400, ['errorCode' => 'PDOFTBT']);
+            throw new HttpResponseTriggerException(false, ['errorCode' => 'PDOFTBT'], 500);
         $this->fetchType = $fetchType;
     }
 
-    /**
-     * beállítja a fetchelés módját
-     * @param int $fetchMode
-     */
     public function setFetchMode(int $fetchMode): void
     {
         $this->fetchMode = $fetchMode;
     }
 
     /**
-     * lefuttataja a lekérdezést és visszaadja az eredményt
-     * @return mixed a select lekérezés eredménye
-     * @throws RequestResultException ha a lekérdezés meghiúsult , kivétel tartalma: (httpkód 500, [hibakód, querystring])
+     * runs the query and returns the result
+     * @return mixed result of query
+     * @throws HttpResponseTriggerException on query error
      */
     public function execute(): mixed
     {
         $query = $this->pdo->prepare($this->getCommand());
         $success = $query->execute($this->getValues());
         if ($success === false) {
-            throw new RequestResultException(500, ['errorcode' => 'PDOSSSF', 'errorMessage' => $this->getCommand()]);
+            throw new HttpResponseTriggerException(false, ['errorCode' => 'PDOSSSF', 'errorMessage' => $this->getCommand()], 500);
         }
         $rt = $this->getFetchType();
         return $query->$rt($this->getFetchMode());

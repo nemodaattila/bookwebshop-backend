@@ -1,9 +1,9 @@
 <?php
 
-namespace core\backend\database\queryProcessor\simple;
+namespace simpleDatabaseProcessor;
 
 /**
- * Class SimpleUpdatePDOProcessor segédosztáéy egyszerú PDO update query felépítésére és végrehajtásáta
- * @package core\backend\database\queryProcessor\simple
+ * Class SimpleUpdatePDOProcessor helper class handling update PDO queries
+ * @package simpleDatabaseProcessor
  */
 class SimpleUpdatePDOProcessor extends SimplePDOProcessorParent{}
