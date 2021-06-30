@@ -2,15 +2,32 @@
 
 namespace exception;
 
+use Exception;
 use Throwable;
 
-class HttpResponseTriggerException extends \Exception
+/**
+ * Class HttpResponseTriggerException it's a fake exception for triggering http response
+ * @package exception
+ */
+class HttpResponseTriggerException extends Exception
 {
-    private int $httpCode=200;
+    /**
+     * @var int http code of the response
+     */
+    private int $httpCode;
+
+    /**
+     * @var bool state of correctness of the response data
+     * e.g.: false for validation error
+     */
     private bool $success;
+
+    /**
+     * @var mixed data for response
+     */
     private mixed $data;
 
-    public function __construct(bool $success, mixed $data, int $httpCode=200, $message = "", $code = 0, Throwable $previous = null)
+    public function __construct(bool $success, mixed $data, int $httpCode = 200, $message = "", $code = 0, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
         $this->success = $success;
@@ -18,31 +35,18 @@ class HttpResponseTriggerException extends \Exception
         $this->httpCode = $httpCode;
     }
 
-
-
-    /**
-     * @return int
-     */
     public function getHttpCode(): int
     {
         return $this->httpCode;
     }
 
-    /**
-     * @return bool
-     */
     public function isSuccess(): bool
     {
         return $this->success;
     }
 
-    /**
-     * @return mixed
-     */
     public function getData(): mixed
     {
         return $this->data;
     }
-
-
 }

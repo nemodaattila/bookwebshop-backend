@@ -18,6 +18,9 @@
   },
   "require": {
     "ext-json": "*",
-    "ext-pdo": "*"
+    "ext-pdo": "*",
+    "ext-exif": "*",
+    "ext-gd": "*",
+    "ext-fileinfo": "*"
   }
 }

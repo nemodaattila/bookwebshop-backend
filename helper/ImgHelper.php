@@ -2,19 +2,16 @@
 
 namespace helper;
 
-// Link image type to correct image loader
-// - makes it easier to add additional types later on
-// - makes the function easier to read
 use exception\HttpResponseTriggerException;
 
 /**
- * Class ImgHelper képekkel kapcsolatos függvények
- * @package core\backend\helper
+ * Class ImgHelper helper functions connected to images
+ * @package helper
  */
 class ImgHelper
 {
     /**
-     * imagekezelők tipustól függően - betöltőfüggvény , mentőfüggvény, minőség
+     * imageHandler functions by file type - loading/saving + image quality
      */
     const IMAGE_HANDLERS = [
         IMAGETYPE_JPEG => [
@@ -34,39 +31,26 @@ class ImgHelper
     ];
 
     /**
-     * @param string $fileName
-     * @param string $sourcePath
-     * @param string $targetPath
-     * @param int $width
-     * @param int $height
-     * @todo
+     * creates a thumbnail from an image
+     * @param string $filename filename - without path
+     * @param string $path path of the file to be converted
+     * @param string $dest save path of the thumbnail
+     * @param int $targetWidth width of the thumnbail
+     * @param int|null $targetHeight height of the thumnail - if it's 0 it will be proportionate
+     * @throws HttpResponseTriggerException if file not exists
+     * @throws HttpResponseTriggerException if save failed
+     * @author source : https://pqina.nl/blog/creating-thumbnails-with-php/
      */
-    static public function createCover(string $fileName, string $sourcePath, string $targetPath, int $width, int $height)
+    static public function createThumbnail(string $filename, string $path, string $dest, int $targetWidth, int $targetHeight = null): ?bool
     {
-//        var_dump($fileName);
-    }
-
-    /**
-     * képből thumbnail-t csinál
-     * @param string $filename a file neve (elérési út nélkül)
-     * @param string $src elérési út
-     * @param string $dest thumbnail mentési helye
-     * @param int $targetWidth a létrehozandó thumbnail szélessége
-     * @param int|null $targetHeight a létrehozandó thumbnail magassága | null - arányosan
-     * @throws RequestResultException ha a forrásfájl nem létezik
-     * @throws RequestResultException ha a mentés nem sikerült
-     * @author //source : https://pqina.nl/blog/creating-thumbnails-with-php/
-     */
-    static public function createThumbnail(string $filename, string $src, string $dest, int $targetWidth, int $targetHeight = null): ?bool
-    {
-        if (!file_exists($src . '\\' . $filename)) {
-            throw new RequestResultException(500, ['errorCode=>IHCTFNE', 'fileName' => $src . '\\' . $filename]);
+        if (!file_exists($path . '\\' . $filename)) {
+            throw new HttpResponseTriggerException(false, ['errorCode=>IHCTFNE', 'fileName' => $path . '\\' . $filename], 500);
         }
-        $type = exif_imagetype($src . '\\' . $filename);
+        $type = exif_imagetype($path . '\\' . $filename);
         if (!$type || !self::IMAGE_HANDLERS[$type]) {
             return null;
         }
-        $image = call_user_func(self::IMAGE_HANDLERS[$type]['load'], $src . '\\' . $filename);
+        $image = call_user_func(self::IMAGE_HANDLERS[$type]['load'], $path . '\\' . $filename);
         if (!$image) {
             return null;
         }
@@ -106,21 +90,21 @@ class ImgHelper
             self::IMAGE_HANDLERS[$type]['quality']
         );
         if ($save !== true) {
-            throw new RequestResultException(500, ['errorCode' => 'IHTCE']);
+            throw new HttpResponseTriggerException(false, ['errorCode' => 'IHTCE'], 500);
         }
         return $save;
     }
 
     /**
-     * képből base64 stringet képez
-     * @param string $file a leképezendő kép
-     * @return string az átalakított kép base64 string formában
-     * @throws RequestResultException ha a kép nem létezik
+     * converts an image to base64 string
+     * @param string $file image to be converted
+     * @return string image in base64 string form
+     * @throws HttpResponseTriggerException if file not exists
      */
     static public function convertImageToBase64String(string $file): string
     {
         if (!file_exists($file)) {
-            throw new HttpResponseTriggerException(false,['errorCode=>IHCTFNE', 'fileName' => $file],200);
+            throw new HttpResponseTriggerException(false, ['errorCode=>IHCTFNE', 'fileName' => $file], 500);
         }
         $imgData = base64_encode(file_get_contents($file));
         return 'data: ' . mime_content_type($file) . ';base64,' . $imgData;

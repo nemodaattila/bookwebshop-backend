@@ -12,9 +12,9 @@ use PDO;
 abstract class SimplePDOProcessorParent
 {
     /**
-     * @var PDO PDO connection
+     * @var PDO | null PDO connection
      */
-    protected PDO $pdo;
+    protected ?PDO $pdo;
     /**
      * @var string sql query string
      */
@@ -45,9 +45,14 @@ abstract class SimplePDOProcessorParent
         return $this->queryValues;
     }
 
-    public function __construct(PDO $pdo)
+    public function __construct(?PDO $pdo)
     {
         $this->pdo = $pdo;
+    }
+
+    public function nullPDO()
+    {
+        $this->pdo = null;
     }
 
     /**
@@ -63,4 +68,6 @@ abstract class SimplePDOProcessorParent
         }
         return true;
     }
+
+
 }

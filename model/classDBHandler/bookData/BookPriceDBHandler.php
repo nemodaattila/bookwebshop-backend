@@ -2,19 +2,33 @@
 
 namespace classDbHandler\bookData;
 
-use database\PDOProcessorBuilder;
+use classDbHandler\DBHandlerParent;
+use exception\HttpResponseTriggerException;
 
-class BookPriceDBHandler
+/**
+ * Class BookPriceDBHandler database connection/ functions to table book_price
+ * @package classDbHandler\bookData
+ */
+class BookPriceDBHandler extends DBHandlerParent
 {
-    public function getPriceByIsbn(string $isbn): int|bool
+    /**
+     * returns the price of a book
+     * @param string $isbn isbn of a book
+     * @return int price of the book (if no error)
+     * @throws HttpResponseTriggerException wrong processor type
+     * @throws HttpResponseTriggerException wrong fetch type
+     * @throws HttpResponseTriggerException sql query error
+     * @throws HttpResponseTriggerException if result is null (price not exists for book)
+     */
+    public function getPriceByIsbn(string $isbn): int
     {
-        $PDOLink = PDOProcessorBuilder::getProcessor('select', true);
-        $PDOLink->setCommand("SELECT bp.price FROM book_price as bp WHERE isbn=?");
-        $PDOLink->setFetchType('fetch');
-        $PDOLink->setValues($isbn);
-        $tempResult = $PDOLink->execute();
+        $this->createPDO('select');
+        $this->PDOLink->setCommand("SELECT bp.price FROM book_price as bp WHERE isbn=?");
+        $this->PDOLink->setFetchType('fetch');
+        $this->PDOLink->setValues($isbn);
+        $tempResult = $this->PDOLink->execute();
         if ($tempResult === null) {
-            throw new RequestResultException(500, ['errorCode' => 'GBPISBNNE']);
+            throw new HttpResponseTriggerException(false, ['errorCode' => 'GBPISBNNE'], 500);
         }
         return $tempResult['price'];
     }

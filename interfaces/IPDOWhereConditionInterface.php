@@ -4,12 +4,12 @@ namespace interfaces;
 
 /**
  * Interface IPDOWhereConditionInterface
- * @package core\backend\interfaces PDO query WHERE feltételének megadására és leképezésére képes osztályok interfece
+ * @package core\backend\interfaces interface for creating PDO WHERE conditions
  */
 interface IPDOWhereConditionInterface
 {
     /**
-     * @return string visszaadja a WHERE query stringszakaszt
+     * @return string returns the query's WHERE part as string
      */
     public function getQueryString(): string;
 }

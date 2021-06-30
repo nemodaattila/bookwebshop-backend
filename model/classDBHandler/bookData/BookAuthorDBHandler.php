@@ -2,16 +2,28 @@
 
 namespace classDbHandler\bookData;
 
-use database\PDOProcessorBuilder;
+use classDbHandler\DBHandlerParent;
+use exception\HttpResponseTriggerException;
 
-class BookAuthorDBHandler
+/**
+ * Class BookAuthorDBHandler database connection/functions to table book_author
+ * @package classDbHandler\bookData
+ */
+class BookAuthorDBHandler extends DBHandlerParent
 {
+
+    /**
+     * gets the author(s) of a book by isbn
+     * @param string $isbn isbn number of a book
+     * @return array author(s) of the book
+     * @throws HttpResponseTriggerException on mysql query error
+     */
     public function getByIsbn(string $isbn): array
     {
-        $PDOLink = PDOProcessorBuilder::getProcessor('select', true);
-        $PDOLink->setCommand("SELECT author_id FROM book_author where isbn = ?");
-        $PDOLink->setValues($isbn);
-        $tempResult = $PDOLink->execute();
+        $this->createPDO('select');
+        $this->PDOLink->setCommand("SELECT author_id FROM book_author where isbn = ?");
+        $this->PDOLink->setValues($isbn);
+        $tempResult = $this->PDOLink->execute();
         $result = [];
         foreach ($tempResult as $value) {
             $result[] = $value['author_id'];
