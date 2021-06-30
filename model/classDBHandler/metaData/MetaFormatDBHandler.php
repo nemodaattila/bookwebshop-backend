@@ -2,21 +2,25 @@
 
 namespace classDbHandler\metaData;
 
-use database\PDOProcessorBuilder;
+use classDbHandler\DBHandlerParent;
+use exception\HttpResponseTriggerException;
 
-class MetaFormatDBHandler
+/**
+ * Class MetaFormatDBHandler database connection / functions to table meta_format
+ * @package classDbHandler\metaData
+ */
+class MetaFormatDBHandler extends DBHandlerParent
 {
-
     /**
-     * formátumtipusok visszadása
-     * @return array multidimenzionális tömb pl: ['könyv'=>[0=>'puhafedeles', ...], ['hangoskönyv'=>[10=>'audiocd']]]
-     * @throws RequestResultException PDOProcesszot hiba
+     * returns formats grouped by book type
+     * @return array formats in multidimensional associative array
+     * @throws HttpResponseTriggerException bad BDO processor type
      */
     public function getGroupedByType(): array
     {
-        $PDOLink = PDOProcessorBuilder::getProcessor('select', true);
-        $PDOLink->setCommand("SELECT id, type_id, name FROM meta_format");
-        $tempResult = $PDOLink->execute();
+        $this->createPDO('select');
+        $this->PDOLink->setCommand("SELECT id, type_id, name FROM meta_format");
+        $tempResult = $this->PDOLink->execute();
         $result = [];
         foreach ($tempResult as $value) {
             if (!isset($result[$value['type_id']])) {

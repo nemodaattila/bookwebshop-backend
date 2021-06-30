@@ -2,7 +2,6 @@
 
 namespace rest;
 
-use classDbHandler\BookMetaDataDBHandler;
 use classDbHandler\metaData\MetaFormatDBHandler;
 use classDbHandler\metaData\MetaLanguageDBHandler;
 use classDbHandler\metaData\MetaMainCategoryDBHandler;
@@ -12,14 +11,22 @@ use classDbHandler\metaData\MetaTargetAudienceDBHandler;
 use classDbHandler\metaData\MetaTypeDBHandler;
 use exception\HttpResponseTriggerException;
 
+/**
+ * collects all meta data connected to books :
+ * format, type, language, main and subcategory, tag, target audience
+ * Class BookMetaData
+ * @package rest
+ */
 class BookMetaData
 {
-
+    /**
+     * calls every corresponding Db handler for every metadata type ,
+     * and throws an exception as result with the data in it in array form
+     * @throws HttpResponseTriggerException result data
+     */
     public function getBookMetaData()
     {
-//        $metaDataGetter = new BookMetaDataDBHandler();
-//        $result = $metaDataGetter->getAllMetaData();
-        $result =  [
+        $result = [
             'format' => (new MetaFormatDBHandler())->getGroupedByType(),
             'language' => (new MetaLanguageDBHandler())->get(),
             'mainCategory' => (new MetaMainCategoryDBHandler())->get(),
@@ -30,7 +37,4 @@ class BookMetaData
         ];
         throw new HttpResponseTriggerException(true, $result);
     }
-
-
-
 }

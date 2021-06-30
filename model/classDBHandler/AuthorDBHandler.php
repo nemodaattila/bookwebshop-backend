@@ -2,17 +2,27 @@
 
 namespace classDbHandler;
 
-use database\PDOProcessorBuilder;
+use exception\HttpResponseTriggerException;
 
-class AuthorDBHandler
+/**
+ * Class AuthorDBHandler database connector / functions to table author
+ * @package classDbHandler
+ */
+class AuthorDBHandler extends DBHandlerParent
 {
+    /**
+     * returns an author's name by author's id
+     * @param int $id id of the author
+     * @return string name of the author
+     * @throws HttpResponseTriggerException bad processor type
+     */
     public function getNameByID(int $id): string
     {
-        $PDOLink = PDOProcessorBuilder::getProcessor('select', true);
-        $PDOLink->setCommand("SELECT name FROM author where id = ?");
-        $PDOLink->setValues($id);
-        $PDOLink->setFetchType('fetch');
-        $result = $PDOLink->execute();
+        $this->createPDO('select');
+        $this->PDOLink->setCommand("SELECT name FROM author where id = ?");
+        $this->PDOLink->setValues($id);
+        $this->PDOLink->setFetchType('fetch');
+        $result = $this->PDOLink->execute();
         return $result['name'];
     }
 }

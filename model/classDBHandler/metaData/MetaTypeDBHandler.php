@@ -2,15 +2,25 @@
 
 namespace classDbHandler\metaData;
 
-use database\PDOProcessorBuilder;
+use classDbHandler\DBHandlerParent;
+use exception\HttpResponseTriggerException;
 
-class MetaTypeDBHandler
+/**
+ * Class MetaTypeDBHandler database connection / function to table meta_type
+ * @package classDbHandler\metaData
+ */
+class MetaTypeDBHandler extends DBHandlerParent
 {
+    /**
+     * returns all book types
+     * @return array book types
+     * @throws HttpResponseTriggerException bad processor type
+     */
     public function get(): array
     {
-        $PDOLink = PDOProcessorBuilder::getProcessor('select', true);
-        $PDOLink->setCommand("SELECT id,  name FROM meta_type");
-        $tempResult = $PDOLink->execute();
+        $this->createPDO('select');
+        $this->PDOLink->setCommand("SELECT id,  name FROM meta_type");
+        $tempResult = $this->PDOLink->execute();
         $result = [];
         foreach ($tempResult as $value) {
             $result[$value['id']] = $value['name'];

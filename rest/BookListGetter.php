@@ -4,18 +4,30 @@ namespace rest;
 
 use classModel\RequestParameters;
 use database\PDOProcessorBuilder;
+use databaseSource\WhereConditionsBackboneClass;
 use exception\HttpResponseTriggerException;
+use helper\VariableHelper;
 use PDO;
 
+/**
+ * Class BookListGetter http request processor, return a list of book isbn-s, which matches search parameters
+ * @package rest
+ */
 class BookListGetter
 {
-    public function getBookList(RequestParameters $requestData): array
+    /**
+     * searches for books which match search parameters
+     * @param RequestParameters $requestData http request parameters
+     * @throws HttpResponseTriggerException on success, throws the isbn list
+     * @throws HttpResponseTriggerException bad processor type
+     * @throws HttpResponseTriggerException bad search parameter type
+     */
+    public function getBookList(RequestParameters $requestData): void
     {
-
         //DO parameter validation
-        $parameters= $requestData->getRequestData();
+        $parameters = $requestData->getRequestData();
         if (gettype($parameters) === 'object')
-            $parameters['criteria'] = $this->checkAndConvertSearchCriterium($parameters['criteria']);
+            $parameters['criteria'] = $this->checkAndConvertSearchCriteria($parameters['criteria']);
         [$PDOLink, $dataSource] = PDOProcessorBuilder::getProcessorAndDataSource('select');
         switch ($parameters['order']) {
             case 'Title':
@@ -47,7 +59,7 @@ class BookListGetter
                 $dataSource->addSubQueryAsAttribute($subPDOLink, $subDataSource, 'FirstAuthor');
                 break;
             default:
-                throw new RequestResultException(500, ['errorCode' => 'PDOPTTA', 'type' => $parameters['order']]);
+                throw new HttpResponseTriggerException(false, ['errorCode' => 'PDOPTTA', 'type' => $parameters['order']], 500);
         }
         switch ($parameters['order']) {
             case 'Title':
@@ -66,7 +78,7 @@ class BookListGetter
                             $dataSource->addTable('book_tag', 'bt');
                             $dataSource->addWhereCondition('=', ['book.isbn', 'book_tag.isbn'], 'AND');
                             break;
-                        case "Targetaudience":
+                        case "TargetAudience":
                         case "Publisher":
                         case "Language":
                         case "Year":
@@ -147,7 +159,7 @@ class BookListGetter
                             $dataSource->addTable('book_series', 'bs');
                             $dataSource->addWhereCondition("=", ['book_price.isbn', 'book_series.isbn'], 'AND');
                             break;
-                        case "Targetaudience":
+                        case "TargetAudience":
                         case "Publisher":
                         case "Language":
                         case "Year":
@@ -165,7 +177,7 @@ class BookListGetter
             'Year' => 'book_description.year',
             'Price' => 'book_price.price',
             'Author' => 'FirstAuthor',
-            default => throw new RequestResultException(500, ['errorCode' => 'PDOPTTA', 'type' => $parameters['order']])
+            default => throw new HttpResponseTriggerException(false, ['errorCode' => 'PDOPTTA', 'type' => $parameters['order']], 500)
         };
         $parameters['order'] = $newOrder;
         if ($parameters['criteria'] !== []) {
@@ -329,21 +341,21 @@ class BookListGetter
     }
 
     /**
-     * kereési feltételek átalakítása tömbbé
-     * @param string $criterium a keresési feltételek JSON string formában
-     * @return array feltételek tömbben
-     * @throws RequestResultException ha feltétel nem konvertálható objekt-é
+     * converts JSON search criteria to object, then an associative array
+     * @param string $criteria a search criteria in JSON string form
+     * @return array criteria as array
+     * @throws HttpResponseTriggerException if the data converted from JSON is not an object
      */
-    private function checkAndConvertSearchCriterium(string $criterium): array
+    private function checkAndConvertSearchCriteria(string $criteria): array
     {
-        if ($criterium === '{}') {
+        if ($criteria === '{}') {
             return [];
         }
-        $criterium = json_decode($criterium);
-        if (is_object($criterium)) {
-            return VariableHelper::convertStdClassToArray($criterium);
+        $criteria = json_decode($criteria);
+        if (is_object($criteria)) {
+            return VariableHelper::convertStdClassToArray($criteria);
         }
-        throw new RequestResultException(500, ['errorMessage' => 'DBLHCT', 'type' => gettype($criterium)]);
+        throw new HttpResponseTriggerException(false, ['errorMessage' => 'DBLHCT', 'type' => gettype($criteria)], 500);
     }
 
 }

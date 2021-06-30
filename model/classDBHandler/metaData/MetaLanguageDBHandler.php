@@ -2,15 +2,25 @@
 
 namespace classDbHandler\metaData;
 
-use database\PDOProcessorBuilder;
+use classDbHandler\DBHandlerParent;
+use exception\HttpResponseTriggerException;
 
-class MetaLanguageDBHandler
+/**
+ * Class MetaLanguageDBHandler database connection / functions to table meta_language
+ * @package classDbHandler\metaData bad BDO processor type
+ */
+class MetaLanguageDBHandler extends DBHandlerParent
 {
+    /**
+     * returns all book language
+     * @return array languages
+     * @throws HttpResponseTriggerException
+     */
     public function get(): array
     {
-        $PDOLink = PDOProcessorBuilder::getProcessor('select', true);
-        $PDOLink->setCommand("SELECT id,  name FROM meta_language");
-        $tempResult = $PDOLink->execute();
+        $this->createPDO('select');
+        $this->PDOLink->setCommand("SELECT id,  name FROM meta_language");
+        $tempResult = $this->PDOLink->execute();
         $result = [];
         foreach ($tempResult as $value) {
             $result[$value['id']] = $value['name'];

@@ -1,9 +1,8 @@
-
 {
   "autoload": {
     "psr-4": {
-      "service\\":"service/",
-      "routes\\":"routes/",
+      "service\\": "service/",
+      "routes\\": "routes/",
       "exception\\": "exception/",
       "classModel\\": "model/class",
       "classDbHandler\\": "model/classDBHandler",

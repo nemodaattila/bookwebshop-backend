@@ -8,55 +8,71 @@ use classDbHandler\bookData\BookCoverDBHandler;
 use classDbHandler\bookData\BookDiscountDBHandler;
 use classDbHandler\bookData\BookPriceDBHandler;
 use classDbHandler\bookData\BookPrimaryDataDBHAndler;
-use classDbHandler\metaData\MetaLanguageDBHandler;
 use classModel\RequestParameters;
-use database\PDOProcessorBuilder;
 use exception\HttpResponseTriggerException;
 use helper\ImgHelper;
 
+/**
+ *
+ * Class BookDataGetter http request processor, handles primary data of a book
+ * primary data is: isbn, title, author(s), category_id, type_id, price, discount, cover_thumbnail (as bas64 string)
+ * @package rest
+ */
 class BookDataGetter
 {
-    public function getBookPrimaryData(RequestParameters $parameters )
+    /**
+     * collect primary data by calling multiple db handler functions
+     * @param RequestParameters $parameters parameters from http request, url parameter used only (isbn)
+     * @throws HttpResponseTriggerException the right result is thrown here, instead of a return
+     */
+    public function getBookPrimaryData(RequestParameters $parameters)
     {
-//        $bookDataGetter = new BookDataDBHAndler();
         $isbn = $parameters->getUrlParameters()[0];
         $result = (new BookPrimaryDataDBHAndler())->getByIsbn($isbn);
         $result['author'] = $this->getBookAuthor($isbn);
         $result['price'] = (new BookPriceDBHandler())->getPriceByIsbn($isbn);
         $result['discount'] = (new BookDiscountDBHandler())->getQuantityByIsbn($isbn);
         $result['cover_thumbnail'] = $this->getCoverThumbnail($isbn);
-
-//        $result = $bookDataGetter->getPrimaryData();
         throw new HttpResponseTriggerException(true, $result);
     }
 
-    private function getBookAuthor($isbn): array
+    /**
+     * return the author(s) of a book
+     * @param string $isbn isbn of a book
+     * @return array author(s) of a book
+     * @throws HttpResponseTriggerException
+     */
+    private function getBookAuthor(string $isbn): array
     {
-        $authorIDs= (new BookAuthorDBHandler())->getByIsbn($isbn);
+        $authorIDs = (new BookAuthorDBHandler())->getByIsbn($isbn);
         $authorGetter = new AuthorDBHandler();
-        $result =[];
-        foreach ($authorIDs as $value)
-        {
-            $result[$value]= $authorGetter->getNameByID($value);
+        $result = [];
+        foreach ($authorIDs as $value) {
+            $result[$value] = $authorGetter->getNameByID($value);
         }
         asort($result);
         return $result;
     }
 
-    private function getCoverThumbnail(mixed $isbn)
+    /**
+     * checks if a book has cover if it has returns the base64 string of the cover's thumbnail,
+     * if not returns a default thumbnail string
+     * @param string $isbn isbn of a book
+     * @return string cover thumbnail converted to base64 string
+     * @throws HttpResponseTriggerException
+     */
+    private function getCoverThumbnail(string $isbn): string
     {
-        $coverhandler = new BookCoverDBHandler();
-        $coverData = $coverhandler->getByIsbn($isbn);
-        if ($coverData === false) {
-            return ImgHelper::convertImageToBase64String( 'image\coverThumbnail\no_cover.jpg');
-        }
-        else
-        {
+        $coverHandler = new BookCoverDBHandler();
+        $coverData = $coverHandler->getByIsbn($isbn);
+        if ($coverData == false) {
+            return ImgHelper::convertImageToBase64String('image\coverThumbnail\no_cover.jpg');
+        } else {
             if ($coverData['has_cover'] === '1' && $coverData['has_thumbnail'] === '0') {
                 ImgHelper::createThumbnail($isbn . '.' . $coverData['extension'], 'image\cover\\', ROOT . 'image\coverThumbnail\\', 150, 212);
-                $coverhandler->setHasThumbnailToTrueByIsbn($isbn);
+                $coverHandler->setHasThumbnailToTrueByIsbn($isbn);
             }
-            return ImgHelper::convertImageToBase64String( 'image\coverThumbnail\\' . $isbn . '.' . $coverData['extension']);
+            return ImgHelper::convertImageToBase64String('image\coverThumbnail\\' . $isbn . '.' . $coverData['extension']);
         }
     }
 

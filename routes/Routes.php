@@ -2,34 +2,31 @@
 
 namespace routes;
 
+/**
+ * Class Routes possible routes for Http request Router
+ * @package routes
+ */
 class Routes
 {
 
     /**
-     * adds a route to the router
-     * @param string $httpMethod request type - get/post/put/delete
-     * @param string $url - request url: user/$1
-     * @param string $classname called resthandler class
-     * @param string $task - function to be called
-     * @param bool $authRequired - authentication level all/user/admin / ?? check PHP JWT
+     * possible routes, parameters: type [GET, POST, PUT, DELETE] | url path | called class | called function
+     * | authenticated users
+     * @var array|string[][]
      */
 
-    private array $routes =[
+    private array $routes = [
         ['GET', 'metadata', 'BookMetaData', 'getBookMetaData', 'all'],
         ['POST', 'booklist', 'BookListGetter', 'getBookList', 'all'],
         ['GET', 'primarydata\$1', 'BookDataGetter', 'getBookPrimaryData', 'all']
     ];
 
     /**
-     * @return array|\string[][]
+     * returns all routes
+     * @return array
      */
     public function getRoutes(): array
     {
         return $this->routes;
     }
-
-
-
-
-
 }
