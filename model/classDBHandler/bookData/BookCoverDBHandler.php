@@ -14,11 +14,10 @@ class BookCoverDBHandler extends DBHandlerParent
     /**
      * return cover parameters for a book by isbn
      * @param string $isbn isbn of a book
-     * @return array cover data
-     * @throws HttpResponseTriggerException wrong fetch type
+     * @return array|bool cover data
      * @throws HttpResponseTriggerException sql query error
      */
-    public function getByIsbn(string $isbn): array
+    public function getByIsbn(string $isbn): array | bool
     {
         $this->createPDO('select');
         $this->PDOLink->setCommand("SELECT bc.extension, bc.has_cover, bc.has_thumbnail FROM book_cover as bc WHERE book_isbn=?");
