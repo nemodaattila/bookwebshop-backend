@@ -203,7 +203,7 @@ class BookListGetter
                         $dataSource->bindValue('%' . $value . '%');
                         break;
                     case 'Title':
-                        $dataSource->addTable(['book', 'b']);
+                        $dataSource->addTable('book', 'b');
                         $dataSource->addWhereCondition('LIKE', ['book.title', '?'], 'AND');
                         $dataSource->bindValue('%' . $value . '%');
                         break;

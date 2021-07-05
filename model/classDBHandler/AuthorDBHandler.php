@@ -25,4 +25,12 @@ class AuthorDBHandler extends DBHandlerParent
         $result = $this->PDOLink->execute();
         return $result['name'];
     }
+
+    function getSpecificAuthorsWithLike(string $pattern)
+    {
+        $this->createPDO('select');
+        $this->PDOLink->setCommand("Select a.Name from Author as a where a.Name LIKE ?");
+        $this->PDOLink->setValues('%'.$pattern.'%');
+        return $this->PDOLink->execute();
+    }
 }

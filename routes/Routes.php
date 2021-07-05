@@ -18,7 +18,8 @@ class Routes
     private array $routes = [
         ['GET', 'metadata', 'BookMetaData', 'getBookMetaData', 'all'],
         ['POST', 'booklist', 'BookListGetter', 'getBookList', 'all'],
-        ['GET', 'primarydata\$1', 'BookDataGetter', 'getBookPrimaryData', 'all']
+        ['GET', 'primarydata\$1', 'BookDataGetter', 'getBookPrimaryData', 'all'],
+        ['GET', 'datalist\$1\$2', 'DataListGetter', 'getDataList', 'all']
     ];
 
     /**
