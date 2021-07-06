@@ -4,6 +4,7 @@ namespace rest;
 
 use classDbHandler\AuthorDBHandler;
 use classDbHandler\PublisherDBHandler;
+use classDbHandler\SeriesDBHandler;
 use classModel\RequestParameters;
 use exception\HttpResponseTriggerException;
 
@@ -19,6 +20,10 @@ class DataListGetter
         if (ucfirst($type)==="Publisher")
         {
             $this->getPublisherDataList($value);
+        }
+        if (ucfirst($type)==="Series")
+        {
+            $this->getSeriesDataList($value);
         }
     }
 
@@ -37,6 +42,17 @@ class DataListGetter
     {
         $ph = new PublisherDBHandler();
         $dl = $ph->getSpecificPublisherWithLike($value);
+        foreach ($dl as $key=>$value)
+        {
+            $dl[$key]=$value['name'];
+        }
+        throw new HttpResponseTriggerException(true, $dl);
+    }
+
+    private function getSeriesDataList(string $value)
+    {
+        $ph = new SeriesDBHandler();
+        $dl = $ph->getSpecificSeriesWithLike($value);
         foreach ($dl as $key=>$value)
         {
             $dl[$key]=$value['name'];
