@@ -217,7 +217,7 @@ class BookListGetter
                         break;
                     case 'Type':
                         $dataSource->addTable('book', 'b');
-                        $dataSource->addWhereCondition('=', ['book.type', '?'], 'AND');
+                        $dataSource->addWhereCondition('=', ['book.type_id', '?'], 'AND');
                         $dataSource->bindValue($value);
                         break;
                     case 'Category':
