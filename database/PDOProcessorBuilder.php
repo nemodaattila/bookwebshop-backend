@@ -6,9 +6,10 @@ use databaseSource\PDOQueryDataSource;
 use exception\HttpResponseTriggerException;
 use interfaces\IPDOQueryProcessorInterface;
 use simpleDatabaseProcessor\SimpleInsertPDOProcessor;
+use simpleDatabaseProcessor\SimplePDOProcessorParent;
 use simpleDatabaseProcessor\SimpleSelectPDOProcessor;
 use simpleDatabaseProcessor\SimpleUpdatePDOProcessor;
-
+use simpleDatabaseProcessor\SimpleDeletePDOProcessor;
 /**
  * Class PDOProcessorBuilder builder class for creating the appropriate PDO helper class
  * @package database
@@ -39,7 +40,7 @@ final class PDOProcessorBuilder
      * @throws HttpResponseTriggerException if the type not: 'Insert','Select','Update' or 'Delete
      */
     public static function getProcessor(string $type, bool $simple = false):
-    IPDOQueryProcessorInterface|SimpleSelectPDOProcessor|SimpleUpdatePDOProcessor|SimpleInsertPDOProcessor
+    IPDOQueryProcessorInterface|SimplePDOProcessorParent
     {
         $type = ucfirst(strtolower($type));
         if (!in_array($type, ['Insert', 'Select', 'Update', 'Delete'])) {

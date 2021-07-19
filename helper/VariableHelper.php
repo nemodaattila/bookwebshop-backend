@@ -2,6 +2,7 @@
 
 namespace helper;
 
+use interfaces\IConvertableToArrayInterface;
 use stdClass;
 
 /**
@@ -18,5 +19,11 @@ class VariableHelper
     public static function convertStdClassToArray(stdClass $class): array
     {
         return json_decode(json_encode($class), true);
+    }
+
+    public static function convertObjectToArray(?IConvertableToArrayInterface $class): array
+    {
+        if ($class === null) return [];
+        return $class->getAllValueAsArray();
     }
 }

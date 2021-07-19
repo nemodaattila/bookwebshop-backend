@@ -12,10 +12,12 @@
       "databaseSource\\": "database/querySource",
       "simpleDatabaseProcessor\\": "database/queryProcessor/simple",
       "complexDatabaseProcessor\\": "database/queryProcessor/complex",
-      "interfaces\\": "interfaces"
+      "interfaces\\": "interfaces/",
+      "controller\\": "controller/"
     }
   },
   "require": {
+    "tymon/jwt-auth": ">=1.0.2",
     "ext-json": "*",
     "ext-pdo": "*",
     "ext-exif": "*",
