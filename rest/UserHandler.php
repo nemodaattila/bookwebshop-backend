@@ -46,9 +46,16 @@ class UserHandler
 
     }
 
-    public function logOutUser(RequestParameters $parameters)
+    public function logOutUser()
     {
-        $token = $parameters->getUrlParameters();
+
+        SessionHandler::getInstance();
+//        var_dump($_SESSION);
+        $token = $this->userTokenController->getTokenFromSession();
+
+        $this->userTokenController->removeToken($token);
+        throw new HttpResponseTriggerException(true, []);
+
 
     }
 
@@ -64,7 +71,7 @@ class UserHandler
     {
         $token = $requestParameters->getUrlParameters()[0];
         $tokenObj = $this->userTokenController->getTokenObjectByString($token);
-        $user = $this->DBHandler->getAUserById($tokenObj->getUserId());
+        $user = $this->userController->getAUserById($tokenObj->getUserId());
         throw new HttpResponseTriggerException(true, ['userData' => VariableHelper::convertObjectToArray($user)]);
     }
 

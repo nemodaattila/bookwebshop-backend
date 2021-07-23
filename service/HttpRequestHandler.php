@@ -36,12 +36,20 @@ class HttpRequestHandler
     public function __construct()
     {
         try {
-            $this->addCorsHeaders();
-            $this->setRootConstant();
-            $this->getRouteBaseFromRequest();
-            $this->searchForExistingRoute();
-            $this->getHttpRequestData();
-            $this->loadRestClass();
+            if ($_SERVER['REQUEST_METHOD']==='OPTIONS')
+            {
+                $this->addCorsHeaders();
+            }
+            else {
+                $this->addCorsOriginHeader();
+                $this->setRootConstant();
+                $this->getRouteBaseFromRequest();
+                $this->searchForExistingRoute();
+                $this->getHttpRequestData();
+                $this->authenticateUser();
+                $this->loadRestClass();
+            }
+
         } catch (HttpResponseTriggerException $e) {
             $this->sendResponseBasedOnTriggerException($e);
         } catch (Exception $e) {
@@ -56,10 +64,23 @@ class HttpRequestHandler
      */
     private function addCorsHeaders()
     {
+
         //DO expand cors handling
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Headers: X-Requested-With, Content-Type, Origin, Cache-Control, Pragma, Authorization, Accept, Accept-Encoding");
+//        header("Access-Control-Allow-Origin: *");
+
+        header("Access-Control-Allow-Origin: http://localhost:4200");
+        header("Access-Control-Allow-Headers: x-webtoken, X-WEBTOKEN, X-Requested-With, Origin, Cache-Control, Pragma, Authorization, Accept, Accept-Encoding");
         header("Access-Control-Allow-Methods: PUT, POST, GET, OPTIONS, DELETE");
+        header('Access-Control-Allow-Credentials: true');
+    }
+
+    private function addCorsOriginHeader()
+    {
+        header("Access-Control-Allow-Origin: http://localhost:4200");
+
+//        header("Access-Control-Allow-Origin: *");
+            header('Access-Control-Allow-Credentials: true');
+
     }
 
     /**
@@ -166,6 +187,11 @@ class HttpRequestHandler
         $restClass = "\\rest\\" . $restClass;
         $class = new $restClass();
         $class->$functionName($this->parameters);
+    }
+
+    private function authenticateUser()
+    {
+
     }
 
 }

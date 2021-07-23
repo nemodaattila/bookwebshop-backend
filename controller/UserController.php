@@ -58,7 +58,7 @@ class UserController
         return [true, $user];
     }
 
-    private function getAUserById(int $userId): User
+    public function getAUserById(int $userId): User
     {
         $userObj = $this->DBHandler->getAUserById($userId);
         if (!$userObj) {

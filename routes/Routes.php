@@ -16,7 +16,7 @@ class Routes
      */
 
     private array $routes = [
-        ['GET',"logout/$1", "UserHandler", "logOutUser", 2],
+        ['GET',"logout", "UserHandler", "logOutUser", 2],
         ['GET','tokentouser\$1', 'UserHandler','getUserByToken',1],
         ['POST',"login", "UserHandler", "loginUser", 1],
         ['POST',"register", "UserHandler", "registerUser", 1],

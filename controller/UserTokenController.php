@@ -59,17 +59,44 @@ class UserTokenController
         $sh::save('token', $token, true);
     }
 
+    public function getTokenFromSession()
+    {
+        $sh = SessionHandler::getInstance();
+        return $sh::read('token', true);
+    }
+
+    private function removeTokenFromSession()
+    {
+        $sh = SessionHandler::getInstance();
+        $sh::delete('token');
+    }
+
     public function getTokenObjectByString(string $tokenString): UserToken
     {
-        $tokenObj = $this->DBHandler->select($tokenString);
+        $tokenObj = $this->getTokenFromSession() ?? $this->DBHandler->select($tokenString);
+        if ($tokenObj === null)
+        {
+            throw new HttpResponseTriggerException(false, ['errorCode' => 'UTINULL']);
+
+        }
 //        var_dump($tokenObj);
+        $this->checkActiveToken($tokenObj);
+
+        return $tokenObj;
+    }
+
+    private function checkActiveToken(UserToken $tokenObj)
+    {
         if (!$this->DBHandler->checkTokenIsActive($tokenObj)) {
-            $this->DBHandler->delete($tokenObj);
+            $this->removeToken($tokenObj);
             throw new HttpResponseTriggerException(false, ['errorCode' => 'UTEXP']);
         }
-        return $tokenObj;
+    }
 
-//
+    public function removeToken(UserToken $tokenObj)
+    {
+        $this->DBHandler->delete($tokenObj);
+        $this->removeTokenFromSession();
     }
 
 }
