@@ -36,11 +36,9 @@ class HttpRequestHandler
     public function __construct()
     {
         try {
-            if ($_SERVER['REQUEST_METHOD']==='OPTIONS')
-            {
+            if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                 $this->addCorsHeaders();
-            }
-            else {
+            } else {
                 $this->addCorsOriginHeader();
                 $this->setRootConstant();
                 $this->getRouteBaseFromRequest();
@@ -79,7 +77,7 @@ class HttpRequestHandler
         header("Access-Control-Allow-Origin: http://localhost:4200");
 
 //        header("Access-Control-Allow-Origin: *");
-            header('Access-Control-Allow-Credentials: true');
+        header('Access-Control-Allow-Credentials: true');
 
     }
 
@@ -175,8 +173,6 @@ class HttpRequestHandler
             }
         }
     }
-
-
 
     /**
      * loads a http request processor class based on url

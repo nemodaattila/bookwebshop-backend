@@ -29,7 +29,7 @@ class UserDBHandler extends DBHandlerParent
     {
         $this->createPDO('insert');
         $this->PDOLink->setCommand("INSERT INTO user (id, name, password, email, authorization_level    ) values (?,?,?,?,?)");
-        $this->PDOLink->setValues([null,$user->getUserName(),$user->getPassword(), $user->getEmail(),1]);
+        $this->PDOLink->setValues([null, $user->getUserName(), $user->getPassword(), $user->getEmail(), 1]);
         $result = $this->PDOLink->execute();
         return $result;
     }
@@ -41,8 +41,7 @@ class UserDBHandler extends DBHandlerParent
         $this->PDOLink->setCommand("select u.name, u.password, u.email, u.authorization_level from user as u where u.id = ?");
         $this->PDOLink->setValues([$userId]);
         $result = $this->PDOLink->execute();
-        if (count($result)!==1)
-        {
+        if (count($result) !== 1) {
             return null;
         }
         $result = $result[0];

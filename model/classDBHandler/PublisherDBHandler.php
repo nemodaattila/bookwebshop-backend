@@ -9,7 +9,7 @@ class PublisherDBHandler extends DBHandlerParent
     {
         $this->createPDO('select');
         $this->PDOLink->setCommand("Select p.name from Publisher as p where p.name LIKE ?");
-        $this->PDOLink->setValues('%'.$pattern.'%');
+        $this->PDOLink->setValues('%' . $pattern . '%');
         return $this->PDOLink->execute();
     }
 }

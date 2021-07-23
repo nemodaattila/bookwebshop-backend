@@ -17,7 +17,7 @@ class BookCoverDBHandler extends DBHandlerParent
      * @return array|bool cover data
      * @throws HttpResponseTriggerException sql query error
      */
-    public function getByIsbn(string $isbn): array | bool
+    public function getByIsbn(string $isbn): array|bool
     {
         $this->createPDO('select');
         $this->PDOLink->setCommand("SELECT bc.extension, bc.has_cover, bc.has_thumbnail FROM book_cover as bc WHERE book_isbn=?");

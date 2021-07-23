@@ -73,5 +73,4 @@ class UserToken
         $this->expirationTime = $expirationTime;
     }
 
-
 }

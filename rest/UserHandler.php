@@ -27,16 +27,15 @@ class UserHandler
     public function registerUser(RequestParameters $parameters)
     {
         $regData = $parameters->getRequestData();
-         [$success, $resultData] = $this->userController->registerUser($regData);
+        [$success, $resultData] = $this->userController->registerUser($regData);
         throw new HttpResponseTriggerException($success, $resultData);
     }
 
     public function loginUser(RequestParameters $parameters)
     {
         $loginData = $parameters->getRequestData();
-        [$success, $user]=$this->userController->loginUser($loginData);
-        if (!$success)
-        {
+        [$success, $user] = $this->userController->loginUser($loginData);
+        if (!$success) {
             throw new HttpResponseTriggerException(false, $user);
         }
 
@@ -56,16 +55,7 @@ class UserHandler
         $this->userTokenController->removeToken($token);
         throw new HttpResponseTriggerException(true, []);
 
-
     }
-
-
-
-
-
-
-
-
 
     public function getUserByToken(RequestParameters $requestParameters)
     {
@@ -74,6 +64,5 @@ class UserHandler
         $user = $this->userController->getAUserById($tokenObj->getUserId());
         throw new HttpResponseTriggerException(true, ['userData' => VariableHelper::convertObjectToArray($user)]);
     }
-
 
 }

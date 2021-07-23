@@ -23,8 +23,7 @@ class SessionHandler
 
     public static function save(string $name, mixed $value, bool $serialize = false)
     {
-        if ($serialize)
-        {
+        if ($serialize) {
             $value = serialize($value);
         }
         $_SESSION[$name] = $value;
@@ -36,8 +35,7 @@ class SessionHandler
 
         if (!(isset($_SESSION[$name])))
             return null;
-        if ($unSerialize)
-        {
+        if ($unSerialize) {
             return unserialize($_SESSION[$name]);
         }
         return $_SESSION[$name];

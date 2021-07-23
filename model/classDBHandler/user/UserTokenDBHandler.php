@@ -11,7 +11,7 @@ class UserTokenDBHandler extends DBHandlerParent
     {
         $this->createPDO('insert');
         $this->PDOLink->setCommand("INSERT INTO user_token (token, user_id, authorization_level, expiration_time) values (?,?,?,?)");
-        $this->PDOLink->setValues([$user->getToken(),$user->getUserId(),$user->getAuthorizationLevel(), $user->getExpirationTime()]);
+        $this->PDOLink->setValues([$user->getToken(), $user->getUserId(), $user->getAuthorizationLevel(), $user->getExpirationTime()]);
         $result = $this->PDOLink->execute();
         return $result;
     }
@@ -23,8 +23,7 @@ class UserTokenDBHandler extends DBHandlerParent
         $this->PDOLink->setCommand("select ut.token, ut.user_id, ut.authorization_level, ut.expiration_time from user_token as ut where ut.token = ?");
         $this->PDOLink->setValues($token);
         $result = $this->PDOLink->execute();
-        if (count($result)!==1)
-        {
+        if (count($result) !== 1) {
             return null;
         }
         $result = $result[0];
@@ -35,10 +34,10 @@ class UserTokenDBHandler extends DBHandlerParent
         return $userToken;
     }
 
-    public function checkTokenIsActive(UserToken $token):bool
+    public function checkTokenIsActive(UserToken $token): bool
     {
 //
-        return ( $token->getExpirationTime() - (new \DateTime())->getTimestamp()> 0);
+        return ($token->getExpirationTime() - (new \DateTime())->getTimestamp() > 0);
     }
 
     public function delete(UserToken $token)

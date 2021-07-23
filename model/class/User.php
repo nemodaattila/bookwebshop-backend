@@ -8,11 +8,10 @@ class User implements IConvertableToArrayInterface
 {
     private int $id;
 
-
     private string $userName;
     private string $password;
     private string $email;
-    private int $authorizationLevel=1;
+    private int $authorizationLevel = 1;
 
     /**
      * @param int $id
@@ -22,7 +21,6 @@ class User implements IConvertableToArrayInterface
         $this->id = $id;
     }
 
-
     /**
      * @return int
      */
@@ -30,6 +28,7 @@ class User implements IConvertableToArrayInterface
     {
         return $this->id;
     }
+
     /**
      * @return int
      */
@@ -96,10 +95,9 @@ class User implements IConvertableToArrayInterface
 
     public function getAllValueAsArray(): array
     {
-        $values=[];
-        foreach ($this as $key =>$value)
-        {
-            $values[$key]=$value;
+        $values = [];
+        foreach ($this as $key => $value) {
+            $values[$key] = $value;
         }
         return $values;
     }

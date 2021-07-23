@@ -69,5 +69,4 @@ abstract class SimplePDOProcessorParent
         return true;
     }
 
-
 }

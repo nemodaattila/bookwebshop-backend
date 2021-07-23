@@ -17,7 +17,6 @@
     }
   },
   "require": {
-    "tymon/jwt-auth": ">=1.0.2",
     "ext-json": "*",
     "ext-pdo": "*",
     "ext-exif": "*",

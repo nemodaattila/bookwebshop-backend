@@ -296,7 +296,7 @@ class BookListGetter
                         $dataSource->bindValue($pages[$value][1], PDO::PARAM_INT);
                         break;
                     case 'Discount':
-                        $pages = [[0,0],[1, 5], [6, 15], [16, 30], [31, 50], [51, 100]];
+                        $pages = [[0, 0], [1, 5], [6, 15], [16, 30], [31, 50], [51, 100]];
                         $dataSource->addTable('book_discount', 'bdc');
                         $dataSource->addWhereCondition('BETWEEN', ['book_discount.discount_value', '?', '?'], 'AND');
                         $dataSource->bindValue($pages[$value][0], PDO::PARAM_INT);

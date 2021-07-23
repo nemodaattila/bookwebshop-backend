@@ -8,7 +8,7 @@ class SeriesDBHandler extends DBHandlerParent
     {
         $this->createPDO('select');
         $this->PDOLink->setCommand("Select s.name from Series as s where s.name LIKE ?");
-        $this->PDOLink->setValues('%'.$pattern.'%');
+        $this->PDOLink->setValues('%' . $pattern . '%');
         return $this->PDOLink->execute();
     }
 }

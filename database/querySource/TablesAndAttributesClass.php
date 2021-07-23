@@ -2,7 +2,6 @@
 
 namespace databaseSource;
 
-
 use exception\HttpResponseTriggerException;
 
 /**

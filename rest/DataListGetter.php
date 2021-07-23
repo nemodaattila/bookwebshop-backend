@@ -13,16 +13,13 @@ class DataListGetter
     public function getDataList(RequestParameters $parameters)
     {
         [$type, $value] = $parameters->getUrlParameters();
-        if (ucfirst($type)==="Author")
-        {
+        if (ucfirst($type) === "Author") {
             $this->getAuthorDataList($value);
         }
-        if (ucfirst($type)==="Publisher")
-        {
+        if (ucfirst($type) === "Publisher") {
             $this->getPublisherDataList($value);
         }
-        if (ucfirst($type)==="Series")
-        {
+        if (ucfirst($type) === "Series") {
             $this->getSeriesDataList($value);
         }
     }
@@ -31,9 +28,8 @@ class DataListGetter
     {
         $ah = new AuthorDBHandler();
         $dl = $ah->getSpecificAuthorsWithLike($value);
-        foreach ($dl as $key=>$value)
-        {
-            $dl[$key]=$value['Name'];
+        foreach ($dl as $key => $value) {
+            $dl[$key] = $value['Name'];
         }
         throw new HttpResponseTriggerException(true, $dl);
     }
@@ -42,9 +38,8 @@ class DataListGetter
     {
         $ph = new PublisherDBHandler();
         $dl = $ph->getSpecificPublisherWithLike($value);
-        foreach ($dl as $key=>$value)
-        {
-            $dl[$key]=$value['name'];
+        foreach ($dl as $key => $value) {
+            $dl[$key] = $value['name'];
         }
         throw new HttpResponseTriggerException(true, $dl);
     }
@@ -53,9 +48,8 @@ class DataListGetter
     {
         $ph = new SeriesDBHandler();
         $dl = $ph->getSpecificSeriesWithLike($value);
-        foreach ($dl as $key=>$value)
-        {
-            $dl[$key]=$value['name'];
+        foreach ($dl as $key => $value) {
+            $dl[$key] = $value['name'];
         }
         throw new HttpResponseTriggerException(true, $dl);
     }

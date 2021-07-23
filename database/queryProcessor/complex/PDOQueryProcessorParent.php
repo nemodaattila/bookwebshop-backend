@@ -11,7 +11,6 @@ use PDO;
  * @package complexDatabaseProcessor
  * @todo named placeholder megvalósítása
  */
-
 abstract class PDOQueryProcessorParent implements IPDOQueryProcessorInterface
 {
     /**

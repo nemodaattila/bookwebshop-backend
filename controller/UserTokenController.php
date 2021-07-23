@@ -74,8 +74,7 @@ class UserTokenController
     public function getTokenObjectByString(string $tokenString): UserToken
     {
         $tokenObj = $this->getTokenFromSession() ?? $this->DBHandler->select($tokenString);
-        if ($tokenObj === null)
-        {
+        if ($tokenObj === null) {
             throw new HttpResponseTriggerException(false, ['errorCode' => 'UTINULL']);
 
         }
