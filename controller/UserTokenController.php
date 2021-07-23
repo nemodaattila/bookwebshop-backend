@@ -5,12 +5,19 @@ namespace controller;
 use classDbHandler\user\UserTokenDBHandler;
 use classModel\User;
 use classModel\UserToken;
+use DateTime;
 use exception\HttpResponseTriggerException;
-use helper\VariableHelper;
 use service\SessionHandler;
 
+/**
+ * Class UserTokenController controller class for handling user authentication tokens
+ * @package controller
+ */
 class UserTokenController
 {
+    /**
+     * @var UserTokenDBHandler instance of UserTokenDBHandler
+     */
     private UserTokenDBHandler $DBHandler;
 
     public function __construct()
@@ -18,6 +25,12 @@ class UserTokenController
         $this->DBHandler = new UserTokenDBHandler();
     }
 
+    /**
+     * generates and saves token based on User Data
+     * @param User $user user data
+     * @return UserToken user token object
+     * @throws HttpResponseTriggerException error during token generation, error during save
+     */
     public function generateAndSaveTokenFromUser(User $user): UserToken
     {
         $token = $this->generateToken($user);
@@ -26,10 +39,16 @@ class UserTokenController
         return $token;
     }
 
+    /**
+     * generates authorization token
+     * @param User $userObj User data
+     * @return UserToken user token object
+     * @throws HttpResponseTriggerException
+     */
     private function generateToken(User $userObj): UserToken
     {
         $token = new UserToken();
-        $timeStamp = (new \DateTime())->getTimestamp() + 600;
+        $timeStamp = (new DateTime())->getTimestamp() + 600;
         $hash = bin2hex(mhash(MHASH_SHA384, $timeStamp . $userObj->getUserName() . $userObj->getPassword() . $userObj->getEmail()));
 
         if (!$hash) {
@@ -41,36 +60,66 @@ class UserTokenController
         return $token;
     }
 
+    /**
+     * saves token to session and database
+     * @param UserToken $token user token object
+     * @throws HttpResponseTriggerException save error
+     */
     private function saveToken(UserToken $token)
     {
         $this->saveTokenToDatabase($token);
         $this->saveTokenToSession($token);
     }
 
+    /**
+     * saves token to database
+     * @param UserToken $token token Object
+     * @throws HttpResponseTriggerException save error
+     */
     private function saveTokenToDatabase(UserToken $token)
     {
-        $result = $this->DBHandler->crate($token);
+        $result = $this->DBHandler->create($token);
         if (!$result) throw new HttpResponseTriggerException(false, ['errorCode' => 'UTSE']);
     }
 
+    /**
+     * save token to session
+     * @param UserToken $token token Object
+     */
     private function saveTokenToSession(UserToken $token)
     {
         $sh = SessionHandler::getInstance();
-        $sh::save('token', $token, true);
+        $sh::set('token', $token, true);
     }
 
-    public function getTokenFromSession()
+    /**
+     * reads user token from Session
+     * @return UserToken|null
+     */
+    public function getTokenFromSession(): UserToken|null
     {
         $sh = SessionHandler::getInstance();
-        return $sh::read('token', true);
+        return $sh::get('token', true);
     }
 
+    /**
+     * removes token from session
+     */
     private function removeTokenFromSession()
     {
         $sh = SessionHandler::getInstance();
-        $sh::delete('token');
+        $sh::unset('token');
     }
 
+    /**
+     * searches token in Session or Database by token string
+     * if exists checks if it is active
+     * if active returns token
+     * @param string $tokenString
+     * @return UserToken token object
+     * @throws HttpResponseTriggerException if token not exists OR expired
+     * TODO if token is active but not exists in Session , create
+     */
     public function getTokenObjectByString(string $tokenString): UserToken
     {
         $tokenObj = $this->getTokenFromSession() ?? $this->DBHandler->select($tokenString);
@@ -84,6 +133,11 @@ class UserTokenController
         return $tokenObj;
     }
 
+    /**
+     * checks if token is younger than 10 minutes
+     * @param UserToken $tokenObj Token Object
+     * @throws HttpResponseTriggerException token expired
+     */
     private function checkActiveToken(UserToken $tokenObj)
     {
         if (!$this->DBHandler->checkTokenIsActive($tokenObj)) {
@@ -92,6 +146,11 @@ class UserTokenController
         }
     }
 
+    /**
+     * removes token form session and from database
+     * @param UserToken $tokenObj token Object
+     * @throws HttpResponseTriggerException user delete error
+     */
     public function removeToken(UserToken $tokenObj)
     {
         $this->DBHandler->delete($tokenObj);

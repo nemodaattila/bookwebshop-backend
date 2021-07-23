@@ -6,6 +6,10 @@ use classDbHandler\user\UserDBHandler;
 use classModel\User;
 use exception\HttpResponseTriggerException;
 
+/**
+ * Class UserController controller for handling users
+ * @package controller
+ */
 class UserController
 {
     private UserDBHandler $DBHandler;
@@ -15,7 +19,13 @@ class UserController
         $this->DBHandler = new UserDBHandler();
     }
 
-    public function registerUser(array $regData)
+    /**
+     * creates a new USer and saves to database, name and email must be unique
+     * @param array $regData registration data
+     * @return array [<bool> action success, <mixed> result or error data (email or name exists, database error) ]
+     * @throws HttpResponseTriggerException database errors
+     */
+    public function registerUser(array $regData): array
     {
         $user = new User();
         $user->setEmail($regData['email']);
@@ -25,23 +35,42 @@ class UserController
         if (!empty($userExists)) {
             return [false, ['errorCode' => 'UE']];
         }
-        $result = $this->DBHandler->crate($user);
+        $result = $this->DBHandler->create($user);
         if ($result) {
-            return [true, $result];
+            return [true, true];
         } else
             return [false, ['errorCode' => 'UCE']];
     }
 
+    /**
+     * hashes the given plain password
+     * @param string $password password
+     * @return string hashed password
+     * TODO create more complex hash
+     */
     private function hashPassword(string $password): string
     {
         return bin2hex(mhash(MHASH_SHA384, $password));
     }
 
+    /**
+     * compares two passwords
+     * @param User $loginUser password from login data
+     * @param User $userDB password from database
+     * @return bool result of comparison
+     */
     private function comparePasswords(User $loginUser, User $userDB): bool
     {
         return $loginUser->getPassword() === $userDB->getPassword();
     }
 
+    /**
+     * checks if a user exists, by login data, checks password, if true returns user, else error message
+     * @param array $loginData login data
+     * @return array [<bool> action success, <mixed> user or error data (user not exists with data, bad password), database error]
+     * @throws HttpResponseTriggerException user not exists , database errors
+     * TODO password check really needed ???
+     */
     public function loginUser(array $loginData): array
     {
         $tempUser = new User();
@@ -58,6 +87,12 @@ class UserController
         return [true, $user];
     }
 
+    /**
+     * return a user based on ID
+     * @param int $userId user id
+     * @return User user Object
+     * @throws HttpResponseTriggerException user id not exists, db error
+     */
     public function getAUserById(int $userId): User
     {
         $userObj = $this->DBHandler->getAUserById($userId);

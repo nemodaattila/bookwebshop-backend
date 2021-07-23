@@ -9,7 +9,7 @@ namespace interfaces;
 interface IConvertableToArrayInterface
 {
     /**
-     * @return array visszaadja egy osztály adatait tömb formában
+     * @return array returns the values of an object in array form
      */
     public function getAllValueAsArray(): array;
 }

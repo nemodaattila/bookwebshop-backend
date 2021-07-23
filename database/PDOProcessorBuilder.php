@@ -5,11 +5,7 @@ namespace database;
 use databaseSource\PDOQueryDataSource;
 use exception\HttpResponseTriggerException;
 use interfaces\IPDOQueryProcessorInterface;
-use simpleDatabaseProcessor\SimpleInsertPDOProcessor;
 use simpleDatabaseProcessor\SimplePDOProcessorParent;
-use simpleDatabaseProcessor\SimpleSelectPDOProcessor;
-use simpleDatabaseProcessor\SimpleUpdatePDOProcessor;
-use simpleDatabaseProcessor\SimpleDeletePDOProcessor;
 
 /**
  * Class PDOProcessorBuilder builder class for creating the appropriate PDO helper class
@@ -37,8 +33,9 @@ final class PDOProcessorBuilder
      * return a PDO handler class, based on parameter
      * @param string $type type of class/method ['Insert','Select','Update','Delete']
      * @param bool $simple is simplified , if true: namespace simpleDatabaseProcessor, if false: namespace complexDatabaseProcessor
-     * @return IPDOQueryProcessorInterface|SimpleSelectPDOProcessor|SimpleUpdatePDOProcessor|SimpleInsertPDOProcessor PDO handler class
+     * @return IPDOQueryProcessorInterface|SimplePDOProcessorParent PDO handler class
      * @throws HttpResponseTriggerException if the type not: 'Insert','Select','Update' or 'Delete
+     * TODO return type ???
      */
     public static function getProcessor(string $type, bool $simple = false):
     IPDOQueryProcessorInterface|SimplePDOProcessorParent

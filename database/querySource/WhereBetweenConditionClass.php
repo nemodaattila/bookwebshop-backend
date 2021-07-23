@@ -33,6 +33,7 @@ class WhereBetweenConditionClass extends WhereConditionParentClass implements IP
     /**
      * return the parameters as where query string part
      * @return string string part
+     * @throws HttpResponseTriggerException wrong condition type
      */
     public function getQueryString(): string
     {

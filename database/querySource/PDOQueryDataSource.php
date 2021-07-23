@@ -39,7 +39,7 @@ class PDOQueryDataSource
     private array $boundValues = [];
     /**
      * @var string ORDER BY attribute
-     * @todo több paraméter megadása
+     * TODO több paraméter megadása
      */
     private string $order;
     /**
@@ -188,6 +188,7 @@ class PDOQueryDataSource
      * adding attributes to datasource
      * @param string $tableName full name of table
      * @param array $attributes attributes
+     * @throws HttpResponseTriggerException if table not exists
      * @example $dataSource->addAttributes('book',['isbn']);
      */
     public function addAttributes(string $tableName, array $attributes)

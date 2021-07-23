@@ -26,7 +26,13 @@ class AuthorDBHandler extends DBHandlerParent
         return $result['name'];
     }
 
-    function getSpecificAuthorsWithLike(string $pattern)
+    /**
+     * returns all author's names which matches LIKE pattern
+     * @param string $pattern pattern to match authors
+     * @return array name of authors
+     * @throws HttpResponseTriggerException bad processor type, query error
+     */
+    function getSpecificAuthorsWithLike(string $pattern): array
     {
         $this->createPDO('select');
         $this->PDOLink->setCommand("Select a.Name from Author as a where a.Name LIKE ?");

@@ -35,8 +35,8 @@ class ImgHelper
      * @param string $filename filename - without path
      * @param string $path path of the file to be converted
      * @param string $dest save path of the thumbnail
-     * @param int $targetWidth width of the thumnbail
-     * @param int|null $targetHeight height of the thumnail - if it's 0 it will be proportionate
+     * @param int $targetWidth width of the thumbnail
+     * @param int|null $targetHeight height of the thumbnail - if it's 0 it will be proportionate
      * @throws HttpResponseTriggerException if file not exists
      * @throws HttpResponseTriggerException if save failed
      * @author source : https://pqina.nl/blog/creating-thumbnails-with-php/

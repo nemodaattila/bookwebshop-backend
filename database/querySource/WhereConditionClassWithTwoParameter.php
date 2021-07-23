@@ -40,6 +40,7 @@ class WhereConditionClassWithTwoParameter extends WhereConditionParentClass impl
 
     /**
      * @return string returns the parameter as string
+     * @throws HttpResponseTriggerException wrong condition type
      */
     public function getQueryString(): string
     {

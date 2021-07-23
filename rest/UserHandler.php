@@ -2,17 +2,17 @@
 
 namespace rest;
 
-use classDbHandler\user\UserDBHandler;
-use classDbHandler\user\UserTokenDBHandler;
 use classModel\RequestParameters;
-use classModel\User;
-use classModel\UserToken;
 use controller\UserController;
 use controller\UserTokenController;
 use exception\HttpResponseTriggerException;
 use helper\VariableHelper;
 use service\SessionHandler;
 
+/**
+ * Class UserHandler http request handler class , for users (registration, login, etc)
+ * @package rest
+ */
 class UserHandler
 {
     private UserController $userController;
@@ -24,6 +24,11 @@ class UserHandler
         $this->userTokenController = new UserTokenController();
     }
 
+    /**
+     * registers a user
+     * @param RequestParameters $parameters http request parameters
+     * @throws HttpResponseTriggerException throws result in exception, db errors
+     */
     public function registerUser(RequestParameters $parameters)
     {
         $regData = $parameters->getRequestData();
@@ -31,6 +36,12 @@ class UserHandler
         throw new HttpResponseTriggerException($success, $resultData);
     }
 
+    /**
+     * logs a user in
+     * result is token + userdata
+     * @param RequestParameters $parameters http request parameters
+     * @throws HttpResponseTriggerException throws result in exception, db errors
+     */
     public function loginUser(RequestParameters $parameters)
     {
         $loginData = $parameters->getRequestData();
@@ -38,25 +49,29 @@ class UserHandler
         if (!$success) {
             throw new HttpResponseTriggerException(false, $user);
         }
-
         $token = $this->userTokenController->generateAndSaveTokenFromUser($user);
-
         throw new HttpResponseTriggerException(true, ['token' => $token->getToken(), 'userData' => VariableHelper::convertObjectToArray($user)]);
-
     }
 
+    /**
+     * logs out user stored in session/database (by token)
+     * @throws HttpResponseTriggerException throws result as exception, db errors
+     */
     public function logOutUser()
     {
-
         SessionHandler::getInstance();
 //        var_dump($_SESSION);
         $token = $this->userTokenController->getTokenFromSession();
-
         $this->userTokenController->removeToken($token);
         throw new HttpResponseTriggerException(true, []);
-
     }
 
+    /**
+     * returns a user based on token string
+     * result is [<bool> success, <array> userdata]
+     * @param RequestParameters $requestParameters http request parameters
+     * @throws HttpResponseTriggerException result data or error data
+     */
     public function getUserByToken(RequestParameters $requestParameters)
     {
         $token = $requestParameters->getUrlParameters()[0];

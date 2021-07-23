@@ -116,7 +116,7 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
      * returns the part of the query which contains the order and the order direction parameters
      * eg: ORDER BY p.name ASC
      * @return string query part
-     * @todo több paraméter alapján rendezés
+     * TODO több paraméter alapján rendezés
      */
     private function getOrderByQuery(): string
     {

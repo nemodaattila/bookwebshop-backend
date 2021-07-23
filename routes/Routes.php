@@ -13,6 +13,7 @@ class Routes
      * possible routes, parameters: type [GET, POST, PUT, DELETE] | url path | called class | called function
      * | authenticated users
      * @var array|string[][]
+     * TODO hozzáadni paramétert ami jelöli melyik adatok kellenek a requestből -> url, phpinput, both
      */
 
     private array $routes = [

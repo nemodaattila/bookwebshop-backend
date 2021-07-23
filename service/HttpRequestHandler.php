@@ -67,7 +67,7 @@ class HttpRequestHandler
 //        header("Access-Control-Allow-Origin: *");
 
         header("Access-Control-Allow-Origin: http://localhost:4200");
-        header("Access-Control-Allow-Headers: x-webtoken, X-WEBTOKEN, X-Requested-With, Origin, Cache-Control, Pragma, Authorization, Accept, Accept-Encoding");
+        header("Access-Control-Allow-Headers: X-Requested-With, Origin, Cache-Control, Pragma, Authorization, Accept, Accept-Encoding");
         header("Access-Control-Allow-Methods: PUT, POST, GET, OPTIONS, DELETE");
         header('Access-Control-Allow-Credentials: true');
     }
@@ -185,6 +185,9 @@ class HttpRequestHandler
         $class->$functionName($this->parameters);
     }
 
+    /**
+     * TODO
+     */
     private function authenticateUser()
     {
 

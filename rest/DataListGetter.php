@@ -8,8 +8,19 @@ use classDbHandler\SeriesDBHandler;
 use classModel\RequestParameters;
 use exception\HttpResponseTriggerException;
 
+/**
+ * Http request processor
+ * class for collecting book data with LIKE patterns (for datalist on frontend)
+ * Class DataListGetter
+ * @package rest
+ */
 class DataListGetter
 {
+    /**
+     * calls function based on request parameter (Author, Publisher or Series)
+     * @param RequestParameters $parameters http request parameters
+     * @throws HttpResponseTriggerException functions throw result in exception (it's ok not error)
+     */
     public function getDataList(RequestParameters $parameters)
     {
         [$type, $value] = $parameters->getUrlParameters();
@@ -24,6 +35,11 @@ class DataListGetter
         }
     }
 
+    /**
+     * gets authors that match the given pattern
+     * @param string $value pattern
+     * @throws HttpResponseTriggerException throws result in exception (it's ok not error), db error
+     */
     private function getAuthorDataList(string $value)
     {
         $ah = new AuthorDBHandler();
@@ -34,6 +50,11 @@ class DataListGetter
         throw new HttpResponseTriggerException(true, $dl);
     }
 
+    /**
+     * gets publishers that match the given pattern
+     * @param string $value pattern
+     * @throws HttpResponseTriggerException throws result in exception (it's ok not error), db error
+     */
     private function getPublisherDataList(string $value)
     {
         $ph = new PublisherDBHandler();
@@ -44,6 +65,11 @@ class DataListGetter
         throw new HttpResponseTriggerException(true, $dl);
     }
 
+    /**
+     * gets series that match the given pattern
+     * @param string $value pattern
+     * @throws HttpResponseTriggerException throws result in exception (it's ok not error), db error
+     */
     private function getSeriesDataList(string $value)
     {
         $ph = new SeriesDBHandler();

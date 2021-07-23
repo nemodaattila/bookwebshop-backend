@@ -4,18 +4,35 @@ namespace classDbHandler\user;
 
 use classDbHandler\DBHandlerParent;
 use classModel\UserToken;
+use DateTime;
+use exception\HttpResponseTriggerException;
 
+/**
+ * Class UserTokenDBHandler database connection class for User Tokens (user_token table)
+ * @package classDbHandler\user
+ */
 class UserTokenDBHandler extends DBHandlerParent
 {
-    public function crate(UserToken $user)
+    /**
+     * inserts a token record into table
+     * @param UserToken $user token Object
+     * @return bool creation is successful
+     * @throws HttpResponseTriggerException wrong processor type, query error
+     */
+    public function create(UserToken $user): bool
     {
         $this->createPDO('insert');
         $this->PDOLink->setCommand("INSERT INTO user_token (token, user_id, authorization_level, expiration_time) values (?,?,?,?)");
         $this->PDOLink->setValues([$user->getToken(), $user->getUserId(), $user->getAuthorizationLevel(), $user->getExpirationTime()]);
-        $result = $this->PDOLink->execute();
-        return $result;
+        return $this->PDOLink->execute();
     }
 
+    /**
+     * returns a token record based on token string
+     * @param string $token token string
+     * @return UserToken|null Token object if token valid, else null
+     * @throws HttpResponseTriggerException processor type, query error
+     */
     public function select(string $token): ?UserToken
     {
         $userToken = new UserToken();
@@ -34,18 +51,27 @@ class UserTokenDBHandler extends DBHandlerParent
         return $userToken;
     }
 
+    /**
+     * checks if token is active i.e. expiration time not older then 10 minutes
+     * @param UserToken $token token Object
+     * @return bool activity as boolean
+     */
     public function checkTokenIsActive(UserToken $token): bool
     {
-//
-        return ($token->getExpirationTime() - (new \DateTime())->getTimestamp() > 0);
+        return ($token->getExpirationTime() - (new DateTime())->getTimestamp() > 0);
     }
 
-    public function delete(UserToken $token)
+    /**
+     * removes a token record from table
+     * @param UserToken $token token Object
+     * @return bool delete succeeded
+     * @throws HttpResponseTriggerException wrong processor type , query error
+     */
+    public function delete(UserToken $token): bool
     {
         $this->createPDO('delete');
         $this->PDOLink->setCommand("DELETE FROM user_token as ut where ut.user_id = ?");
         $this->PDOLink->setValues([$token->getUserId()]);
-        $result = $this->PDOLink->execute();
-        return $result;
+        return $this->PDOLink->execute();
     }
 }

@@ -50,12 +50,4 @@ class RequestParameters
         $this->requestData = [];
     }
 
-    /**
-     * @return array return all parameters as array
-     */
-    public function getAllData(): array
-    {
-        return get_object_vars($this);
-    }
-
 }

@@ -2,8 +2,15 @@
 
 namespace service;
 
+/**
+ * Class SessionHandler helper class for handling sessions
+ * @package service
+ */
 class SessionHandler
 {
+    /**
+     * @var SessionHandler|null static instance
+     */
     private static ?SessionHandler $instance = null;
 
     public static function getInstance(): SessionHandler
@@ -17,11 +24,17 @@ class SessionHandler
     public function __construct()
     {
         if (!isset($_SESSION)) {
-            session_start(['cookie_httponly' => false]);
+            session_start();
         }
     }
 
-    public static function save(string $name, mixed $value, bool $serialize = false)
+    /**
+     * sets a value in session
+     * @param string $name key name
+     * @param mixed $value value to be saved
+     * @param bool $serialize if true serializes the value
+     */
+    public static function set(string $name, mixed $value, bool $serialize = false)
     {
         if ($serialize) {
             $value = serialize($value);
@@ -29,10 +42,13 @@ class SessionHandler
         $_SESSION[$name] = $value;
     }
 
-    public static function read(string $name, bool $unSerialize = false)
+    /**
+     * gets a value from session
+     * @param string $name key name to get
+     * @param bool $unSerialize if true un-serializes the value
+     */
+    public static function get(string $name, bool $unSerialize = false): mixed
     {
-//        var_dump($_SESSION);
-
         if (!(isset($_SESSION[$name])))
             return null;
         if ($unSerialize) {
@@ -41,14 +57,12 @@ class SessionHandler
         return $_SESSION[$name];
     }
 
-    public static function delete(string $name)
+    /**
+     * removes a value from Session
+     * @param string $name key of value to be removed
+     */
+    public static function unset(string $name)
     {
         unset($_SESSION[$name]);
     }
-
-//    public function __destruct()
-//    {
-//        session_destroy();
-//        // TODO: Implement __destruct() method.
-//    }
 }

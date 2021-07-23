@@ -12,7 +12,7 @@ class TablesAndAttributesClass
 {
     /**
      * @var array array of tables and attributes, format:
-     * (<table name>=>[alias=><alias name>, attributes=>[name=><attribute name>, alias=><aliasname>]])[]
+     * (<table name>=>[alias=><alias name>, attributes=>[name=><attribute name>, alias=><alias name>]])[]
      */
     private array $tables = [];
 
