@@ -7,6 +7,7 @@ use controller\UserController;
 use controller\UserTokenController;
 use exception\HttpResponseTriggerException;
 use helper\VariableHelper;
+use service\Authentication;
 use service\SessionHandler;
 
 /**
@@ -72,12 +73,24 @@ class UserHandler
      * @param RequestParameters $requestParameters http request parameters
      * @throws HttpResponseTriggerException result data or error data
      */
-    public function getUserByToken(RequestParameters $requestParameters)
+    public function getUserByToken()
     {
-        $token = $requestParameters->getUrlParameters()[0];
-        $tokenObj = $this->userTokenController->getTokenObjectByString($token);
-        $user = $this->userController->getAUserById($tokenObj->getUserId());
+
+        [$hasUser, $message] = (Authentication::getInstance())->getTokenState();
+
+        if (!$hasUser) {
+            throw new HttpResponseTriggerException(false, ['errorCode' => $message]);
+        } else
+            $userId = (Authentication::getInstance())->getTokenObj()->getUserId();
+        $user = $this->userController->getAUserById($userId);
+        $user->setPassword('');
         throw new HttpResponseTriggerException(true, ['userData' => VariableHelper::convertObjectToArray($user)]);
+
+//        $token = $requestParameters->getUrlParameters()[0];
+//        $tokenObj = $this->userTokenController->getTokenObjectByString($token);
+//        $user = $this->userController->getAUserById($tokenObj->getUserId());
+//        $user->setPassword('');
+//        throw new HttpResponseTriggerException(true, ['userData' => VariableHelper::convertObjectToArray($user), 'tokenExpires'=>$tokenObj->getExpirationTime()]);
     }
 
 }

@@ -51,6 +51,15 @@ class UserTokenDBHandler extends DBHandlerParent
         return $userToken;
     }
 
+    public function refreshExpirationDate(UserToken $tokenObj)
+    {
+        $this->createPDO('update');
+        $this->PDOLink->setCommand("update ut.token, ut.user_id, ut.authorization_level, ut.expiration_time from user_token as ut where ut.token = ?");
+        $this->PDOLink->setCommand("UPDATE user_token SET 	expiration_time = ? WHERE token=?");
+        $this->PDOLink->setValues([$tokenObj->getExpirationTime(), $tokenObj->getToken()]);
+        return $this->PDOLink->execute();
+    }
+
     /**
      * checks if token is active i.e. expiration time not older then 10 minutes
      * @param UserToken $token token Object

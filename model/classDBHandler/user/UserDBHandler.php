@@ -35,7 +35,7 @@ class UserDBHandler extends DBHandlerParent
     public function checkUserExistsWithNameAndPassword(User $user): array
     {
         $this->createPDO('select');
-        $this->PDOLink->setCommand("select u.id from user as u where u.name = ? OR u.password = ?");
+        $this->PDOLink->setCommand("select u.id from user as u where u.name = ? AND u.password = ?");
         $this->PDOLink->setValues([$user->getUserName(), $user->getPassword()]);
         return $this->PDOLink->execute();
     }

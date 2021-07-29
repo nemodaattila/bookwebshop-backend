@@ -80,10 +80,9 @@ class UserController
         if (count($userExists) !== 1) {
             return [false, ['errorCode' => 'ULEPN']];
         }
+
         $id = $userExists[0]['id'];
         $user = $this->getAUserById($id);
-        if (!$this->comparePasswords($tempUser, $user))
-            return [false, ['errorCode' => 'ULEIP']];
         return [true, $user];
     }
 

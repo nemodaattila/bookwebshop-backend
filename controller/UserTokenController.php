@@ -108,7 +108,7 @@ class UserTokenController
     private function removeTokenFromSession()
     {
         $sh = SessionHandler::getInstance();
-        $sh::unset('token');
+        $sh->unset('token');
     }
 
     /**
@@ -116,34 +116,45 @@ class UserTokenController
      * if exists checks if it is active
      * if active returns token
      * @param string $tokenString
-     * @return UserToken token object
+     * @return array token object
      * @throws HttpResponseTriggerException if token not exists OR expired
      * TODO if token is active but not exists in Session , create
      */
-    public function getTokenObjectByString(string $tokenString): UserToken
+    public function getTokenObjectByString(string $tokenString): array
     {
-        $tokenObj = $this->getTokenFromSession() ?? $this->DBHandler->select($tokenString);
+//        var_dump('sfsdf');
+        $tokenObj = $this->getTokenFromSession();
         if ($tokenObj === null) {
-            throw new HttpResponseTriggerException(false, ['errorCode' => 'UTINULL']);
-
+            $tokenObjDB = $this->DBHandler->select($tokenString);
+            if ($tokenObjDB === null) {
+                return [false, 'UTNE'];
+            }
+            else {
+                $tokenObj = $tokenObjDB;
+                $this->saveTokenToSession($tokenObj);
+            }
         }
-//        var_dump($tokenObj);
-        $this->checkActiveToken($tokenObj);
+        if (!$this->checkActiveToken($tokenObj)) {
+            return [false, 'UTEXP'];
+        }
+        $this->refreshTokenExpirationDate();
+        return [true, ''];
 
-        return $tokenObj;
     }
 
     /**
-     * checks if token is younger than 10 minutes
+     * checks if token is younger than 10 minutes, if not removes it
      * @param UserToken $tokenObj Token Object
      * @throws HttpResponseTriggerException token expired
      */
-    private function checkActiveToken(UserToken $tokenObj)
+    private function checkActiveToken(UserToken $tokenObj): bool
     {
         if (!$this->DBHandler->checkTokenIsActive($tokenObj)) {
             $this->removeToken($tokenObj);
-            throw new HttpResponseTriggerException(false, ['errorCode' => 'UTEXP']);
+//            throw new HttpResponseTriggerException(false, ['errorCode' => 'UTEXP']);
+            return false;
         }
+        return true;
     }
 
     /**
@@ -155,6 +166,15 @@ class UserTokenController
     {
         $this->DBHandler->delete($tokenObj);
         $this->removeTokenFromSession();
+    }
+
+    private function refreshTokenExpirationDate()
+    {
+        $tokenObj = $this->getTokenFromSession();
+        $timeStamp = (new DateTime())->getTimestamp() + 600;
+        $tokenObj->setExpirationTime($timeStamp);
+        $this->DBHandler->refreshExpirationDate($tokenObj);
+        $this->saveTokenToSession($tokenObj);
     }
 
 }

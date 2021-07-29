@@ -3,6 +3,7 @@
 namespace service;
 
 use classModel\RequestParameters;
+use controller\UserTokenController;
 use Error;
 use Exception;
 use exception\HttpResponseTriggerException;
@@ -70,6 +71,8 @@ class HttpRequestHandler
         header("Access-Control-Allow-Headers: X-Requested-With, Origin, Cache-Control, Pragma, Authorization, Accept, Accept-Encoding");
         header("Access-Control-Allow-Methods: PUT, POST, GET, OPTIONS, DELETE");
         header('Access-Control-Allow-Credentials: true');
+        header('Access-Control-Expose-Headers: TokenExpirationTime');
+
     }
 
     private function addCorsOriginHeader()
@@ -78,7 +81,7 @@ class HttpRequestHandler
 
 //        header("Access-Control-Allow-Origin: *");
         header('Access-Control-Allow-Credentials: true');
-
+        header('Access-Control-Expose-Headers: TokenExpirationTime');
     }
 
     /**
@@ -124,7 +127,9 @@ class HttpRequestHandler
      */
     private function sendResponseBasedOnTriggerException(HttpResponseTriggerException $e)
     {
+        $this->addTokenExpirationTimeToHeader();
         header($_SERVER['SERVER_PROTOCOL'] . ' ' . $e->getHttpCode());
+
         $data = ['success' => $e->isSuccess(), "data" => $e->getData()];
         echo json_encode($data);
         die();
@@ -139,8 +144,23 @@ class HttpRequestHandler
     private function sendResponseBasedOnError(string $message, string $file, int $line)
     {
         //DO save message to log instead of echo
+        $this->addTokenExpirationTimeToHeader();
         header($_SERVER['SERVER_PROTOCOL'] . ' ' . 500);
+
         echo $message . ' - ' . $file . ':' . $line;
+    }
+
+    private function addTokenExpirationTimeToHeader()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'OPTIONS') {
+            $as = Authentication::getInstance();
+            $state = $as->getTokenState();
+//            var_dump($state);
+            if ($state[0] === true) {
+                header("TokenExpirationTime: {$as->getTokenObj()->getExpirationTime()}");
+            }
+        }
+//        var_dump(headers_list());
     }
 
     /**
@@ -190,7 +210,13 @@ class HttpRequestHandler
      */
     private function authenticateUser()
     {
-
+        if (isset(getallheaders()['Authorization'])) {
+            $token = filter_var(getallheaders()['Authorization'], FILTER_SANITIZE_STRING);
+            if ($token !== null) {
+                $as = Authentication::getInstance();
+                $as->authenticateUserByToken($token);
+            }
+        }
     }
 
 }
