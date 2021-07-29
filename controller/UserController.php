@@ -54,22 +54,10 @@ class UserController
     }
 
     /**
-     * compares two passwords
-     * @param User $loginUser password from login data
-     * @param User $userDB password from database
-     * @return bool result of comparison
-     */
-    private function comparePasswords(User $loginUser, User $userDB): bool
-    {
-        return $loginUser->getPassword() === $userDB->getPassword();
-    }
-
-    /**
      * checks if a user exists, by login data, checks password, if true returns user, else error message
      * @param array $loginData login data
      * @return array [<bool> action success, <mixed> user or error data (user not exists with data, bad password), database error]
      * @throws HttpResponseTriggerException user not exists , database errors
-     * TODO password check really needed ???
      */
     public function loginUser(array $loginData): array
     {
@@ -90,7 +78,7 @@ class UserController
      * return a user based on ID
      * @param int $userId user id
      * @return User user Object
-     * @throws HttpResponseTriggerException user id not exists, db error
+     * @throws HttpResponseTriggerException database errors
      */
     public function getAUserById(int $userId): User
     {

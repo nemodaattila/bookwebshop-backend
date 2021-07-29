@@ -3,7 +3,6 @@
 namespace service;
 
 use classModel\RequestParameters;
-use controller\UserTokenController;
 use Error;
 use Exception;
 use exception\HttpResponseTriggerException;
@@ -46,6 +45,7 @@ class HttpRequestHandler
                 $this->searchForExistingRoute();
                 $this->getHttpRequestData();
                 $this->authenticateUser();
+                $this->authenticationTaskGuard();
                 $this->loadRestClass();
             }
 
@@ -205,9 +205,6 @@ class HttpRequestHandler
         $class->$functionName($this->parameters);
     }
 
-    /**
-     * TODO
-     */
     private function authenticateUser()
     {
         if (isset(getallheaders()['Authorization'])) {
@@ -217,6 +214,11 @@ class HttpRequestHandler
                 $as->authenticateUserByToken($token);
             }
         }
+    }
+
+    private function authenticationTaskGuard()
+    {
+        //TODO
     }
 
 }

@@ -42,7 +42,6 @@ class WhereConditionsBackboneClass extends WhereConditionParentClass implements 
      * @param WhereConditionsBackboneClass $class condition class
      * @param string|null $conditionOperator operator between two component pl: 'AND'
      * @param false $isBracketed if true the condition will be bracketed
-     * TODO tesztelni
      */
     public function addConditionObject(WhereConditionsBackboneClass $class, ?string $conditionOperator = null, bool $isBracketed = false)
     {

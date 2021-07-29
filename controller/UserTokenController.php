@@ -117,7 +117,7 @@ class UserTokenController
      * if active returns token
      * @param string $tokenString
      * @return array token object
-     * @throws HttpResponseTriggerException if token not exists OR expired
+//     * @throws HttpResponseTriggerException if token not exists OR expired
      * TODO if token is active but not exists in Session , create
      */
     public function getTokenObjectByString(string $tokenString): array
@@ -128,8 +128,7 @@ class UserTokenController
             $tokenObjDB = $this->DBHandler->select($tokenString);
             if ($tokenObjDB === null) {
                 return [false, 'UTNE'];
-            }
-            else {
+            } else {
                 $tokenObj = $tokenObjDB;
                 $this->saveTokenToSession($tokenObj);
             }
@@ -145,13 +144,12 @@ class UserTokenController
     /**
      * checks if token is younger than 10 minutes, if not removes it
      * @param UserToken $tokenObj Token Object
-     * @throws HttpResponseTriggerException token expired
+     * @throws HttpResponseTriggerException database errors
      */
     private function checkActiveToken(UserToken $tokenObj): bool
     {
         if (!$this->DBHandler->checkTokenIsActive($tokenObj)) {
             $this->removeToken($tokenObj);
-//            throw new HttpResponseTriggerException(false, ['errorCode' => 'UTEXP']);
             return false;
         }
         return true;

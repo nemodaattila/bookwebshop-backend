@@ -70,7 +70,6 @@ class UserHandler
     /**
      * returns a user based on token string
      * result is [<bool> success, <array> userdata]
-     * @param RequestParameters $requestParameters http request parameters
      * @throws HttpResponseTriggerException result data or error data
      */
     public function getUserByToken()
