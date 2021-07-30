@@ -24,13 +24,13 @@ class DataListGetter
     public function getDataList(RequestParameters $parameters)
     {
         [$type, $value] = $parameters->getUrlParameters();
-        if (ucfirst($type) === "Author") {
+        if (ucfirst($type) === 'Author') {
             $this->getAuthorDataList($value);
         }
-        if (ucfirst($type) === "Publisher") {
+        if (ucfirst($type) === 'Publisher') {
             $this->getPublisherDataList($value);
         }
-        if (ucfirst($type) === "Series") {
+        if (ucfirst($type) === 'Series') {
             $this->getSeriesDataList($value);
         }
     }

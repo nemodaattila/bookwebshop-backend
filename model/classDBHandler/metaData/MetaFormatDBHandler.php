@@ -19,7 +19,7 @@ class MetaFormatDBHandler extends DBHandlerParent
     public function getGroupedByType(): array
     {
         $this->createPDO('select');
-        $this->PDOLink->setCommand("SELECT id, type_id, name FROM meta_format");
+        $this->PDOLink->setCommand('SELECT id, type_id, name FROM meta_format');
         $tempResult = $this->PDOLink->execute();
         $result = [];
         foreach ($tempResult as $value) {

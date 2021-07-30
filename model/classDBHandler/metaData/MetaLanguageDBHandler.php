@@ -19,7 +19,7 @@ class MetaLanguageDBHandler extends DBHandlerParent
     public function get(): array
     {
         $this->createPDO('select');
-        $this->PDOLink->setCommand("SELECT id,  name FROM meta_language");
+        $this->PDOLink->setCommand('SELECT id,  name FROM meta_language');
         $tempResult = $this->PDOLink->execute();
         $result = [];
         foreach ($tempResult as $value) {

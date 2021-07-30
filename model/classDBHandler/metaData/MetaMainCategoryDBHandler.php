@@ -21,7 +21,7 @@ class MetaMainCategoryDBHandler extends DBHandlerParent
     {
         $this->createPDO('select');
         $this->PDOLink = PDOProcessorBuilder::getProcessor('select', true);
-        $this->PDOLink->setCommand("SELECT id,  name FROM meta_main_category");
+        $this->PDOLink->setCommand('SELECT id,  name FROM meta_main_category');
         $tempResult = $this->PDOLink->execute();
         $result = [];
         foreach ($tempResult as $value) {

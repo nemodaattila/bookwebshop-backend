@@ -19,8 +19,8 @@ class Routes
     private array $routes = [
         ['GET', 'logout', 'UserHandler', 'logOutUser', 'L'],
         ['GET', 'tokentouser', 'UserHandler', 'getUserByToken', 'A'],
-        ['POST', "login", "UserHandler", "loginUser", 'A'],
-        ['POST', "register", "UserHandler", "registerUser", 'NL'],
+        ['POST', 'login', 'UserHandler', 'loginUser', 'A'],
+        ['POST', 'register', 'UserHandler', 'registerUser', 'NL'],
         ['GET', 'metadata', 'BookMetaData', 'getBookMetaData', 'A'],
         ['POST', 'booklist', 'BookListGetter', 'getBookList', 'A'],
         ['GET', 'primarydata\$1', 'BookDataGetter', 'getBookPrimaryData', 'A'],

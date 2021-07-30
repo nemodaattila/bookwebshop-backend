@@ -19,7 +19,7 @@ class AuthorDBHandler extends DBHandlerParent
     public function getNameByID(int $id): string
     {
         $this->createPDO('select');
-        $this->PDOLink->setCommand("SELECT name FROM author where id = ?");
+        $this->PDOLink->setCommand('SELECT name FROM author where id = ?');
         $this->PDOLink->setValues($id);
         $this->PDOLink->setFetchType('fetch');
         $result = $this->PDOLink->execute();
@@ -35,7 +35,7 @@ class AuthorDBHandler extends DBHandlerParent
     function getSpecificAuthorsWithLike(string $pattern): array
     {
         $this->createPDO('select');
-        $this->PDOLink->setCommand("Select a.Name from Author as a where a.Name LIKE ?");
+        $this->PDOLink->setCommand('Select a.Name from Author as a where a.Name LIKE ?');
         $this->PDOLink->setValues('%' . $pattern . '%');
         return $this->PDOLink->execute();
     }

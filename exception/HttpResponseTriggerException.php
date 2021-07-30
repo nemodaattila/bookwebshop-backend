@@ -27,7 +27,7 @@ class HttpResponseTriggerException extends Exception
      */
     private mixed $data;
 
-    public function __construct(bool $success, mixed $data, int $httpCode = 200, $message = "", $code = 0, Throwable $previous = null)
+    public function __construct(bool $success, mixed $data, int $httpCode = 200, $message = '', $code = 0, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
         $this->success = $success;

@@ -23,7 +23,7 @@ class BookDiscountDBHandler extends DBHandlerParent
     public function getQuantityByIsbn(string $isbn): int
     {
         $this->createPDO('select');
-        $this->PDOLink->setCommand("SELECT bd.discount_value FROM book_discount as bd WHERE isbn=?");
+        $this->PDOLink->setCommand('SELECT bd.discount_value FROM book_discount as bd WHERE isbn=?');
         $this->PDOLink->setFetchType('fetch');
         $this->PDOLink->setValues($isbn);
         $tempResult = $this->PDOLink->execute();

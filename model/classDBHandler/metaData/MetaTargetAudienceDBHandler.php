@@ -19,7 +19,7 @@ class MetaTargetAudienceDBHandler extends DBHandlerParent
     public function get(): array
     {
         $this->createPDO('select');
-        $this->PDOLink->setCommand("SELECT id,  name FROM meta_target_audience");
+        $this->PDOLink->setCommand('SELECT id,  name FROM meta_target_audience');
         $tempResult = $this->PDOLink->execute();
         $result = [];
         foreach ($tempResult as $value) {

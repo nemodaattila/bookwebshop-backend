@@ -23,7 +23,7 @@ class BookPriceDBHandler extends DBHandlerParent
     public function getPriceByIsbn(string $isbn): int
     {
         $this->createPDO('select');
-        $this->PDOLink->setCommand("SELECT bp.price FROM book_price as bp WHERE isbn=?");
+        $this->PDOLink->setCommand('SELECT bp.price FROM book_price as bp WHERE isbn=?');
         $this->PDOLink->setFetchType('fetch');
         $this->PDOLink->setValues($isbn);
         $tempResult = $this->PDOLink->execute();

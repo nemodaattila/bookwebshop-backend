@@ -78,16 +78,16 @@ class BookListGetter
                             $dataSource->addTable('book_tag', 'bt');
                             $dataSource->addWhereCondition('=', ['book.isbn', 'book_tag.isbn'], 'AND');
                             break;
-                        case "TargetAudience":
-                        case "Publisher":
-                        case "Language":
-                        case "Year":
-                        case "Pages":
-                        case "Format":
+                        case 'TargetAudience':
+                        case 'Publisher':
+                        case 'Language':
+                        case 'Year':
+                        case 'Pages':
+                        case 'Format':
                             $dataSource->addTable('book_description', 'bd');
                             $dataSource->addWhereCondition('=', ['book.isbn', 'book_description.isbn'], 'AND');
                             break;
-                        case "Price":
+                        case 'Price':
                             $dataSource->addTable('book_price', 'bp');
                             $dataSource->addWhereCondition('=', ['book.isbn', 'book_price.isbn'], 'AND');
                             break;
@@ -106,35 +106,35 @@ class BookListGetter
             case 'Year':
                 foreach ($parameters['criteria'] as $key => $value) {
                     switch ($key) {
-                        case "Quick":
-                        case"ISBN":
-                        case "Title":
-                        case"Type":
-                        case "Category":
-                        case "MainCategory":
+                        case 'Quick':
+                        case'ISBN':
+                        case 'Title':
+                        case'Type':
+                        case 'Category':
+                        case 'MainCategory':
                             $dataSource->addTable('book', 'b');
-                            $dataSource->addWhereCondition("=", ['book.isbn', 'book_description.isbn'], 'AND');
+                            $dataSource->addWhereCondition('=', ['book.isbn', 'book_description.isbn'], 'AND');
                             break;
                         case 'Author':
                             $dataSource->addTable('book_author', 'ba');
-                            $dataSource->addWhereCondition("=", ['book_description.isbn', 'book_author.isbn'], 'AND');
+                            $dataSource->addWhereCondition('=', ['book_description.isbn', 'book_author.isbn'], 'AND');
                             break;
                         case 'Series':
                             $dataSource->addTable('book_series', 'bs');
-                            $dataSource->addWhereCondition("=", ['book_description.isbn', 'book_series.isbn'], 'AND');
+                            $dataSource->addWhereCondition('=', ['book_description.isbn', 'book_series.isbn'], 'AND');
                             break;
                         case 'Tags':
                             $dataSource->addTable('book_tag', 'bt');
-                            $dataSource->addWhereCondition("=", ['book_description.isbn', 'book_tag.isbn'], 'AND');
+                            $dataSource->addWhereCondition('=', ['book_description.isbn', 'book_tag.isbn'], 'AND');
                             break;
-                        case "Price":
+                        case 'Price':
                             $dataSource->addTable('book_price', 'bp');
-                            $dataSource->addWhereCondition("=", ['book_description.isbn', 'book_price.isbn'], 'AND');
+                            $dataSource->addWhereCondition('=', ['book_description.isbn', 'book_price.isbn'], 'AND');
                             break;
                         case 'Discount':
                         case 'DiscountCategory':
                             $dataSource->addTable('book_discount', 'bpc');
-                            $dataSource->addWhereCondition("=", ['book_description.isbn', 'book_discount.isbn'], 'AND');
+                            $dataSource->addWhereCondition('=', ['book_description.isbn', 'book_discount.isbn'], 'AND');
                             break;
                     }
                 }
@@ -142,31 +142,31 @@ class BookListGetter
             case 'Price':
                 foreach ($parameters['criteria'] as $key => $value) {
                     switch ($key) {
-                        case "Quick":
-                        case"ISBN":
-                        case "Title":
-                        case"Type":
-                        case "Category":
-                        case "MainCategory":
+                        case 'Quick':
+                        case'ISBN':
+                        case 'Title':
+                        case'Type':
+                        case 'Category':
+                        case 'MainCategory':
                             $dataSource->addTable('book', 'b');
-                            $dataSource->addWhereCondition("=", ['book.isbn', 'book_price.isbn'], 'AND');
+                            $dataSource->addWhereCondition('=', ['book.isbn', 'book_price.isbn'], 'AND');
                             break;
                         case 'Author':
                             $dataSource->addTable('book_author', 'ba');
-                            $dataSource->addWhereCondition("=", ['book_price.isbn', 'book_author.isbn'], 'AND');
+                            $dataSource->addWhereCondition('=', ['book_price.isbn', 'book_author.isbn'], 'AND');
                             break;
                         case 'Series':
                             $dataSource->addTable('book_series', 'bs');
-                            $dataSource->addWhereCondition("=", ['book_price.isbn', 'book_series.isbn'], 'AND');
+                            $dataSource->addWhereCondition('=', ['book_price.isbn', 'book_series.isbn'], 'AND');
                             break;
-                        case "TargetAudience":
-                        case "Publisher":
-                        case "Language":
-                        case "Year":
-                        case "Pages":
-                        case "Format":
+                        case 'TargetAudience':
+                        case 'Publisher':
+                        case 'Language':
+                        case 'Year':
+                        case 'Pages':
+                        case 'Format':
                             $dataSource->addTable('book_description', 'bd');
-                            $dataSource->addWhereCondition("=", ['book_price.isbn', 'book_description.isbn'], 'AND');
+                            $dataSource->addWhereCondition('=', ['book_price.isbn', 'book_description.isbn'], 'AND');
                             break;
                     }
                 }

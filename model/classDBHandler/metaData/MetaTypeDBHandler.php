@@ -19,7 +19,7 @@ class MetaTypeDBHandler extends DBHandlerParent
     public function get(): array
     {
         $this->createPDO('select');
-        $this->PDOLink->setCommand("SELECT id,  name FROM meta_type");
+        $this->PDOLink->setCommand('SELECT id,  name FROM meta_type');
         $tempResult = $this->PDOLink->execute();
         $result = [];
         foreach ($tempResult as $value) {

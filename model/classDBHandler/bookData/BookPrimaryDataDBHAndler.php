@@ -22,7 +22,7 @@ class BookPrimaryDataDBHAndler extends DBHandlerParent
     public function getByIsbn(string $isbn): array
     {
         $this->createPDO('select');
-        $this->PDOLink->setCommand("SELECT isbn, title, type_id, category_id FROM book WHERE isbn=?");
+        $this->PDOLink->setCommand('SELECT isbn, title, type_id, category_id FROM book WHERE isbn=?');
         $this->PDOLink->setValues($isbn);
         $this->PDOLink->setFetchType('fetch');
         $tempResult = $this->PDOLink->execute();

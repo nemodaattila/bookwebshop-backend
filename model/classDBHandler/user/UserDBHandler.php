@@ -21,7 +21,7 @@ class UserDBHandler extends DBHandlerParent
     public function checkUserNameOrEmailExists(User $user): array
     {
         $this->createPDO('select');
-        $this->PDOLink->setCommand("select u.id from user as u where u.name = ? OR u.email = ?");
+        $this->PDOLink->setCommand('select u.id from user as u where u.name = ? OR u.email = ?');
         $this->PDOLink->setValues([$user->getUserName(), $user->getEmail()]);
         return $this->PDOLink->execute();
     }
@@ -35,7 +35,7 @@ class UserDBHandler extends DBHandlerParent
     public function checkUserExistsWithNameAndPassword(User $user): array
     {
         $this->createPDO('select');
-        $this->PDOLink->setCommand("select u.id from user as u where u.name = ? AND u.password = ?");
+        $this->PDOLink->setCommand('select u.id from user as u where u.name = ? AND u.password = ?');
         $this->PDOLink->setValues([$user->getUserName(), $user->getPassword()]);
         return $this->PDOLink->execute();
     }
@@ -49,7 +49,7 @@ class UserDBHandler extends DBHandlerParent
     public function create(User $user): bool
     {
         $this->createPDO('insert');
-        $this->PDOLink->setCommand("INSERT INTO user (id, name, password, email, authorization_level    ) values (?,?,?,?,?)");
+        $this->PDOLink->setCommand('INSERT INTO user (id, name, password, email, authorization_level    ) values (?,?,?,?,?)');
         $this->PDOLink->setValues([null, $user->getUserName(), $user->getPassword(), $user->getEmail(), 1]);
         return $this->PDOLink->execute();
     }
@@ -64,7 +64,7 @@ class UserDBHandler extends DBHandlerParent
     {
         $user = new User();
         $this->createPDO('select');
-        $this->PDOLink->setCommand("select u.name, u.password, u.email, u.authorization_level from user as u where u.id = ?");
+        $this->PDOLink->setCommand('select u.name, u.password, u.email, u.authorization_level from user as u where u.id = ?');
         $this->PDOLink->setValues([$userId]);
         $result = $this->PDOLink->execute();
         if (count($result) !== 1) {

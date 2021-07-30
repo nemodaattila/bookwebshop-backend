@@ -21,7 +21,7 @@ class BookAuthorDBHandler extends DBHandlerParent
     public function getByIsbn(string $isbn): array
     {
         $this->createPDO('select');
-        $this->PDOLink->setCommand("SELECT author_id FROM book_author where isbn = ?");
+        $this->PDOLink->setCommand('SELECT author_id FROM book_author where isbn = ?');
         $this->PDOLink->setValues($isbn);
         $tempResult = $this->PDOLink->execute();
         $result = [];

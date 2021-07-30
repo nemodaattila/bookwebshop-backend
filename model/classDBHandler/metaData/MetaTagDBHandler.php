@@ -19,7 +19,7 @@ class MetaTagDBHandler
     public function get(): array
     {
         $PDOLink = PDOProcessorBuilder::getProcessor('select', true);
-        $PDOLink->setCommand("SELECT id,  name FROM meta_tag");
+        $PDOLink->setCommand('SELECT id,  name FROM meta_tag');
         $tempResult = $PDOLink->execute();
         $result = [];
         foreach ($tempResult as $value) {

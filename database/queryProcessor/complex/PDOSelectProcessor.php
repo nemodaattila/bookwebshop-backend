@@ -49,7 +49,7 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
      */
     public function createQuery(): string
     {
-        $query = "SELECT " . $this->getTableAndAttributesQuery();
+        $query = 'SELECT ' . $this->getTableAndAttributesQuery();
         $where = $this->source->getQueryWhere();
         if ($where !== '')
             $query .= ' WHERE ' . $where;
@@ -65,7 +65,7 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
      */
     private function createCountQuery(): string
     {
-        $query = "SELECT COUNT(*) AS COUNT FROM ( SELECT " . $this->getTableAndAttributesQuery();
+        $query = 'SELECT COUNT(*) AS COUNT FROM ( SELECT ' . $this->getTableAndAttributesQuery();
         $where = $this->source->getQueryWhere();
         if ($where !== '')
             $query .= ' WHERE ' . $where;
@@ -201,7 +201,7 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
             $query = ',';
             foreach ($subQuery as [$processor, $source, $alias]) {
                 $processor->setSource($source);
-                $query .= "(" . $processor->createQuery() . ') AS ' . $alias . ' ';
+                $query .= '(' . $processor->createQuery() . ') AS ' . $alias . ' ';
             }
         }
         return $query;

@@ -20,7 +20,7 @@ class PublisherDBHandler extends DBHandlerParent
     function getSpecificPublisherWithLike(string $pattern): array
     {
         $this->createPDO('select');
-        $this->PDOLink->setCommand("Select p.name from publisher as p where p.name LIKE ?");
+        $this->PDOLink->setCommand('Select p.name from publisher as p where p.name LIKE ?');
         $this->PDOLink->setValues('%' . $pattern . '%');
         return $this->PDOLink->execute();
     }

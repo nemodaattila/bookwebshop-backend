@@ -20,7 +20,7 @@ class BookCoverDBHandler extends DBHandlerParent
     public function getByIsbn(string $isbn): array|bool
     {
         $this->createPDO('select');
-        $this->PDOLink->setCommand("SELECT bc.extension, bc.has_cover, bc.has_thumbnail FROM book_cover as bc WHERE book_isbn=?");
+        $this->PDOLink->setCommand('SELECT bc.extension, bc.has_cover, bc.has_thumbnail FROM book_cover as bc WHERE book_isbn=?');
         $this->PDOLink->setFetchType('fetch');
         $this->PDOLink->setValues($isbn);
         return $this->PDOLink->execute();
@@ -35,7 +35,7 @@ class BookCoverDBHandler extends DBHandlerParent
     public function setHasThumbnailToTrueByIsbn(int $isbn): void
     {
         $this->createPDO('update');
-        $this->PDOLink->setCommand("UPDATE book_cover SET has_thumbnail = '1' WHERE book_isbn=?");
+        $this->PDOLink->setCommand('UPDATE book_cover SET has_thumbnail = 1 WHERE book_isbn=?');
         $this->PDOLink->setValues($isbn);
         $this->PDOLink->execute();
     }

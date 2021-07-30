@@ -19,7 +19,7 @@ class SeriesDBHandler extends DBHandlerParent
     function getSpecificSeriesWithLike(string $pattern): array
     {
         $this->createPDO('select');
-        $this->PDOLink->setCommand("Select s.name from Series as s where s.name LIKE ?");
+        $this->PDOLink->setCommand('Select s.name from Series as s where s.name LIKE ?');
         $this->PDOLink->setValues('%' . $pattern . '%');
         return $this->PDOLink->execute();
     }

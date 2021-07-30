@@ -21,7 +21,7 @@ class MetaSubCategoryDBHandler extends DBHandlerParent
     {
         $this->createPDO('select');
         $PDOLink = PDOProcessorBuilder::getProcessor('select', true);
-        $PDOLink->setCommand("SELECT id, main_category_id, name FROM meta_subcategory");
+        $PDOLink->setCommand('SELECT id, main_category_id, name FROM meta_subcategory');
         $tempResult = $PDOLink->execute();
         $result = [];
         foreach ($tempResult as $value) {

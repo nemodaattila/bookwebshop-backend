@@ -58,7 +58,7 @@ abstract class WhereConditionParentClass implements IPDOWhereConditionInterface
             [$condClass, $bracketed] = $this->conditions[$i];
             $string = $condClass->getQueryString();
             if ($bracketed === true)
-                $string = "(" . $string . ')';
+                $string = '(' . $string . ')';
             $query .= $string . ' ';
         }
         return $query;

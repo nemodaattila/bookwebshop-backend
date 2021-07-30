@@ -22,7 +22,7 @@ class UserTokenDBHandler extends DBHandlerParent
     public function create(UserToken $user): bool
     {
         $this->createPDO('insert');
-        $this->PDOLink->setCommand("INSERT INTO user_token (token, user_id, authorization_level, expiration_time) values (?,?,?,?)");
+        $this->PDOLink->setCommand('INSERT INTO user_token (token, user_id, authorization_level, expiration_time) values (?,?,?,?)');
         $this->PDOLink->setValues([$user->getToken(), $user->getUserId(), $user->getAuthorizationLevel(), $user->getExpirationTime()]);
         return $this->PDOLink->execute();
     }
@@ -37,7 +37,7 @@ class UserTokenDBHandler extends DBHandlerParent
     {
         $userToken = new UserToken();
         $this->createPDO('select');
-        $this->PDOLink->setCommand("select ut.token, ut.user_id, ut.authorization_level, ut.expiration_time from user_token as ut where ut.token = ?");
+        $this->PDOLink->setCommand('select ut.token, ut.user_id, ut.authorization_level, ut.expiration_time from user_token as ut where ut.token = ?');
         $this->PDOLink->setValues($token);
         $result = $this->PDOLink->execute();
         if (count($result) !== 1) {
@@ -60,8 +60,8 @@ class UserTokenDBHandler extends DBHandlerParent
     public function refreshExpirationDate(UserToken $tokenObj): bool
     {
         $this->createPDO('update');
-        $this->PDOLink->setCommand("update ut.token, ut.user_id, ut.authorization_level, ut.expiration_time from user_token as ut where ut.token = ?");
-        $this->PDOLink->setCommand("UPDATE user_token SET 	expiration_time = ? WHERE token=?");
+        $this->PDOLink->setCommand('update ut.token, ut.user_id, ut.authorization_level, ut.expiration_time from user_token as ut where ut.token = ?');
+        $this->PDOLink->setCommand('UPDATE user_token SET 	expiration_time = ? WHERE token=?');
         $this->PDOLink->setValues([$tokenObj->getExpirationTime(), $tokenObj->getToken()]);
         return $this->PDOLink->execute();
     }
@@ -85,7 +85,7 @@ class UserTokenDBHandler extends DBHandlerParent
     public function delete(UserToken $token): bool
     {
         $this->createPDO('delete');
-        $this->PDOLink->setCommand("DELETE FROM user_token as ut where ut.user_id = ?");
+        $this->PDOLink->setCommand('DELETE FROM user_token as ut where ut.user_id = ?');
         $this->PDOLink->setValues([$token->getUserId()]);
         return $this->PDOLink->execute();
     }

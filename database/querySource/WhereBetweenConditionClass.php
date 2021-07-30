@@ -40,7 +40,7 @@ class WhereBetweenConditionClass extends WhereConditionParentClass implements IP
         $param1 = $this->getQueryStringPart($this->parameters[0]);
         $param2 = $this->getQueryStringPart($this->parameters[1]);
         $param3 = $this->getQueryStringPart($this->parameters[2]);
-        return $param1 . " BETWEEN " . $param2 . ' AND ' . $param3;
+        return $param1 . ' BETWEEN ' . $param2 . ' AND ' . $param3;
     }
 
 }

@@ -20,7 +20,7 @@ class HttpRequestHandler
      * @var string route to be processed, from http request
      * e.g. www.example.com/user/123 -> user/123
      */
-    private string $routeBase = "";
+    private string $routeBase = '';
 
     /**
      * @var RouteAnalyser instance of the RouteAnalyser
@@ -65,11 +65,11 @@ class HttpRequestHandler
     {
 
         //DO expand cors handling
-//        header("Access-Control-Allow-Origin: *");
+//        header('Access-Control-Allow-Origin: *');
 
-        header("Access-Control-Allow-Origin: http://localhost:4200");
-        header("Access-Control-Allow-Headers: X-Requested-With, Origin, Cache-Control, Pragma, Authorization, Accept, Accept-Encoding");
-        header("Access-Control-Allow-Methods: PUT, POST, GET, OPTIONS, DELETE");
+        header('Access-Control-Allow-Origin: http://localhost:4200');
+        header('Access-Control-Allow-Headers: X-Requested-With, Origin, Cache-Control, Pragma, Authorization, Accept, Accept-Encoding');
+        header('Access-Control-Allow-Methods: PUT, POST, GET, OPTIONS, DELETE');
         header('Access-Control-Allow-Credentials: true');
         header('Access-Control-Expose-Headers: TokenExpirationTime');
 
@@ -77,9 +77,9 @@ class HttpRequestHandler
 
     private function addCorsOriginHeader()
     {
-        header("Access-Control-Allow-Origin: http://localhost:4200");
+        header('Access-Control-Allow-Origin: http://localhost:4200');
 
-//        header("Access-Control-Allow-Origin: *");
+//        header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Credentials: true');
         header('Access-Control-Expose-Headers: TokenExpirationTime');
     }
@@ -91,8 +91,8 @@ class HttpRequestHandler
     private function setRootConstant()
     {
         $filename = str_replace('/', '\\', $_SERVER['SCRIPT_NAME']);
-        $root = str_replace('index.php', "", strtolower($filename));
-        DEFINE("ROOT", $root);
+        $root = str_replace('index.php', '', strtolower($filename));
+        DEFINE('ROOT', $root);
     }
 
     /**
@@ -102,9 +102,9 @@ class HttpRequestHandler
     private function getRouteBaseFromRequest()
     {
         $request = strtolower($_SERVER['REQUEST_URI']);
-        $urlStripper = str_replace($_SERVER['CONTEXT_DOCUMENT_ROOT'], "", ROOT);
-        $request = str_replace(['//', '/'], "\\", $request);
-        $request = str_replace($urlStripper, "", $request);
+        $urlStripper = str_replace($_SERVER['CONTEXT_DOCUMENT_ROOT'], '', ROOT);
+        $request = str_replace(['//', '/'], '\\', $request);
+        $request = str_replace($urlStripper, '', $request);
         $this->routeBase = $request;
     }
 
@@ -130,7 +130,7 @@ class HttpRequestHandler
         $this->addTokenExpirationTimeToHeader();
         header($_SERVER['SERVER_PROTOCOL'] . ' ' . $e->getHttpCode());
 
-        $data = ['success' => $e->isSuccess(), "data" => $e->getData()];
+        $data = ['success' => $e->isSuccess(), 'data' => $e->getData()];
         echo json_encode($data);
         die();
     }
@@ -157,7 +157,7 @@ class HttpRequestHandler
             $state = $as->getTokenState();
 //            var_dump($state);
             if ($state[0] === true) {
-                header("TokenExpirationTime: {$as->getTokenObj()->getExpirationTime()}");
+                header('TokenExpirationTime: {$as->getTokenObj()->getExpirationTime()}');
             }
         }
 //        var_dump(headers_list());
@@ -172,12 +172,12 @@ class HttpRequestHandler
         $this->parameters = $this->routeAnalyser->getParameters();
         if (isset($_SERVER['CONTENT_TYPE'])) {
             switch ($_SERVER['REQUEST_METHOD']) {
-                case "PUT":
+                case 'PUT':
                     $putVars = [];
-                    parse_str(file_get_contents("php://input"), $putVars);
+                    parse_str(file_get_contents('php://input'), $putVars);
                     $this->parameters->setRequestData($putVars);
                     break;
-                case "POST":
+                case 'POST':
                     $requestData = file_get_contents('php://input');
                     $decodedData = json_decode($requestData);
                     if ($decodedData === null) {
@@ -200,7 +200,7 @@ class HttpRequestHandler
     private function loadRestClass()
     {
         ['className' => $restClass, 'functionName' => $functionName] = $this->routeAnalyser->getRestData();
-        $restClass = "\\rest\\" . $restClass;
+        $restClass = '\\rest\\' . $restClass;
         $class = new $restClass();
         $class->$functionName($this->parameters);
     }
