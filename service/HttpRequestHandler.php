@@ -219,6 +219,29 @@ class HttpRequestHandler
     private function authenticationTaskGuard()
     {
         //TODO
+        $as = Authentication::getInstance();
+        $token = $as->getTokenObj();
+
+        ['authentication' => $authenticationLevel] = $this->routeAnalyser->getRestData();
+        if (($authenticationLevel !== 'A' && $authenticationLevel !== 'NL') && $token === null) {
+            throw new HttpResponseTriggerException(false, ['errorCode' => 'TAF','type'=>1]);
+
+        }
+
+        switch ($authenticationLevel) {
+            case 'NL':
+                if ($token !== null)
+                    throw new HttpResponseTriggerException(false, ['errorCode' => 'TAF','type'=>2]);
+                break;
+            case 'M':
+                if ($token->getAuthorizationLevel() < 2)
+                    throw new HttpResponseTriggerException(false, ['errorCode' => 'TAF','type'=>3]);
+                break;
+            case 'AD':
+                if ($token->getAuthorizationLevel() < 3)
+                    throw new HttpResponseTriggerException(false, ['errorCode' => 'TAF','type'=>4]);
+                break;
+        }
     }
 
 }

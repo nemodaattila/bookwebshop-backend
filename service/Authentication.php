@@ -49,11 +49,21 @@ class Authentication
         return self::$tokenState;
     }
 
+    public function setTokenState()
+    {
+        self::$tokenState = [true, ''];
+    }
+
+    public function resetTokenState()
+    {
+        self::$tokenState = [false, ''];
+    }
+
     /**
      * returns the token object of the current logged user
-     * @return UserToken
+     * @return UserToken|null
      */
-    public function getTokenObj(): UserToken
+    public function getTokenObj(): UserToken | null
     {
         $tokenCont = new UserTokenController();
         return $tokenCont->getTokenFromSession();

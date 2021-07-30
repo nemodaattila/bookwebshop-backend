@@ -51,6 +51,7 @@ class UserHandler
             throw new HttpResponseTriggerException(false, $user);
         }
         $token = $this->userTokenController->generateAndSaveTokenFromUser($user);
+        (Authentication::getInstance())->setTokenState();
         throw new HttpResponseTriggerException(true, ['token' => $token->getToken(), 'userData' => VariableHelper::convertObjectToArray($user)]);
     }
 
@@ -64,6 +65,7 @@ class UserHandler
 //        var_dump($_SESSION);
         $token = $this->userTokenController->getTokenFromSession();
         $this->userTokenController->removeToken($token);
+        (Authentication::getInstance())->resetTokenState();
         throw new HttpResponseTriggerException(true, []);
     }
 

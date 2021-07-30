@@ -11,20 +11,20 @@ class Routes
 
     /**
      * possible routes, parameters: type [GET, POST, PUT, DELETE] | url path | called class | called function
-     * | authenticated users
+     * | authentication level (A: all, L: logged user, NL: not logged user, M: book data maintenance (upload/edit), AD: admin)
      * @var array|string[][]
      * TODO hozzáadni paramétert ami jelöli melyik adatok kellenek a requestből -> url, phpinput, both
      */
 
     private array $routes = [
-        ['GET', "logout", "UserHandler", "logOutUser", 2],
-        ['GET', 'tokentouser', 'UserHandler', 'getUserByToken', 1],
-        ['POST', "login", "UserHandler", "loginUser", 1],
-        ['POST', "register", "UserHandler", "registerUser", 1],
-        ['GET', 'metadata', 'BookMetaData', 'getBookMetaData', 1],
-        ['POST', 'booklist', 'BookListGetter', 'getBookList', 1],
-        ['GET', 'primarydata\$1', 'BookDataGetter', 'getBookPrimaryData', 1],
-        ['GET', 'datalist\$1\$2', 'DataListGetter', 'getDataList', 1]
+        ['GET', 'logout', 'UserHandler', 'logOutUser', 'L'],
+        ['GET', 'tokentouser', 'UserHandler', 'getUserByToken', 'A'],
+        ['POST', "login", "UserHandler", "loginUser", 'A'],
+        ['POST', "register", "UserHandler", "registerUser", 'NL'],
+        ['GET', 'metadata', 'BookMetaData', 'getBookMetaData', 'A'],
+        ['POST', 'booklist', 'BookListGetter', 'getBookList', 'A'],
+        ['GET', 'primarydata\$1', 'BookDataGetter', 'getBookPrimaryData', 'A'],
+        ['GET', 'datalist\$1\$2', 'DataListGetter', 'getDataList', 'A']
     ];
 
     /**
