@@ -26,6 +26,7 @@ class BookListGetter
     {
         //DO parameter validation
         $parameters = $requestData->getRequestData();
+
         if (gettype($parameters) === 'object')
             $parameters['criteria'] = $this->checkAndConvertSearchCriteria($parameters['criteria']);
         [$PDOLink, $dataSource] = PDOProcessorBuilder::getProcessorAndDataSource('select');

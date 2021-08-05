@@ -117,7 +117,7 @@ class UserTokenController
      * if active returns token
      * @param string $tokenString
      * @return array token object
-//     * @throws HttpResponseTriggerException if token not exists OR expired
+     * //     * @throws HttpResponseTriggerException if token not exists OR expired
      * TODO if token is active but not exists in Session , create
      */
     public function getTokenObjectByString(string $tokenString): array

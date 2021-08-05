@@ -32,4 +32,23 @@ class BookDiscountDBHandler extends DBHandlerParent
         }
         return $tempResult['discount_value'];
     }
+
+    /**
+     * return a type id based on isbn
+     * @param string $isbn
+     * @return int
+     * @throws HttpResponseTriggerException
+     */
+    public function getTypeByIsbn(string $isbn): int
+    {
+        $this->createPDO('select');
+        $this->PDOLink->setCommand('SELECT bd.discount_id FROM book_discount as bd WHERE isbn=?');
+        $this->PDOLink->setFetchType('fetch');
+        $this->PDOLink->setValues($isbn);
+        $tempResult = $this->PDOLink->execute();
+        if ($tempResult === false) {
+            return 0;
+        }
+        return $tempResult['discount_id'];
+    }
 }

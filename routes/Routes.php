@@ -17,6 +17,8 @@ class Routes
      */
 
     private array $routes = [
+
+        ['GET', 'secondarydata\$1', 'BookDataGetter', 'getBookSecondaryData', 'A'],
         ['GET', 'logout', 'UserHandler', 'logOutUser', 'L'],
         ['GET', 'tokentouser', 'UserHandler', 'getUserByToken', 'A'],
         ['POST', 'login', 'UserHandler', 'loginUser', 'A'],

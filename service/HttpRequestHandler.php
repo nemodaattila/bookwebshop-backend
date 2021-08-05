@@ -66,7 +66,6 @@ class HttpRequestHandler
 
         //DO expand cors handling
 //        header('Access-Control-Allow-Origin: *');
-
         header('Access-Control-Allow-Origin: http://localhost:4200');
         header('Access-Control-Allow-Headers: X-Requested-With, Origin, Cache-Control, Pragma, Authorization, Accept, Accept-Encoding');
         header('Access-Control-Allow-Methods: PUT, POST, GET, OPTIONS, DELETE');
@@ -78,7 +77,6 @@ class HttpRequestHandler
     private function addCorsOriginHeader()
     {
         header('Access-Control-Allow-Origin: http://localhost:4200');
-
 //        header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Credentials: true');
         header('Access-Control-Expose-Headers: TokenExpirationTime');
@@ -129,7 +127,6 @@ class HttpRequestHandler
     {
         $this->addTokenExpirationTimeToHeader();
         header($_SERVER['SERVER_PROTOCOL'] . ' ' . $e->getHttpCode());
-
         $data = ['success' => $e->isSuccess(), 'data' => $e->getData()];
         echo json_encode($data);
         die();
@@ -146,7 +143,6 @@ class HttpRequestHandler
         //DO save message to log instead of echo
         $this->addTokenExpirationTimeToHeader();
         header($_SERVER['SERVER_PROTOCOL'] . ' ' . 500);
-
         echo $message . ' - ' . $file . ':' . $line;
     }
 
@@ -155,12 +151,10 @@ class HttpRequestHandler
         if ($_SERVER['REQUEST_METHOD'] !== 'OPTIONS') {
             $as = Authentication::getInstance();
             $state = $as->getTokenState();
-//            var_dump($state);
             if ($state[0] === true) {
                 header('TokenExpirationTime: {$as->getTokenObj()->getExpirationTime()}');
             }
         }
-//        var_dump(headers_list());
     }
 
     /**
@@ -205,6 +199,9 @@ class HttpRequestHandler
         $class->$functionName($this->parameters);
     }
 
+    /**
+     * checks user authentication
+     */
     private function authenticateUser()
     {
         if (isset(getallheaders()['Authorization'])) {
@@ -216,6 +213,10 @@ class HttpRequestHandler
         }
     }
 
+    /**
+     * checks if user is entitled to use the given function
+     * @throws HttpResponseTriggerException
+     */
     private function authenticationTaskGuard()
     {
         //TODO
@@ -224,22 +225,20 @@ class HttpRequestHandler
 
         ['authentication' => $authenticationLevel] = $this->routeAnalyser->getRestData();
         if (($authenticationLevel !== 'A' && $authenticationLevel !== 'NL') && $token === null) {
-            throw new HttpResponseTriggerException(false, ['errorCode' => 'TAF','type'=>1]);
-
+            throw new HttpResponseTriggerException(false, ['errorCode' => 'TAF', 'type' => 1]);
         }
-
         switch ($authenticationLevel) {
             case 'NL':
                 if ($token !== null)
-                    throw new HttpResponseTriggerException(false, ['errorCode' => 'TAF','type'=>2]);
+                    throw new HttpResponseTriggerException(false, ['errorCode' => 'TAF', 'type' => 2]);
                 break;
             case 'M':
                 if ($token->getAuthorizationLevel() < 2)
-                    throw new HttpResponseTriggerException(false, ['errorCode' => 'TAF','type'=>3]);
+                    throw new HttpResponseTriggerException(false, ['errorCode' => 'TAF', 'type' => 3]);
                 break;
             case 'AD':
                 if ($token->getAuthorizationLevel() < 3)
-                    throw new HttpResponseTriggerException(false, ['errorCode' => 'TAF','type'=>4]);
+                    throw new HttpResponseTriggerException(false, ['errorCode' => 'TAF', 'type' => 4]);
                 break;
         }
     }

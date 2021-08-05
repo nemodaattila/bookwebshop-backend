@@ -63,7 +63,7 @@ class Authentication
      * returns the token object of the current logged user
      * @return UserToken|null
      */
-    public function getTokenObj(): UserToken | null
+    public function getTokenObj(): UserToken|null
     {
         $tokenCont = new UserTokenController();
         return $tokenCont->getTokenFromSession();

@@ -5,9 +5,15 @@ namespace rest;
 use classDbHandler\AuthorDBHandler;
 use classDbHandler\bookData\BookAuthorDBHandler;
 use classDbHandler\bookData\BookCoverDBHandler;
+use classDbHandler\bookData\BookDescriptionDBHandler;
 use classDbHandler\bookData\BookDiscountDBHandler;
 use classDbHandler\bookData\BookPriceDBHandler;
 use classDbHandler\bookData\BookPrimaryDataDBHAndler;
+use classDbHandler\bookData\BookSeriesDBHandler;
+use classDbHandler\bookData\BookTagDBHandler;
+use classDbHandler\DiscountDBHandler;
+use classDbHandler\PublisherDBHandler;
+use classDbHandler\SeriesDBHandler;
 use classModel\RequestParameters;
 use exception\HttpResponseTriggerException;
 use helper\ImgHelper;
@@ -74,6 +80,43 @@ class BookDataGetter
             }
             return ImgHelper::convertImageToBase64String('image\coverThumbnail\\' . $isbn . '.' . $coverData['extension']);
         }
+    }
+
+    /**
+     * returns the cover of a book in base 64 string form based in isbn
+     * @param string $isbn
+     * @return string
+     * @throws HttpResponseTriggerException image conversion error
+     */
+    private function getCover(string $isbn): string
+    {
+        $coverHandler = new BookCoverDBHandler();
+        $coverData = $coverHandler->getByIsbn($isbn);
+        if ($coverData == false) {
+            return ImgHelper::convertImageToBase64String('image\cover\no_cover.jpg');
+        } else {
+            return ImgHelper::convertImageToBase64String('image\cover\\' . $isbn . '.' . $coverData['extension']);
+        }
+    }
+
+    /**
+     * returns the secondary data of a book based on isbn
+     * @param RequestParameters $parameters
+     * @throws HttpResponseTriggerException
+     */
+    public function getBookSecondaryData(RequestParameters $parameters)
+    {
+        $isbn = $parameters->getUrlParameters()[0];
+        $result = (new BookDescriptionDBHandler())->getByIsbn($isbn);
+        $result['publisher'] = (new PublisherDBHandler())->getPublisherNameById($result['publisher_id']);
+        unset($result['publisher_id']);
+        $result['cover'] = $this->getCover($isbn);
+        $disc = (new BookDiscountDBHandler())->getTypeByIsbn($isbn);
+        $result['discount_type'] = [$disc => (new DiscountDBHandler())->getNameById($disc)];
+        $serId = (new BookSeriesDBHandler())->getSeriesIdByIsbn($isbn);
+        $result['series'] = ($serId === null) ? null : (new SeriesDBHandler())->getSeriesNameById($serId);
+        $result['tags'] = (new BookTagDBHandler())->getTagsByIsbn($isbn);
+        throw new HttpResponseTriggerException(true, $result);
     }
 
 }

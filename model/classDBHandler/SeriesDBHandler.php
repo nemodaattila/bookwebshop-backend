@@ -23,4 +23,22 @@ class SeriesDBHandler extends DBHandlerParent
         $this->PDOLink->setValues('%' . $pattern . '%');
         return $this->PDOLink->execute();
     }
+
+    /**
+     * returns the name of a series based on id
+     * @param int $id
+     * @return string
+     * @throws HttpResponseTriggerException
+     */
+    function getSeriesNameById(int $id): string
+    {
+        $this->createPDO('select');
+        $this->PDOLink->setCommand('Select s.name from series as s where s.id = ?');
+        $this->PDOLink->setValues($id);
+        $tempResult = $this->PDOLink->execute();
+        if ($tempResult === false) {
+            throw new HttpResponseTriggerException(false, ['errorCode' => 'SDBHIDNE']);
+        }
+        return $tempResult[0]['name'];
+    }
 }

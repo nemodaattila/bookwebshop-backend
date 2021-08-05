@@ -20,6 +20,7 @@ class DataListGetter
      * calls function based on request parameter (Author, Publisher or Series)
      * @param RequestParameters $parameters http request parameters
      * @throws HttpResponseTriggerException functions throw result in exception (it's ok not error)
+     * //TODO probléma ékezetekkel POST-ban ??
      */
     public function getDataList(RequestParameters $parameters)
     {
