@@ -152,7 +152,7 @@ class HttpRequestHandler
             $as = Authentication::getInstance();
             $state = $as->getTokenState();
             if ($state[0] === true) {
-                header('TokenExpirationTime: {$as->getTokenObj()->getExpirationTime()}');
+                header('TokenExpirationTime: '.$as->getTokenObj()->getExpirationTime());
             }
         }
     }

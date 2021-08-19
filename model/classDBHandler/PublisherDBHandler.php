@@ -42,4 +42,13 @@ class PublisherDBHandler extends DBHandlerParent
         }
         return $tempResult[0]['name'];
     }
+
+    function addNewPublisher(string $name): bool
+    {
+        $this->createPDO('insert');
+        $this->PDOLink->setCommand('INSERT INTO publisher (name) VALUES (?)');
+        $this->PDOLink->setValues($name);
+        return $this->PDOLink->execute();
+
+    }
 }

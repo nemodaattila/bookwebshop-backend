@@ -41,4 +41,13 @@ class SeriesDBHandler extends DBHandlerParent
         }
         return $tempResult[0]['name'];
     }
+
+    function addNewSeries(string $name): bool
+    {
+        $this->createPDO('insert');
+        $this->PDOLink->setCommand('INSERT INTO series (name) VALUES (?)');
+        $this->PDOLink->setValues($name);
+        return $this->PDOLink->execute();
+
+    }
 }

@@ -39,4 +39,13 @@ class AuthorDBHandler extends DBHandlerParent
         $this->PDOLink->setValues('%' . $pattern . '%');
         return $this->PDOLink->execute();
     }
+
+    function addNewAuthor(string $name): bool
+    {
+        $this->createPDO('insert');
+        $this->PDOLink->setCommand('INSERT INTO author (name) VALUES (?)');
+        $this->PDOLink->setValues($name);
+        return $this->PDOLink->execute();
+
+    }
 }

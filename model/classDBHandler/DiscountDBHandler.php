@@ -7,6 +7,18 @@ use exception\HttpResponseTriggerException;
 class DiscountDBHandler extends DBHandlerParent
 {
 
+    public function get(): array
+    {
+        $this->createPDO('select');
+        $this->PDOLink->setCommand('SELECT id,  name, default_value FROM discount');
+        $tempResult = $this->PDOLink->execute();
+        $result = [];
+        foreach ($tempResult as $value) {
+            $result[$value['id']] = [$value['name'],$value['default_value']];
+        }
+        return $result;
+    }
+
     public function getNameById(int $id): string
     {
         $this->createPDO('select');

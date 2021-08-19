@@ -2,6 +2,7 @@
 
 namespace rest;
 
+use classDbHandler\DiscountDBHandler;
 use classDbHandler\metaData\MetaFormatDBHandler;
 use classDbHandler\metaData\MetaLanguageDBHandler;
 use classDbHandler\metaData\MetaMainCategoryDBHandler;
@@ -34,6 +35,7 @@ class BookMetaData
             'tag' => (new MetaTagDBHandler())->get(),
             'targetAudience' => (new MetaTargetAudienceDBHandler())->get(),
             'type' => (new MetaTypeDBHandler())->get(),
+            "discountType" => (new DiscountDBHandler())->get()
         ];
         throw new HttpResponseTriggerException(true, $result);
     }
