@@ -35,4 +35,12 @@ class BookTagDBHandler extends DBHandlerParent
         }
         return $tags;
     }
+
+    public function insert(string $isbn, int $tagId)
+    {
+        $this->createPDO('insert');
+        $this->PDOLink->setCommand('INSERT INTO book_tag (isbn,tag_id) VALUES (?,?)');
+        $this->PDOLink->setValues([$isbn, $tagId]);
+        return $this->PDOLink->execute();
+    }
 }

@@ -32,4 +32,19 @@ abstract class PDOQueryProcessorParent implements IPDOQueryProcessorInterface
     {
         $this->source = $source;
     }
+
+    public function beginTransaction()
+    {
+        $this->pdo->beginTransaction();
+    }
+
+    public function commit()
+    {
+        $this->pdo->commit();
+    }
+
+    public function rollback()
+    {
+        $this->pdo->rollBack();
+    }
 }

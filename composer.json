@@ -13,7 +13,8 @@
       "simpleDatabaseProcessor\\": "database/queryProcessor/simple",
       "complexDatabaseProcessor\\": "database/queryProcessor/complex",
       "interfaces\\": "interfaces/",
-      "controller\\": "controller/"
+      "controller\\": "controller/",
+      "bookDataManipulator\\": "controller\\BookDataManipulator"
     }
   },
   "require": {

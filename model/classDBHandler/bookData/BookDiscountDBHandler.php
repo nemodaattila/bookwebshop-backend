@@ -51,4 +51,12 @@ class BookDiscountDBHandler extends DBHandlerParent
         }
         return $tempResult['discount_id'];
     }
+
+    public function insert(string $isbn, int $discountId, int $discountValue)
+    {
+        $this->createPDO('insert');
+        $this->PDOLink->setCommand('INSERT INTO book_discount (isbn,discount_id, discount_value) VALUES (?,?,?)');
+        $this->PDOLink->setValues([$isbn, $discountId, $discountValue]);
+        return $this->PDOLink->execute();
+    }
 }

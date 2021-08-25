@@ -30,4 +30,13 @@ class BookSeriesDBHandler extends DBHandlerParent
         }
         return $tempResult[0]['series_id'];
     }
+
+
+    public function insert(string $isbn, int $seriesId)
+    {
+        $this->createPDO('insert');
+        $this->PDOLink->setCommand('INSERT INTO book_series (isbn,series_id) VALUES (?,?)');
+        $this->PDOLink->setValues([$isbn, $seriesId]);
+        return $this->PDOLink->execute();
+    }
 }

@@ -8,7 +8,7 @@ use classDbHandler\bookData\BookCoverDBHandler;
 use classDbHandler\bookData\BookDescriptionDBHandler;
 use classDbHandler\bookData\BookDiscountDBHandler;
 use classDbHandler\bookData\BookPriceDBHandler;
-use classDbHandler\bookData\BookPrimaryDataDBHAndler;
+use classDbHandler\bookData\BookDBHAndler;
 use classDbHandler\bookData\BookSeriesDBHandler;
 use classDbHandler\bookData\BookTagDBHandler;
 use classDbHandler\DiscountDBHandler;
@@ -34,7 +34,7 @@ class BookDataGetter
     public function getBookPrimaryData(RequestParameters $parameters)
     {
         $isbn = $parameters->getUrlParameters()[0];
-        $result = (new BookPrimaryDataDBHAndler())->getByIsbn($isbn);
+        $result = (new BookDBHAndler())->getByIsbn($isbn);
         $result['author'] = $this->getBookAuthor($isbn);
         $result['price'] = (new BookPriceDBHandler())->getPriceByIsbn($isbn);
         $result['discount'] = (new BookDiscountDBHandler())->getQuantityByIsbn($isbn);
@@ -74,8 +74,8 @@ class BookDataGetter
         if ($coverData == false) {
             return ImgHelper::convertImageToBase64String('image\coverThumbnail\no_cover.jpg');
         } else {
-            if ($coverData['has_cover'] === '1' && $coverData['has_thumbnail'] === '0') {
-                ImgHelper::createThumbnail($isbn . '.' . $coverData['extension'], 'image\cover\\', ROOT . 'image\coverThumbnail\\', 150, 212);
+            if ($coverData['has_thumbnail'] === '0') {
+                ImgHelper::createThumbnail($isbn . '.' . $coverData['extension'], 'image\cover\\',  'image\coverThumbnail\\', 150, 212);
                 $coverHandler->setHasThumbnailToTrueByIsbn($isbn);
             }
             return ImgHelper::convertImageToBase64String('image\coverThumbnail\\' . $isbn . '.' . $coverData['extension']);
@@ -108,7 +108,7 @@ class BookDataGetter
     {
         $isbn = $parameters->getUrlParameters()[0];
         $result = (new BookDescriptionDBHandler())->getByIsbn($isbn);
-        $result['publisher'] = (new PublisherDBHandler())->getPublisherNameById($result['publisher_id']);
+        $result['publisher'] = (new PublisherDBHandler())->getNameById($result['publisher_id']);
         unset($result['publisher_id']);
         $result['cover'] = $this->getCover($isbn);
         $disc = (new BookDiscountDBHandler())->getTypeByIsbn($isbn);

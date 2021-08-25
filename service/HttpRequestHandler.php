@@ -67,7 +67,7 @@ class HttpRequestHandler
         //DO expand cors handling
 //        header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Origin: http://localhost:4200');
-        header('Access-Control-Allow-Headers: X-Requested-With, Origin, Cache-Control, Pragma, Authorization, Accept, Accept-Encoding');
+        header('Access-Control-Allow-Headers: X-Requested-With, Origin, Cache-Control, Pragma, Authorization, Accept, Accept-Encoding,Content-Type');
         header('Access-Control-Allow-Methods: PUT, POST, GET, OPTIONS, DELETE');
         header('Access-Control-Allow-Credentials: true');
         header('Access-Control-Expose-Headers: TokenExpirationTime');
@@ -164,6 +164,7 @@ class HttpRequestHandler
     private function getHttpRequestData()
     {
         $this->parameters = $this->routeAnalyser->getParameters();
+
         if (isset($_SERVER['CONTENT_TYPE'])) {
             switch ($_SERVER['REQUEST_METHOD']) {
                 case 'PUT':
@@ -174,6 +175,8 @@ class HttpRequestHandler
                 case 'POST':
                     $requestData = file_get_contents('php://input');
                     $decodedData = json_decode($requestData);
+//                    print_r($decodedData);
+
                     if ($decodedData === null) {
                         $this->parameters->setRequestData([$requestData]);
                     } else {
@@ -183,6 +186,8 @@ class HttpRequestHandler
                             $this->parameters->setRequestData(VariableHelper::convertStdClassToArray($decodedData));
                         } else throw new Exception('POST REQUEST DATA INCORRECT FORMAT');
                     }
+//                    print_r($_FILES);
+//                    var_dump(get_object_vars($this->parameters->getRequestData()[0]));
                     break;
             }
         }

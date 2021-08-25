@@ -20,7 +20,7 @@ class BookCoverDBHandler extends DBHandlerParent
     public function getByIsbn(string $isbn): array|bool
     {
         $this->createPDO('select');
-        $this->PDOLink->setCommand('SELECT bc.extension, bc.has_cover, bc.has_thumbnail FROM book_cover as bc WHERE book_isbn=?');
+        $this->PDOLink->setCommand('SELECT bc.extension, bc.has_thumbnail FROM book_cover as bc WHERE book_isbn=?');
         $this->PDOLink->setFetchType('fetch');
         $this->PDOLink->setValues($isbn);
         return $this->PDOLink->execute();
@@ -32,11 +32,19 @@ class BookCoverDBHandler extends DBHandlerParent
      * @throws HttpResponseTriggerException wrong processor type
      * @throws HttpResponseTriggerException sql query error
      */
-    public function setHasThumbnailToTrueByIsbn(int $isbn): void
+    public function setHasThumbnailToTrueByIsbn(string $isbn): void
     {
         $this->createPDO('update');
         $this->PDOLink->setCommand('UPDATE book_cover SET has_thumbnail = 1 WHERE book_isbn=?');
         $this->PDOLink->setValues($isbn);
         $this->PDOLink->execute();
+    }
+
+    public function insert(string $isbn, string $extension)
+    {
+        $this->createPDO('insert');
+        $this->PDOLink->setCommand('INSERT INTO book_cover (book_isbn,extension,has_thumbnail) VALUES (?,?,?)');
+        $this->PDOLink->setValues([$isbn, $extension, 0]);
+        return $this->PDOLink->execute();
     }
 }

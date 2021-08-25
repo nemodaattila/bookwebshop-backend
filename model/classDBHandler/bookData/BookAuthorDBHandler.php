@@ -30,4 +30,12 @@ class BookAuthorDBHandler extends DBHandlerParent
         }
         return $result;
     }
+
+    public function insert(string $isbn, int $authorId)
+    {
+        $this->createPDO('insert');
+        $this->PDOLink->setCommand('INSERT INTO book_author (isbn,author_id) VALUES (?,?)');
+        $this->PDOLink->setValues([$isbn, $authorId]);
+        return $this->PDOLink->execute();
+    }
 }

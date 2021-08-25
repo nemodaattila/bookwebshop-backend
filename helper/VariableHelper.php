@@ -18,7 +18,7 @@ class VariableHelper
      */
     public static function convertStdClassToArray(stdClass $class): array
     {
-        return json_decode(json_encode($class), true);
+        return (get_object_vars($class));
     }
 
     public static function convertObjectToArray(?IConvertableToArrayInterface $class): array

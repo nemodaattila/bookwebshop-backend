@@ -42,12 +42,25 @@ class SeriesDBHandler extends DBHandlerParent
         return $tempResult[0]['name'];
     }
 
-    function addNewSeries(string $name): bool
+    function insert(string $name): bool
     {
         $this->createPDO('insert');
         $this->PDOLink->setCommand('INSERT INTO series (name) VALUES (?)');
         $this->PDOLink->setValues($name);
         return $this->PDOLink->execute();
+    }
 
+    function getIdByName(string $name): int
+    {
+
+        $this->createPDO('select');
+        $this->PDOLink->setCommand('Select s.id from series as s where s.name = ?');
+        $this->PDOLink->setValues($name);
+        $this->PDOLink->setFetchType('fetch');
+        $tempResult = $this->PDOLink->execute();
+        if ($tempResult === false) {
+            throw new HttpResponseTriggerException(false, ['errorCode' => 'SDBHNDNE']);
+        }
+        return $tempResult['id'];
     }
 }

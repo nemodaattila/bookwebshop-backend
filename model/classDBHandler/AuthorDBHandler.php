@@ -26,13 +26,27 @@ class AuthorDBHandler extends DBHandlerParent
         return $result['name'];
     }
 
+    function getIdByName(string $name): int
+    {
+
+        $this->createPDO('select');
+        $this->PDOLink->setCommand('Select p.id from author as p where p.name = ?');
+        $this->PDOLink->setValues($name);
+        $this->PDOLink->setFetchType('fetch');
+        $tempResult = $this->PDOLink->execute();
+        if ($tempResult === false) {
+            throw new HttpResponseTriggerException(false, ['errorCode' => 'ADBHNDNE']);
+        }
+        return $tempResult['id'];
+    }
+
     /**
      * returns all author's names which matches LIKE pattern
      * @param string $pattern pattern to match authors
      * @return array name of authors
      * @throws HttpResponseTriggerException bad processor type, query error
      */
-    function getSpecificAuthorsWithLike(string $pattern): array
+    function getWithLike(string $pattern): array
     {
         $this->createPDO('select');
         $this->PDOLink->setCommand('Select a.Name from Author as a where a.Name LIKE ?');
@@ -40,7 +54,7 @@ class AuthorDBHandler extends DBHandlerParent
         return $this->PDOLink->execute();
     }
 
-    function addNewAuthor(string $name): bool
+    function insert(string $name): bool
     {
         $this->createPDO('insert');
         $this->PDOLink->setCommand('INSERT INTO author (name) VALUES (?)');

@@ -29,4 +29,15 @@ class BookDescriptionDBHandler extends DBHandlerParent
         }
         return $tempResult;
     }
+
+    public function insert(string $isbn, int $targetAudience, int $publisher, int $language, int $year, int $page,
+        int $format, ?int $weight, ?string $size, ?string $description)
+    {
+
+        $this->createPDO('insert');
+        $this->PDOLink->setCommand('INSERT INTO book_description ( isbn,target_audience_id, publisher_id,
+                              language_id, year, page_number, format_id,weight,physical_size, short_description) VALUES (?,?,?,?,?,?,?,?,?,?)');
+        $this->PDOLink->setValues(func_get_args());
+        return $this->PDOLink->execute();
+    }
 }

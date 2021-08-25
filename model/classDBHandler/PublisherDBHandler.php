@@ -17,12 +17,27 @@ class PublisherDBHandler extends DBHandlerParent
      * @return array result name
      * @throws HttpResponseTriggerException wrong processor type, query error
      */
-    function getSpecificPublisherWithLike(string $pattern): array
+    function getWithLike(string $pattern): array
     {
         $this->createPDO('select');
         $this->PDOLink->setCommand('Select p.name from publisher as p where p.name LIKE ?');
         $this->PDOLink->setValues('%' . $pattern . '%');
         return $this->PDOLink->execute();
+    }
+
+    function getIdByName(string $name): int
+    {
+
+
+        $this->createPDO('select');
+        $this->PDOLink->setCommand('Select p.id from publisher as p where p.name = ?');
+        $this->PDOLink->setValues($name);
+        $this->PDOLink->setFetchType('fetch');
+        $tempResult = $this->PDOLink->execute();
+        if ($tempResult === false) {
+            throw new HttpResponseTriggerException(false, ['errorCode' => 'PDBHNDNE']);
+        }
+        return $tempResult['id'];
     }
 
     /**
@@ -31,7 +46,7 @@ class PublisherDBHandler extends DBHandlerParent
      * @return string
      * @throws HttpResponseTriggerException
      */
-    function getPublisherNameById(int $id): string
+    function getNameById(int $id): string
     {
         $this->createPDO('select');
         $this->PDOLink->setCommand('Select p.name from publisher as p where p.id = ?');
@@ -43,7 +58,7 @@ class PublisherDBHandler extends DBHandlerParent
         return $tempResult[0]['name'];
     }
 
-    function addNewPublisher(string $name): bool
+    function insert(string $name): bool
     {
         $this->createPDO('insert');
         $this->PDOLink->setCommand('INSERT INTO publisher (name) VALUES (?)');

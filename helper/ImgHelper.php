@@ -17,7 +17,7 @@ class ImgHelper
         IMAGETYPE_JPEG => [
             'load' => 'imagecreatefromjpeg',
             'save' => 'imagejpeg',
-            'quality' => 100
+            'quality' => 75
         ],
         IMAGETYPE_PNG => [
             'load' => 'imagecreatefrompng',
@@ -83,10 +83,11 @@ class ImgHelper
             $targetWidth, $targetHeight,
             $width, $height
         );
+
         $save = call_user_func(
             self::IMAGE_HANDLERS[$type]['save'],
             $thumbnail,
-            $dest . '\\' . $filename,
+            $dest . $filename,
             self::IMAGE_HANDLERS[$type]['quality']
         );
         if ($save !== true) {

@@ -44,7 +44,7 @@ class DataListGetter
     private function getAuthorDataList(string $value)
     {
         $ah = new AuthorDBHandler();
-        $dl = $ah->getSpecificAuthorsWithLike($value);
+        $dl = $ah->getWithLike($value);
         foreach ($dl as $key => $value) {
             $dl[$key] = $value['Name'];
         }
@@ -59,7 +59,7 @@ class DataListGetter
     private function getPublisherDataList(string $value)
     {
         $ph = new PublisherDBHandler();
-        $dl = $ph->getSpecificPublisherWithLike($value);
+        $dl = $ph->getWithLike($value);
         foreach ($dl as $key => $value) {
             $dl[$key] = $value['name'];
         }
