@@ -14,7 +14,7 @@ class BookAuthorDBHandler extends DBHandlerParent
 
     /**
      * gets the author(s) of a book by isbn
-     * @param string $isbn isbn number of a book
+     * @param string $isbn isbn of a book
      * @return array author(s) of the book
      * @throws HttpResponseTriggerException on mysql query error
      */

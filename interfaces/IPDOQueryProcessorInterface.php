@@ -5,8 +5,9 @@ namespace interfaces;
 use databaseSource\PDOQueryDataSource;
 
 /**
+ * interface for complex PDO query helpers
  * Interface IPDOQueryProcessorInterface
- * @package core\backend\interfaces interface for complex PDO query helpers
+ * @package core\backend\interfaces
  */
 interface IPDOQueryProcessorInterface
 {

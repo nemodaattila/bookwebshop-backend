@@ -13,7 +13,7 @@ use classDbHandler\metaData\MetaTypeDBHandler;
 use exception\HttpResponseTriggerException;
 
 /**
- * collects all meta data connected to books :
+ * collects all metadata connected to books :
  * format, type, language, main and subcategory, tag, target audience
  * Class BookMetaData
  * @package rest

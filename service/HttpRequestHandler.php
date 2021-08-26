@@ -120,44 +120,6 @@ class HttpRequestHandler
     }
 
     /**
-     * send a http response based on a HttpResponseTriggerException
-     * @param HttpResponseTriggerException $e specific exception for responses
-     */
-    private function sendResponseBasedOnTriggerException(HttpResponseTriggerException $e)
-    {
-        $this->addTokenExpirationTimeToHeader();
-        header($_SERVER['SERVER_PROTOCOL'] . ' ' . $e->getHttpCode());
-        $data = ['success' => $e->isSuccess(), 'data' => $e->getData()];
-        echo json_encode($data);
-        die();
-    }
-
-    /**
-     * sends a http response based on error parameters
-     * @param string $message error message
-     * @param string $file filename from which the error was thrown
-     * @param int $line line from which the error was thrown
-     */
-    private function sendResponseBasedOnError(string $message, string $file, int $line)
-    {
-        //DO save message to log instead of echo
-        $this->addTokenExpirationTimeToHeader();
-        header($_SERVER['SERVER_PROTOCOL'] . ' ' . 500);
-        echo $message . ' - ' . $file . ':' . $line;
-    }
-
-    private function addTokenExpirationTimeToHeader()
-    {
-        if ($_SERVER['REQUEST_METHOD'] !== 'OPTIONS') {
-            $as = Authentication::getInstance();
-            $state = $as->getTokenState();
-            if ($state[0] === true) {
-                header('TokenExpirationTime: '.$as->getTokenObj()->getExpirationTime());
-            }
-        }
-    }
-
-    /**
      * collects data from http request body, converts it if necessary
      * @throws Exception if the data is in an inappropriate format
      */
@@ -191,17 +153,6 @@ class HttpRequestHandler
                     break;
             }
         }
-    }
-
-    /**
-     * loads a http request processor class based on url
-     */
-    private function loadRestClass()
-    {
-        ['className' => $restClass, 'functionName' => $functionName] = $this->routeAnalyser->getRestData();
-        $restClass = '\\rest\\' . $restClass;
-        $class = new $restClass();
-        $class->$functionName($this->parameters);
     }
 
     /**
@@ -246,6 +197,55 @@ class HttpRequestHandler
                     throw new HttpResponseTriggerException(false, ['errorCode' => 'TAF', 'type' => 4]);
                 break;
         }
+    }
+
+    /**
+     * loads a http request processor class based on url
+     */
+    private function loadRestClass()
+    {
+        ['className' => $restClass, 'functionName' => $functionName] = $this->routeAnalyser->getRestData();
+        $restClass = '\\rest\\' . $restClass;
+        $class = new $restClass();
+        $class->$functionName($this->parameters);
+    }
+
+    /**
+     * send a http response based on a HttpResponseTriggerException
+     * @param HttpResponseTriggerException $e specific exception for responses
+     */
+    private function sendResponseBasedOnTriggerException(HttpResponseTriggerException $e)
+    {
+        $this->addTokenExpirationTimeToHeader();
+        header($_SERVER['SERVER_PROTOCOL'] . ' ' . $e->getHttpCode());
+        $data = ['success' => $e->isSuccess(), 'data' => $e->getData()];
+        echo json_encode($data);
+        die();
+    }
+
+    private function addTokenExpirationTimeToHeader()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'OPTIONS') {
+            $as = Authentication::getInstance();
+            $state = $as->getTokenState();
+            if ($state[0] === true) {
+                header('TokenExpirationTime: ' . $as->getTokenObj()->getExpirationTime());
+            }
+        }
+    }
+
+    /**
+     * sends a http response based on error parameters
+     * @param string $message error message
+     * @param string $file filename from which the error was thrown
+     * @param int $line line from which the error was thrown
+     */
+    private function sendResponseBasedOnError(string $message, string $file, int $line)
+    {
+        //DO save message to log instead of echo
+        $this->addTokenExpirationTimeToHeader();
+        header($_SERVER['SERVER_PROTOCOL'] . ' ' . 500);
+        echo $message . ' - ' . $file . ':' . $line;
     }
 
 }

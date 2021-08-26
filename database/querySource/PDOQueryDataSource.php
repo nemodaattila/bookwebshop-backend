@@ -52,6 +52,13 @@ class PDOQueryDataSource
     private bool $distinct = false;
 
     //getters/setters
+
+    public function __construct()
+    {
+        $this->tablesAndAttributes = new TablesAndAttributesClass();
+        $this->whereConditions = new WhereConditionsBackboneClass();
+    }
+
     public function isDistinct(): bool
     {
         return $this->distinct;
@@ -84,13 +91,6 @@ class PDOQueryDataSource
         return null;
     }
 
-    public function getOrderDirection(): ?string
-    {
-        if (isset($this->orderDirection))
-            return $this->orderDirection;
-        return null;
-    }
-
     /**
      * sets the order parameter
      * @throws HttpResponseTriggerException if table of the order parameter not exists
@@ -101,15 +101,43 @@ class PDOQueryDataSource
         $this->order = $order;
     }
 
+    /**
+     * checks if the given attribute's table exists
+     * if exists returns it with alias name
+     * if not exception
+     * if no table name was added, simply returns it
+     * @param string $attribute az attribute: person.name
+     * @return string attribute with table alias, or simply the attribute
+     * @throws HttpResponseTriggerException if table doesn't exist
+     */
+    public function checkTableExists(string $attribute): string
+    {
+        $newName = $attribute;
+        $explodedAttrib = explode('.', $attribute);
+        if (count($explodedAttrib) === 2) {
+            $tables = $this->tablesAndAttributes->getAll();
+            if (array_key_exists($explodedAttrib[0], $tables)) {
+                $alias = $tables[$explodedAttrib[0]]['alias'];
+                if ($alias !== null) {
+                    $newName = $alias . '.' . $explodedAttrib[1];
+                }
+            } else {
+                throw new HttpResponseTriggerException(false, ['errorCode' => 'QSTACNE', 'value' => $attribute], 400);
+            }
+        }
+        return $newName;
+    }
+
+    public function getOrderDirection(): ?string
+    {
+        if (isset($this->orderDirection))
+            return $this->orderDirection;
+        return null;
+    }
+
     public function setOrderDirection(string $orderDirection): void
     {
         $this->orderDirection = $orderDirection;
-    }
-
-    public function __construct()
-    {
-        $this->tablesAndAttributes = new TablesAndAttributesClass();
-        $this->whereConditions = new WhereConditionsBackboneClass();
     }
 
     /**
@@ -158,9 +186,9 @@ class PDOQueryDataSource
      */
     public function addSubQueryAsAttribute(IPDOQueryProcessorInterface $pdoProcessor, PDOQueryDataSource $dataSource, string $alias)
     {
-        if ($alias === null) {
-            throw new  HttpResponseTriggerException(false, ['errorCode' => 'PDOASQA'], 500);
-        }
+//        if (is_null($alias)) {
+//            throw new  HttpResponseTriggerException(false, ['errorCode' => 'PDOASQA'], 500);
+//        }
         $this->subQueryAsAttribute[] = [$pdoProcessor, $dataSource, $alias];
     }
 
@@ -234,33 +262,6 @@ class PDOQueryDataSource
     public function addConditionObject(WhereConditionsBackboneClass $class, $conditionOperator = null, bool $isBracketed = false)
     {
         $this->whereConditions->addConditionObject($class, $conditionOperator, $isBracketed);
-    }
-
-    /**
-     * checks if the given attribute's table exists
-     * if exists returns it with alias name
-     * if not exception
-     * if no table name was added, simply returns ot
-     * @param string $attribute az attribute: person.name
-     * @return string attribute with table alias, or simply the attribute
-     * @throws HttpResponseTriggerException if table doesn't exists
-     */
-    public function checkTableExists(string $attribute): string
-    {
-        $newName = $attribute;
-        $explodedAttrib = explode('.', $attribute);
-        if (count($explodedAttrib) === 2) {
-            $tables = $this->tablesAndAttributes->getAll();
-            if (array_key_exists($explodedAttrib[0], $tables)) {
-                $alias = $tables[$explodedAttrib[0]]['alias'];
-                if ($alias !== null) {
-                    $newName = $alias . '.' . $explodedAttrib[1];
-                }
-            } else {
-                throw new HttpResponseTriggerException(false, ['errorCode' => 'QSTACNE', 'value' => $attribute], 400);
-            }
-        }
-        return $newName;
     }
 
     /**

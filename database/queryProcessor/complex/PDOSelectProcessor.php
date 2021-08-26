@@ -44,6 +44,26 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
     }
 
     /**
+     * runs a query from a querystring with the saved values (boundValues)
+     * @param string $queryString query string
+     * @return array result of query
+     */
+    private function runQuery(string $queryString): array
+    {
+        $query = $this->pdo->prepare($queryString);
+        $values = $this->source->getBoundValues();
+        if (!empty($values)) {
+            foreach ($values as $key => $value) {
+                $id = ($value[2] !== null) ? $value[2] : $key + 1;
+                $query->bindValue($id, $value[0], $value[1]);
+            }
+        }
+        $query->execute();
+        $rt = $this->fetchType;
+        return $query->$rt($this->fetchMode);
+    }
+
+    /**
      * creates and returns a query string from query data source
      * @return string query string
      */
@@ -57,36 +77,6 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
         $query .= $this->getOrderByQuery();
         $query .= $this->getLimitAndOffsetQuery();
         return trim(str_replace('  ', ' ', $query));
-    }
-
-    /**
-     * creates and returns a counter query string from query data source
-     * @return string query string
-     */
-    private function createCountQuery(): string
-    {
-        $query = 'SELECT COUNT(*) AS COUNT FROM ( SELECT ' . $this->getTableAndAttributesQuery();
-        $where = $this->source->getQueryWhere();
-        if ($where !== '')
-            $query .= ' WHERE ' . $where;
-        $query .= ') AS COUNTSUB';
-        return trim(str_replace('  ', ' ', $query));
-    }
-
-    /**
-     * runs a query that results in count number, an earlier data source can be used
-     * @param PDOQueryDataSource|null $source query data source
-     * @return int count - tha result of the query
-     * @throws HttpResponseTriggerException if the data source is null
-     */
-    public function countQuery(?PDOQueryDataSource $source = null): int
-    {
-        if ($source !== null)
-            $this->setSource($source);
-        if ($this->source !== null) {
-            return $this->runCountQuery($this->createCountQuery());
-        }
-        throw new HttpResponseTriggerException(false, ['errorCode' => 'PDOSPCQSE'], 500);
     }
 
     /**
@@ -109,6 +99,24 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
             $tables[] = $table . ($alias !== null ? ' AS ' . $alias : '');
         }
         $query .= implode(', ', $attribs) . ' ' . $this->getSubQueryAsAttribute() . ' FROM ' . implode(', ', $tables) . ' ';
+        return $query;
+    }
+
+    /**
+     * if a sub-query exists, compiles and returns it
+     * @return string al-query string
+     */
+    private function getSubQueryAsAttribute(): string
+    {
+        $query = '';
+        $subQuery = $this->source->getSubQueryAsAttribute();
+        if (count($subQuery) !== 0) {
+            $query = ',';
+            foreach ($subQuery as [$processor, $source, $alias]) {
+                $processor->setSource($source);
+                $query .= '(' . $processor->createQuery() . ') AS ' . $alias . ' ';
+            }
+        }
         return $query;
     }
 
@@ -151,23 +159,19 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
     }
 
     /**
-     * runs a query from a querystring with the saved values (boundValues)
-     * @param string $queryString query string
-     * @return array result of query
+     * runs a query that results in count number, an earlier data source can be used
+     * @param PDOQueryDataSource|null $source query data source
+     * @return int count - tha result of the query
+     * @throws HttpResponseTriggerException if the data source is null
      */
-    private function runQuery(string $queryString): array
+    public function countQuery(?PDOQueryDataSource $source = null): int
     {
-        $query = $this->pdo->prepare($queryString);
-        $values = $this->source->getBoundValues();
-        if (!empty($values)) {
-            foreach ($values as $key => $value) {
-                $id = ($value[2] !== null) ? $value[2] : $key + 1;
-                $query->bindValue($id, $value[0], $value[1]);
-            }
+        if ($source !== null)
+            $this->setSource($source);
+        if ($this->source !== null) {
+            return $this->runCountQuery($this->createCountQuery());
         }
-        $query->execute();
-        $rt = $this->fetchType;
-        return $query->$rt($this->fetchMode);
+        throw new HttpResponseTriggerException(false, ['errorCode' => 'PDOSPCQSE'], 500);
     }
 
     /**
@@ -190,20 +194,16 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
     }
 
     /**
-     * if a sub-query exists, compiles and returns it
-     * @return string al-query string
+     * creates and returns a counter query string from query data source
+     * @return string query string
      */
-    private function getSubQueryAsAttribute(): string
+    private function createCountQuery(): string
     {
-        $query = '';
-        $subQuery = $this->source->getSubQueryAsAttribute();
-        if (count($subQuery) !== 0) {
-            $query = ',';
-            foreach ($subQuery as [$processor, $source, $alias]) {
-                $processor->setSource($source);
-                $query .= '(' . $processor->createQuery() . ') AS ' . $alias . ' ';
-            }
-        }
-        return $query;
+        $query = 'SELECT COUNT(*) AS COUNT FROM ( SELECT ' . $this->getTableAndAttributesQuery();
+        $where = $this->source->getQueryWhere();
+        if ($where !== '')
+            $query .= ' WHERE ' . $where;
+        $query .= ') AS COUNTSUB';
+        return trim(str_replace('  ', ' ', $query));
     }
 }

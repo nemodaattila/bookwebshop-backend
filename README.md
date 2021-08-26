@@ -1,6 +1,6 @@
 # bookwebshop-backend
 
-Backend side of a Web-based book shop
+Backend side of a Web-based bookshop
 
 ## Used softwares:
 

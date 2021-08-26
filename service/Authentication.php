@@ -4,6 +4,7 @@ namespace service;
 
 use classModel\UserToken;
 use controller\UserTokenController;
+use exception\HttpResponseTriggerException;
 
 /**
  * class for handling user authentication
@@ -33,6 +34,7 @@ class Authentication
     /**
      * checks if authorization token is valid
      * @param string $token
+     * @throws HttpResponseTriggerException
      */
     public function authenticateUserByToken(string $token)
     {

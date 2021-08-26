@@ -67,7 +67,7 @@ class UserTokenDBHandler extends DBHandlerParent
     }
 
     /**
-     * checks if token is active i.e. expiration time not older then 10 minutes
+     * checks if token is active i.e. expiration time not older than 10 minutes
      * @param UserToken $token token Object
      * @return bool activity as boolean
      */

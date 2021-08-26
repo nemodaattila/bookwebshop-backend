@@ -31,7 +31,6 @@ class BookSeriesDBHandler extends DBHandlerParent
         return $tempResult[0]['series_id'];
     }
 
-
     public function insert(string $isbn, int $seriesId)
     {
         $this->createPDO('insert');

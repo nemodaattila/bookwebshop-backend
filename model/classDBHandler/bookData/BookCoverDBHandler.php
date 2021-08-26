@@ -28,8 +28,7 @@ class BookCoverDBHandler extends DBHandlerParent
 
     /**
      * sets the book_cover table's has_thumbnail attribute to 1 by isbn
-     * @param int $isbn isbn of the book
-     * @throws HttpResponseTriggerException wrong processor type
+     * @param string $isbn isbn of the book
      * @throws HttpResponseTriggerException sql query error
      */
     public function setHasThumbnailToTrueByIsbn(string $isbn): void

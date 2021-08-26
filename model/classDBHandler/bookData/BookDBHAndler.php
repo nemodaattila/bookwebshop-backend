@@ -14,9 +14,7 @@ class BookDBHAndler extends DBHandlerParent
     /**
      * return data from table book: isbn, title, type_id, category_id by isbn
      * @param string $isbn isbn of a book
-     * @return array data in array
-     * @throws HttpResponseTriggerException wrong processor type
-     * @throws HttpResponseTriggerException wrong fetch type
+     * @return array|bool data in array
      * @throws HttpResponseTriggerException sql query error
      */
     public function getByIsbn(string $isbn): array|bool
@@ -32,7 +30,7 @@ class BookDBHAndler extends DBHandlerParent
     {
         $this->createPDO('insert');
         $this->PDOLink->setCommand('INSERT INTO book ( isbn,title, type_id,category_id) VALUES (?,?,?,?)');
-        $this->PDOLink->setValues([$isbn,$title, $typeId,$categoryId]);
+        $this->PDOLink->setValues([$isbn, $title, $typeId, $categoryId]);
         return $this->PDOLink->execute();
     }
 

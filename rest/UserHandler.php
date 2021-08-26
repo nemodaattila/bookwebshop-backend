@@ -11,7 +11,7 @@ use service\Authentication;
 use service\SessionHandler;
 
 /**
- * Class UserHandler http request handler class , for users (registration, login, etc)
+ * Class UserHandler http request handler class , for users (registration, login, etc.)
  * @package rest
  */
 class UserHandler

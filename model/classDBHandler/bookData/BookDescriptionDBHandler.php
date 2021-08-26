@@ -31,7 +31,7 @@ class BookDescriptionDBHandler extends DBHandlerParent
     }
 
     public function insert(string $isbn, int $targetAudience, int $publisher, int $language, int $year, int $page,
-        int $format, ?int $weight, ?string $size, ?string $description)
+                           int    $format, ?int $weight, ?string $size, ?string $description)
     {
 
         $this->createPDO('insert');

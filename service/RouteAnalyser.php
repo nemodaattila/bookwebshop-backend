@@ -33,6 +33,13 @@ class RouteAnalyser
      */
     private array $restData;
 
+    public function __construct($routeBase)
+    {
+        $this->routeBase = $routeBase;
+        $this->routes = (new Routes())->getRoutes();
+        $this->parameters = new RequestParameters();
+    }
+
     public function getParameters(): RequestParameters
     {
         return $this->parameters;
@@ -41,13 +48,6 @@ class RouteAnalyser
     public function getRestData(): array
     {
         return $this->restData;
-    }
-
-    public function __construct($routeBase)
-    {
-        $this->routeBase = $routeBase;
-        $this->routes = (new Routes())->getRoutes();
-        $this->parameters = new RequestParameters();
     }
 
     /**
@@ -69,7 +69,7 @@ class RouteAnalyser
      * checks if the routes is appropriate for route base
      * @param string $httpMethod http method i.e: GET
      * @param string $path url path
-     * @return bool true if appropriate false if not
+     * @return bool true if appropriate false otherwise
      */
     private function identifyRoute(string $httpMethod, string $path): bool
     {

@@ -8,7 +8,6 @@ use classDbHandler\PublisherDBHandler;
 use classDbHandler\SeriesDBHandler;
 use classModel\RequestParameters;
 use exception\HttpResponseTriggerException;
-use helper\VariableHelper;
 
 class DataUploader
 {
@@ -21,19 +20,16 @@ class DataUploader
             {
                 $result = (new AuthorDBHandler())->insert($value);
                 throw new HttpResponseTriggerException(true, $result);
-                break;
             }
             case 1:
             {
                 $result = (new PublisherDBHandler())->insert($value);
                 throw new HttpResponseTriggerException(true, $result);
-                break;
             }
             case 2:
             {
                 $result = (new SeriesDBHandler())->insert($value);
                 throw new HttpResponseTriggerException(true, $result);
-                break;
             }
         }
 

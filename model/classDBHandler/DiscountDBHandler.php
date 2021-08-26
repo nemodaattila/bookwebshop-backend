@@ -14,7 +14,7 @@ class DiscountDBHandler extends DBHandlerParent
         $tempResult = $this->PDOLink->execute();
         $result = [];
         foreach ($tempResult as $value) {
-            $result[$value['id']] = [$value['name'],$value['default_value']];
+            $result[$value['id']] = [$value['name'], $value['default_value']];
         }
         return $result;
     }

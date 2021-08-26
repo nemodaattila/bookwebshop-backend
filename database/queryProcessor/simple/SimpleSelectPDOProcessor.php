@@ -21,33 +21,6 @@ class SimpleSelectPDOProcessor extends SimplePDOProcessorParent
      */
     protected int $fetchMode = PDO::FETCH_ASSOC;
 
-    public function getFetchType(): string
-    {
-        return $this->fetchType;
-    }
-
-    public function getFetchMode(): int
-    {
-        return $this->fetchMode;
-    }
-
-    /**
-     * sets the type of fetching
-     * @param string $fetchType fetch or fetchAll
-     * @throws HttpResponseTriggerException if fetchType is not fetch or fetchAll
-     */
-    public function setFetchType(string $fetchType): void
-    {
-        if (!in_array($fetchType, ['fetch', 'fetchAll']))
-            throw new HttpResponseTriggerException(false, ['errorCode' => 'PDOFTBT'], 500);
-        $this->fetchType = $fetchType;
-    }
-
-    public function setFetchMode(int $fetchMode): void
-    {
-        $this->fetchMode = $fetchMode;
-    }
-
     /**
      * runs the query and returns the result
      * @return mixed result of query
@@ -62,5 +35,32 @@ class SimpleSelectPDOProcessor extends SimplePDOProcessorParent
         }
         $rt = $this->getFetchType();
         return $query->$rt($this->getFetchMode());
+    }
+
+    public function getFetchType(): string
+    {
+        return $this->fetchType;
+    }
+
+    /**
+     * sets the type of fetching
+     * @param string $fetchType fetch or fetchAll
+     * @throws HttpResponseTriggerException if fetchType is not fetch or fetchAll
+     */
+    public function setFetchType(string $fetchType): void
+    {
+        if (!in_array($fetchType, ['fetch', 'fetchAll']))
+            throw new HttpResponseTriggerException(false, ['errorCode' => 'PDOFTBT'], 500);
+        $this->fetchType = $fetchType;
+    }
+
+    public function getFetchMode(): int
+    {
+        return $this->fetchMode;
+    }
+
+    public function setFetchMode(int $fetchMode): void
+    {
+        $this->fetchMode = $fetchMode;
     }
 }

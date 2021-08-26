@@ -28,7 +28,6 @@ class PublisherDBHandler extends DBHandlerParent
     function getIdByName(string $name): int
     {
 
-
         $this->createPDO('select');
         $this->PDOLink->setCommand('Select p.id from publisher as p where p.name = ?');
         $this->PDOLink->setValues($name);

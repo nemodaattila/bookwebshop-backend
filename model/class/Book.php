@@ -27,7 +27,7 @@ class Book
 
     private ?string $series;
 
-    private ?int $seriesId =null;
+    private ?int $seriesId = null;
 
     private ?int $targetAudience;
 
@@ -47,7 +47,7 @@ class Book
 
     private ?string $tags;
 
-    private ?array $tagId=[];
+    private ?array $tagId = [];
 
     private ?int $price;
 
@@ -58,8 +58,6 @@ class Book
     private ?string $coverUrl;
 
     private ?string $coverFile;
-
-
 
     private mixed $coverFileSource;
 
@@ -149,11 +147,10 @@ class Book
 
     public function checkNulls()
     {
-        if (is_null($this->author)) $this->author='UNKNOWN';
-        if (is_null($this->publisher)) $this->publisher='UNKNOWN';
-        if (is_null($this->year)) $this->year=0;
-        if (is_null($this->page)) $this->page=0;
-
+        if (is_null($this->author)) $this->author = 'UNKNOWN';
+        if (is_null($this->publisher)) $this->publisher = 'UNKNOWN';
+        if (is_null($this->year)) $this->year = 0;
+        if (is_null($this->page)) $this->page = 0;
 
 //            if (($value == "") && (!in_array($key, ["description",'size']))) {
 //                if ($key == "author") {
@@ -196,25 +193,19 @@ class Book
             $this->seriesId = (new SeriesDBHandler())->getIdByName(htmlspecialchars($this->series, ENT_QUOTES));
         }
 
-        if (!is_null($this->coverUrl))
-        {
+        if (!is_null($this->coverUrl)) {
             $this->coverFileSource = file_get_contents($this->coverUrl);
-            if (!$this->coverFileSource)
-            {
-                throw new HttpResponseTriggerException(false,['errorcode'=>'BUFCURLNE']);
+            if (!$this->coverFileSource) {
+                throw new HttpResponseTriggerException(false, ['errorcode' => 'BUFCURLNE']);
             }
 
-        }
-        elseif (!is_null($this->coverFile))
-        {
+        } elseif (!is_null($this->coverFile)) {
 
             $this->coverFileSource = file_get_contents($this->coverFile);
-            if (!$this->coverFileSource)
-            {
-                throw new HttpResponseTriggerException(false,['errorcode'=>'BUFCFILENE']);
+            if (!$this->coverFileSource) {
+                throw new HttpResponseTriggerException(false, ['errorcode' => 'BUFCFILENE']);
             }
         }
-
 
     }
 

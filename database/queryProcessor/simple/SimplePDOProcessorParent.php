@@ -24,30 +24,15 @@ abstract class SimplePDOProcessorParent
      */
     protected array $queryValues = [];
 
-    public function setCommand(string $command)
+    public function __construct(?PDO $pdo)
     {
-        $this->command = $command;
-    }
-
-    public function getCommand(): string
-    {
-        return $this->command;
+        $this->pdo = $pdo;
     }
 
     public function setValues(mixed $values)
     {
         if (!is_array($values)) $values = [$values];
         $this->queryValues = $values;
-    }
-
-    public function getValues(): array
-    {
-        return $this->queryValues;
-    }
-
-    public function __construct(?PDO $pdo)
-    {
-        $this->pdo = $pdo;
     }
 
     public function nullPDO()
@@ -67,6 +52,21 @@ abstract class SimplePDOProcessorParent
             throw new HttpResponseTriggerException(false, ['errorCode' => 'PDOSSSF', 'errorMessage' => $this->getCommand()], 500);
         }
         return true;
+    }
+
+    public function getCommand(): string
+    {
+        return $this->command;
+    }
+
+    public function setCommand(string $command)
+    {
+        $this->command = $command;
+    }
+
+    public function getValues(): array
+    {
+        return $this->queryValues;
     }
 
     public function beginTransaction()

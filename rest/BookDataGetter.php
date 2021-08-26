@@ -5,10 +5,10 @@ namespace rest;
 use classDbHandler\AuthorDBHandler;
 use classDbHandler\bookData\BookAuthorDBHandler;
 use classDbHandler\bookData\BookCoverDBHandler;
+use classDbHandler\bookData\BookDBHAndler;
 use classDbHandler\bookData\BookDescriptionDBHandler;
 use classDbHandler\bookData\BookDiscountDBHandler;
 use classDbHandler\bookData\BookPriceDBHandler;
-use classDbHandler\bookData\BookDBHAndler;
 use classDbHandler\bookData\BookSeriesDBHandler;
 use classDbHandler\bookData\BookTagDBHandler;
 use classDbHandler\DiscountDBHandler;
@@ -75,27 +75,10 @@ class BookDataGetter
             return ImgHelper::convertImageToBase64String('image\coverThumbnail\no_cover.jpg');
         } else {
             if ($coverData['has_thumbnail'] === '0') {
-                ImgHelper::createThumbnail($isbn . '.' . $coverData['extension'], 'image\cover\\',  'image\coverThumbnail\\', 150, 212);
+                ImgHelper::createThumbnail($isbn . '.' . $coverData['extension'], 'image\cover\\', 'image\coverThumbnail\\', 150, 212);
                 $coverHandler->setHasThumbnailToTrueByIsbn($isbn);
             }
             return ImgHelper::convertImageToBase64String('image\coverThumbnail\\' . $isbn . '.' . $coverData['extension']);
-        }
-    }
-
-    /**
-     * returns the cover of a book in base 64 string form based in isbn
-     * @param string $isbn
-     * @return string
-     * @throws HttpResponseTriggerException image conversion error
-     */
-    private function getCover(string $isbn): string
-    {
-        $coverHandler = new BookCoverDBHandler();
-        $coverData = $coverHandler->getByIsbn($isbn);
-        if ($coverData == false) {
-            return ImgHelper::convertImageToBase64String('image\cover\no_cover.jpg');
-        } else {
-            return ImgHelper::convertImageToBase64String('image\cover\\' . $isbn . '.' . $coverData['extension']);
         }
     }
 
@@ -117,6 +100,23 @@ class BookDataGetter
         $result['series'] = ($serId === null) ? null : (new SeriesDBHandler())->getSeriesNameById($serId);
         $result['tags'] = (new BookTagDBHandler())->getTagsByIsbn($isbn);
         throw new HttpResponseTriggerException(true, $result);
+    }
+
+    /**
+     * returns the cover of a book in base 64 string form based in isbn
+     * @param string $isbn
+     * @return string
+     * @throws HttpResponseTriggerException image conversion error
+     */
+    private function getCover(string $isbn): string
+    {
+        $coverHandler = new BookCoverDBHandler();
+        $coverData = $coverHandler->getByIsbn($isbn);
+        if ($coverData == false) {
+            return ImgHelper::convertImageToBase64String('image\cover\no_cover.jpg');
+        } else {
+            return ImgHelper::convertImageToBase64String('image\cover\\' . $isbn . '.' . $coverData['extension']);
+        }
     }
 
 }

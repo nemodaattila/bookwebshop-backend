@@ -3,8 +3,9 @@
 namespace interfaces;
 
 /**
+ * interface for creating PDO WHERE conditions
  * Interface IPDOWhereConditionInterface
- * @package core\backend\interfaces interface for creating PDO WHERE conditions
+ * @package core\backend\interfaces
  */
 interface IPDOWhereConditionInterface
 {

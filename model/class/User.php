@@ -14,19 +14,19 @@ class User implements IConvertableToArrayInterface
     private int $authorizationLevel = 1;
 
     /**
-     * @param int $id
-     */
-    public function setId(int $id): void
-    {
-        $this->id = $id;
-    }
-
-    /**
      * @return int
      */
     public function getId(): int
     {
         return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
     }
 
     /**
@@ -46,6 +46,14 @@ class User implements IConvertableToArrayInterface
     }
 
     /**
+     * @return string
+     */
+    public function getUserName(): string
+    {
+        return $this->userName;
+    }
+
+    /**
      * @param string $userName
      */
     public function setUserName(string $userName): void
@@ -54,11 +62,11 @@ class User implements IConvertableToArrayInterface
     }
 
     /**
-     * @param string $password
+     * @return string
      */
-    public function setPassword(string $password): void
+    public function getEmail(): string
     {
-        $this->password = $password;
+        return $this->email;
     }
 
     /**
@@ -72,25 +80,17 @@ class User implements IConvertableToArrayInterface
     /**
      * @return string
      */
-    public function getUserName(): string
-    {
-        return $this->userName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    /**
-     * @return string
-     */
     public function getPassword(): string
     {
         return $this->password;
+    }
+
+    /**
+     * @param string $password
+     */
+    public function setPassword(string $password): void
+    {
+        $this->password = $password;
     }
 
     public function getAllValueAsArray(): array

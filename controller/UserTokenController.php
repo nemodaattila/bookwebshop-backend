@@ -93,25 +93,6 @@ class UserTokenController
     }
 
     /**
-     * reads user token from Session
-     * @return UserToken|null
-     */
-    public function getTokenFromSession(): UserToken|null
-    {
-        $sh = SessionHandler::getInstance();
-        return $sh::get('token', true);
-    }
-
-    /**
-     * removes token from session
-     */
-    private function removeTokenFromSession()
-    {
-        $sh = SessionHandler::getInstance();
-        $sh->unset('token');
-    }
-
-    /**
      * searches token in Session or Database by token string
      * if exists checks if it is active
      * if active returns token
@@ -142,6 +123,16 @@ class UserTokenController
     }
 
     /**
+     * reads user token from Session
+     * @return UserToken|null
+     */
+    public function getTokenFromSession(): UserToken|null
+    {
+        $sh = SessionHandler::getInstance();
+        return $sh::get('token', true);
+    }
+
+    /**
      * checks if token is younger than 10 minutes, if not removes it
      * @param UserToken $tokenObj Token Object
      * @throws HttpResponseTriggerException database errors
@@ -164,6 +155,15 @@ class UserTokenController
     {
         $this->DBHandler->delete($tokenObj);
         $this->removeTokenFromSession();
+    }
+
+    /**
+     * removes token from session
+     */
+    private function removeTokenFromSession()
+    {
+        $sh = SessionHandler::getInstance();
+        $sh->unset('token');
     }
 
     private function refreshTokenExpirationDate()

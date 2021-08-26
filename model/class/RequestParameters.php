@@ -26,11 +26,6 @@ class RequestParameters
         $this->urlParameters[] = $urlParameter;
     }
 
-    public function setRequestData(array $requestData): void
-    {
-        $this->requestData = $requestData;
-    }
-
     public function getUrlParameters(): array
     {
         return $this->urlParameters;
@@ -39,6 +34,11 @@ class RequestParameters
     public function getRequestData(): array
     {
         return $this->requestData;
+    }
+
+    public function setRequestData(array $requestData): void
+    {
+        $this->requestData = $requestData;
     }
 
     /**

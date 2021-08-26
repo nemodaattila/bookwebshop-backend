@@ -33,7 +33,6 @@ class BookPriceDBHandler extends DBHandlerParent
         return $tempResult['price'];
     }
 
-
     public function insert(string $isbn, int $price)
     {
         $this->createPDO('insert');
