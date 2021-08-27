@@ -20,7 +20,7 @@ class BookDescriptionDBHandler extends DBHandlerParent
     {
         $this->createPDO('select');
         $this->PDOLink->setCommand('SELECT isbn, target_audience_id, publisher_id, language_id, year,
-            page_number, weight, physical_size, short_description FROM book_description WHERE isbn=?');
+            page_number,format_id, weight, physical_size, short_description FROM book_description WHERE isbn=?');
         $this->PDOLink->setValues($isbn);
         $this->PDOLink->setFetchType('fetch');
         $tempResult = $this->PDOLink->execute();

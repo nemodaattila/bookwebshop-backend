@@ -19,7 +19,6 @@ use exception\HttpResponseTriggerException;
 use helper\ImgHelper;
 
 /**
- *
  * Class BookDataGetter http request processor, handles primary data of a book
  * primary data is: isbn, title, author(s), category_id, type_id, price, discount, cover_thumbnail (as bas64 string)
  * @package rest
@@ -35,6 +34,8 @@ class BookDataGetter
     {
         $isbn = $parameters->getUrlParameters()[0];
         $result = (new BookDBHAndler())->getByIsbn($isbn);
+        if (!$result)
+            throw new HttpResponseTriggerException(false, ['errorCode' => 'BDGISBNNE']);
         $result['author'] = $this->getBookAuthor($isbn);
         $result['price'] = (new BookPriceDBHandler())->getPriceByIsbn($isbn);
         $result['discount'] = (new BookDiscountDBHandler())->getQuantityByIsbn($isbn);

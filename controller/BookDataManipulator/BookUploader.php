@@ -12,7 +12,7 @@ use classDbHandler\bookData\BookSeriesDBHandler;
 use classDbHandler\bookData\BookTagDBHandler;
 use classDbHandler\bookData\BookUploadDateDBHandler;
 use classModel\Book;
-use database\PDOProcessorBuilder;
+use database\PDOConnection;
 use exception\HttpResponseTriggerException;
 
 class BookUploader
@@ -24,13 +24,13 @@ class BookUploader
         $book->checkNulls();
         $book->formatBeforeSave();
 
-        $PDOLink = PDOProcessorBuilder::getProcessor('select', true);
+        $pdoConn = PDOConnection::getInstance();
 
         $exists = (new BookDBHAndler)->getByIsbn($book->getIsbn());
         if ($exists)
             throw new HttpResponseTriggerException(false, ['errorCode' => 'BUISBNAE']);
-        $PDOLink->beginTransaction();
-        (new BookDBHAndler)->insert(...$book->getPropertiesForBookTable());
+        $pdoConn->beginTransaction();
+        (new BookDBHAndler)->insert(...$book->getPropertiesForBookTableInsert());
         array_map(function ($value) use ($book) {
             (new BookAuthorDBHandler())->insert($book->getIsbn(), $value);
         }, $book->getAuthorId());
@@ -58,7 +58,7 @@ class BookUploader
             (new BookCoverDBHandler())->insert($book->getIsbn(), $ext);
 
         }
-        $PDOLink->commit();
+        $pdoConn->commit();
         return get_object_vars($book);
     }
 

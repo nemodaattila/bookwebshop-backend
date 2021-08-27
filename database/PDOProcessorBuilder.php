@@ -2,7 +2,9 @@
 
 namespace database;
 
-use databaseSource\PDOQueryDataSource;
+use databaseSource\PDOSelectQueryDataSource;
+use databaseSource\PDOUpdateQueryDataSource;
+use Error;
 use exception\HttpResponseTriggerException;
 use interfaces\IPDOQueryProcessorInterface;
 use simpleDatabaseProcessor\SimplePDOProcessorParent;
@@ -26,7 +28,21 @@ final class PDOProcessorBuilder
             throw new HttpResponseTriggerException(false, ['errorCode' => 'PDOPBBP'], 500);
         }
         $proc = 'complexDatabaseProcessor\PDO' . $type . 'Processor';
-        return [new $proc(PDOConnection::getInstance()), new PDOQueryDataSource()];
+        return [new $proc(PDOConnection::getInstance()), self::getDataSource($type)];
+    }
+
+    /**
+     * return a PDO data source
+     * @return PDOSelectQueryDataSource data source
+     */
+    public static function getDataSource(string $type): PDOSelectQueryDataSource|PDOUpdateQueryDataSource
+    {
+        if ($type === 'Select') {
+            return new PDOSelectQueryDataSource();
+        }
+        if ($type === 'Update') {
+            return new PDOUpdateQueryDataSource();
+        } else throw new Error('PDOPBGDSBT');
     }
 
     /**
@@ -50,14 +66,5 @@ final class PDOProcessorBuilder
             $proc = '\complexDatabaseProcessor\ComplexPDO' . $type . 'Processor';
         }
         return new $proc(PDOConnection::getInstance());
-    }
-
-    /**
-     * return a PDO data source
-     * @return PDOQueryDataSource data source
-     */
-    public function getDataSource(): PDOQueryDataSource
-    {
-        return new PDOQueryDataSource();
     }
 }

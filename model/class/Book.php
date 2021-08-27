@@ -27,7 +27,7 @@ class Book
 
     private ?string $series;
 
-    private ?int $seriesId = null;
+    private ?int $seriesId;
 
     private ?int $targetAudience;
 
@@ -47,7 +47,7 @@ class Book
 
     private ?string $tags;
 
-    private ?array $tagId = [];
+    private ?array $tagId;
 
     private ?int $price;
 
@@ -151,67 +151,62 @@ class Book
         if (is_null($this->publisher)) $this->publisher = 'UNKNOWN';
         if (is_null($this->year)) $this->year = 0;
         if (is_null($this->page)) $this->page = 0;
-
-//            if (($value == "") && (!in_array($key, ["description",'size']))) {
-//                if ($key == "author") {
-//                    $this->$key = "UNKNOWN";
-//                } elseif ($key == "publisher") {
-//                    $this->$key = "UNKNOWN";
-//                } elseif (in_array($key,['year', 'page', 'price', 'weight'])) {
-//                    $this->$key = 0;
-//                } else {
-//                    $this->$key = null;
-//                }
-//            }
-
-//        }
     }
 
     public function formatBeforeSave()
     {
-        if (!is_null($this->author))
+        //original: is_null
+        if (!empty($this->author))
             $this->authorId = explode(",", $this->author);
 
-        if (!is_null($this->tags))
+        if (!empty($this->tags))
             $this->tagId = explode(",", $this->tags);
 
-        if (!is_null($this->authorId)) {
+        if (!empty($this->authorId)) {
             $this->authorId = array_map(function ($value) {
                 if ($value === 'UNKNOWN') return 1;
                 return (new AuthorDBHandler())->getIdByName($value);
             }, $this->authorId);
         }
 
-        if (is_null($this->isbn)) {
-            $this->isbn = "AN-" . md5(serialize($this));
-        }
-        if (!is_null($this->publisher)) {
+        if (!empty($this->publisher)) {
             $this->publisherId = ($this->publisher === 'UNKNOWN') ? 1 : (new PublisherDBHandler())->getIdByName(htmlspecialchars($this->publisher, ENT_QUOTES));
         }
 
-        if (!is_null($this->series)) {
+        if (!empty($this->series)) {
             $this->seriesId = (new SeriesDBHandler())->getIdByName(htmlspecialchars($this->series, ENT_QUOTES));
         }
 
-        if (!is_null($this->coverUrl)) {
+        if (!empty($this->coverUrl)) {
             $this->coverFileSource = file_get_contents($this->coverUrl);
             if (!$this->coverFileSource) {
                 throw new HttpResponseTriggerException(false, ['errorcode' => 'BUFCURLNE']);
             }
 
-        } elseif (!is_null($this->coverFile)) {
+        } elseif (!empty($this->coverFile)) {
 
             $this->coverFileSource = file_get_contents($this->coverFile);
             if (!$this->coverFileSource) {
                 throw new HttpResponseTriggerException(false, ['errorcode' => 'BUFCFILENE']);
             }
         }
+        if (empty($this->isbn) || str_starts_with($this->isbn, 'AN-')) {
+            $this->isbn = "AN-" . md5(serialize($this));
+        }
 
     }
 
-    public function getPropertiesForBookTable(): array
+    public function getPropertiesForBookTableInsert(): array
     {
         return [$this->isbn, $this->title, $this->type, $this->category];
+    }
+
+    public function getPropertiesForBookTableUpdateWithoutIsbn(): array
+    {
+        $res = [];
+        if (!empty($this->title)) $res['title'] = $this->title;
+
+        return $res;
     }
 
     public function getPropertiesForBookDescriptionTable(): array

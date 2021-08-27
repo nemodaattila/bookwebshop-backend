@@ -3,6 +3,7 @@
 namespace classDbHandler\bookData;
 
 use classDbHandler\DBHandlerParent;
+use database\PDOProcessorBuilder;
 use exception\HttpResponseTriggerException;
 
 /**
@@ -32,6 +33,26 @@ class BookDBHAndler extends DBHandlerParent
         $this->PDOLink->setCommand('INSERT INTO book ( isbn,title, type_id,category_id) VALUES (?,?,?,?)');
         $this->PDOLink->setValues([$isbn, $title, $typeId, $categoryId]);
         return $this->PDOLink->execute();
+    }
+
+    public function update(array $data, string $isbn)
+    {
+        [$pdo, $dataSource] = PDOProcessorBuilder::getProcessorAndDataSource('update');
+        $dataSource->addTable('book');
+        $dataSource->addAttributes('book', array_keys($data));
+        $dataSource->addWhereCondition('=', ['book.isbn', '?']);
+        foreach (array_values($data) as $value)
+            $dataSource->bindValue($value);
+        $dataSource->bindValue($isbn);
+        return $pdo->query($dataSource);
+    }
+
+    public function updateIsbn(string $originalIsbn, string $newIsbn)
+    {
+        $this->createPDO('update');
+        $this->PDOLink->setCommand('UPDATE book SET isbn = ? WHERE isbn=?');
+        $this->PDOLink->setValues([$newIsbn, $originalIsbn]);
+        $this->PDOLink->execute();
     }
 
 }

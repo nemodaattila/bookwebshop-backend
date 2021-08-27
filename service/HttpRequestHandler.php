@@ -130,10 +130,16 @@ class HttpRequestHandler
         if (isset($_SERVER['CONTENT_TYPE'])) {
             switch ($_SERVER['REQUEST_METHOD']) {
                 case 'PUT':
-                    $putVars = [];
-                    parse_str(file_get_contents('php://input'), $putVars);
-                    $this->parameters->setRequestData($putVars);
-                    break;
+//                    $putVars = file_get_contents('php://input');
+//                    print_r($putVars);
+//                    foreach ($putVars as $key=>$value)
+//                    {
+//                        $putVars[$key] = json_decode($value);
+//                    }
+//                    var_dump($putVars);
+//                    if (count($putVars) === 1) $putVars = $putVars[0];
+//                    $this->parameters->setRequestData($putVars);
+//                    break;
                 case 'POST':
                     $requestData = file_get_contents('php://input');
                     $decodedData = json_decode($requestData);

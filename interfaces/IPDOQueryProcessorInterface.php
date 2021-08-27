@@ -2,7 +2,7 @@
 
 namespace interfaces;
 
-use databaseSource\PDOQueryDataSource;
+use databaseSource\PDOSelectQueryDataSource;
 
 /**
  * interface for complex PDO query helpers
@@ -12,7 +12,7 @@ use databaseSource\PDOQueryDataSource;
 interface IPDOQueryProcessorInterface
 {
     /**
-     * @param PDOQueryDataSource $source setting a query data source
+     * @param PDOSelectQueryDataSource $source setting a query data source
      */
-    public function setSource(PDOQueryDataSource $source): void;
+    public function setSource(PDOSelectQueryDataSource $source): void;
 }

@@ -108,6 +108,6 @@ class ImgHelper
             throw new HttpResponseTriggerException(false, ['errorCode=>IHCTFNE', 'fileName' => $file], 500);
         }
         $imgData = base64_encode(file_get_contents($file));
-        return 'data: ' . mime_content_type($file) . ';base64,' . $imgData;
+        return 'data:' . mime_content_type($file) . ';base64,' . $imgData;
     }
 }

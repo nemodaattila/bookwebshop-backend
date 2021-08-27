@@ -2,7 +2,7 @@
 
 namespace complexDatabaseProcessor;
 
-use databaseSource\PDOQueryDataSource;
+use databaseSource\PDOSelectQueryDataSource;
 use exception\HttpResponseTriggerException;
 use PDO;
 
@@ -26,14 +26,14 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
 
     /**
      * saving and running PDO query
-     * @param PDOQueryDataSource $source - query datasource
+     * @param PDOSelectQueryDataSource $source - query datasource
      * @param string $fetchType - fetch type
      * @param int $fetchMode - fetch method
-     * @return array result of query
+     * @return array|bool result of query
      * @throws HttpResponseTriggerException if the fetch type is not fetch or fetchAll
      * @example selectProc->query($source, 'fetch', PDO::FETCH_LAZY)
      */
-    public function query(PDOQueryDataSource $source, string $fetchType = 'fetchAll', int $fetchMode = PDO::FETCH_ASSOC): array
+    public function query(PDOSelectQueryDataSource $source, string $fetchType = 'fetchAll', int $fetchMode = PDO::FETCH_ASSOC): array|bool
     {
         $this->setSource($source);
         $this->fetchMode = $fetchMode;
@@ -48,20 +48,6 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
      * @param string $queryString query string
      * @return array result of query
      */
-    private function runQuery(string $queryString): array
-    {
-        $query = $this->pdo->prepare($queryString);
-        $values = $this->source->getBoundValues();
-        if (!empty($values)) {
-            foreach ($values as $key => $value) {
-                $id = ($value[2] !== null) ? $value[2] : $key + 1;
-                $query->bindValue($id, $value[0], $value[1]);
-            }
-        }
-        $query->execute();
-        $rt = $this->fetchType;
-        return $query->$rt($this->fetchMode);
-    }
 
     /**
      * creates and returns a query string from query data source
@@ -99,24 +85,6 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
             $tables[] = $table . ($alias !== null ? ' AS ' . $alias : '');
         }
         $query .= implode(', ', $attribs) . ' ' . $this->getSubQueryAsAttribute() . ' FROM ' . implode(', ', $tables) . ' ';
-        return $query;
-    }
-
-    /**
-     * if a sub-query exists, compiles and returns it
-     * @return string al-query string
-     */
-    private function getSubQueryAsAttribute(): string
-    {
-        $query = '';
-        $subQuery = $this->source->getSubQueryAsAttribute();
-        if (count($subQuery) !== 0) {
-            $query = ',';
-            foreach ($subQuery as [$processor, $source, $alias]) {
-                $processor->setSource($source);
-                $query .= '(' . $processor->createQuery() . ') AS ' . $alias . ' ';
-            }
-        }
         return $query;
     }
 
@@ -160,11 +128,11 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
 
     /**
      * runs a query that results in count number, an earlier data source can be used
-     * @param PDOQueryDataSource|null $source query data source
+     * @param PDOSelectQueryDataSource|null $source query data source
      * @return int count - tha result of the query
      * @throws HttpResponseTriggerException if the data source is null
      */
-    public function countQuery(?PDOQueryDataSource $source = null): int
+    public function countQuery(?PDOSelectQueryDataSource $source = null): int
     {
         if ($source !== null)
             $this->setSource($source);
