@@ -13,9 +13,9 @@ class Book
 
     private ?string $title;
 
-    private ?string $author;
+    private string|array|null $author;
 
-    private ?array $authorId;
+    private ?array $authorId = [];
 
     private ?int $type;
 
@@ -45,9 +45,9 @@ class Book
 
     private ?string $description;
 
-    private ?string $tags;
+    private string|array|null $tags;
 
-    private ?array $tagId;
+    private ?array $tagId = [];
 
     private ?int $price;
 
@@ -102,7 +102,7 @@ class Book
      */
     public function getPrice(): ?int
     {
-        return $this->price;
+        return $this->price ?? null;
     }
 
     /**
@@ -110,7 +110,15 @@ class Book
      */
     public function getDiscountType(): ?int
     {
-        return $this->discountType;
+        return $this->discountType ?? null;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getDiscount(): ?int
+    {
+        return $this->discount ?? null;
     }
 
     /**
@@ -118,7 +126,15 @@ class Book
      */
     public function getSeriesId(): ?int
     {
-        return $this->seriesId;
+        return $this->seriesId ?? null;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSeries(): ?string
+    {
+        return $this->series ?? null;
     }
 
     /**
@@ -134,7 +150,7 @@ class Book
      */
     public function getCoverUrl(): ?string
     {
-        return $this->coverUrl;
+        return $this->coverUrl ?? null;
     }
 
     /**
@@ -142,7 +158,7 @@ class Book
      */
     public function getCoverFileSource(): mixed
     {
-        return $this->coverFileSource;
+        return $this->coverFileSource ?? null;
     }
 
     public function checkNulls()
@@ -156,17 +172,40 @@ class Book
     public function formatBeforeSave()
     {
         //original: is_null
-        if (!empty($this->author))
-            $this->authorId = explode(",", $this->author);
+        if (!empty($this->author)) {
+            if (is_string($this->author)) {
+                $this->authorId = explode(",", $this->author);
+            }
+        }
+        if (!empty($this->tags)) {
+//            print_r($this->tags);
+            if (is_string($this->tags))
+                $this->tagId = explode(",", $this->tags);
+            if (is_array($this->tags)) {
+                $this->tagId = $this->tags;
+                if (isset($this->tagId[0][0]) && $this->tagId[0][0] === '') $this->tagId[0] = [];
+                if (isset($this->tagId[1][0]) && $this->tagId[1][0] === '') $this->tagId[1] = [];
+            }
+        }
 
-        if (!empty($this->tags))
-            $this->tagId = explode(",", $this->tags);
+        if (!empty($this->author)) {
+            if (is_string($this->author)) {
+                $this->authorId = array_map(function ($value) {
+                    if ($value === 'UNKNOWN') return 1;
+                    return (new AuthorDBHandler())->getIdByName($value);
+                }, $this->authorId);
+            }
+            if (is_array($this->author)) {
+                $this->authorId[0] = array_map(function ($value) {
+                    if ($value === 'UNKNOWN') return 1;
+                    return (new AuthorDBHandler())->getIdByName($value);
+                }, $this->author[0]);
+                $this->authorId[1] = array_map(function ($value) {
+                    if ($value === 'UNKNOWN') return 1;
+                    return (new AuthorDBHandler())->getIdByName($value);
+                }, $this->author[1]);
+            }
 
-        if (!empty($this->authorId)) {
-            $this->authorId = array_map(function ($value) {
-                if ($value === 'UNKNOWN') return 1;
-                return (new AuthorDBHandler())->getIdByName($value);
-            }, $this->authorId);
         }
 
         if (!empty($this->publisher)) {
@@ -205,18 +244,38 @@ class Book
     {
         $res = [];
         if (!empty($this->title)) $res['title'] = $this->title;
-
+        if (!empty($this->type)) $res['type_id'] = $this->type;
+        if (!empty($this->category)) $res['category_id'] = $this->category;
         return $res;
     }
 
-    public function getPropertiesForBookDescriptionTable(): array
+    public function getPropertiesForBookDescriptionTableInsert(): array
     {
         return [$this->isbn, $this->targetAudience, $this->publisherId, $this->language, $this->year, $this->page,
             $this->format, $this->weight, $this->size, $this->description];
     }
 
-    public function getPropertiesForDiscountTable(): array
+    public function getPropertiesForBookDescriptionTableUpdate(): array
     {
-        return [$this->isbn, $this->discountType, $this->discount];
+        $res = [];
+        if (!empty($this->publisherId)) $res['publisher_id'] = $this->publisherId;
+        if (!empty($this->targetAudience)) $res['target_audience_id'] = $this->targetAudience;
+        if (!empty($this->language) || (isset ($this->language) && $this->language === 0)) $res['language_id'] = $this->language;
+        if (!empty($this->year) || (isset ($this->year) && $this->year === 0)) $res['year'] = $this->year;
+        if (!empty($this->page) || (isset ($this->page) && $this->page === 0)) $res['page_number'] = $this->page;
+        if (!empty($this->format)) $res['format_id'] = $this->format;
+        if (!empty($this->weight)) $res['weight'] = $this->weight;
+        if (isset ($this->weight) && $this->weight === 0) $res['weight'] = null;
+        if (!empty($this->size)) $res['physical_size'] = $this->size;
+        if (isset ($this->size) && $this->size === '') $res['physical_size'] = null;
+        if (!empty($this->description)) $res['short_description'] = $this->description;
+        if (isset ($this->description) && $this->description === '') $res['short_description'] = null;
+        return $res;
+
+    }
+
+    public function getPropertiesForDiscountTableInsert(): array
+    {
+        return [$this->isbn, $this->discountType, $this->discount ?? 0];
     }
 }

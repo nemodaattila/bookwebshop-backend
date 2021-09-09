@@ -40,4 +40,13 @@ class BookPriceDBHandler extends DBHandlerParent
         $this->PDOLink->setValues([$isbn, $price]);
         return $this->PDOLink->execute();
     }
+
+    public function update(int $price, string $isbn)
+    {
+//        if (empty($price)) return;
+        $this->createPDO('update');
+        $this->PDOLink->setCommand('UPDATE book_price SET price = ? WHERE isbn = ?');
+        $this->PDOLink->setValues([$price, $isbn]);
+        return $this->PDOLink->execute();
+    }
 }

@@ -19,6 +19,7 @@ class Routes
     private array $routes = [
 
         ['POST', 'addquickdata', 'BookDataHandler', 'addQuickData', 'M'],
+        ['DELETE', 'deletebook/$1', 'BookDataHandler', 'deleteBook', 'M'],
         ['POST', 'uploadbook', 'BookDataHandler', 'uploadFullBook', 'M'],
         ['PUT', 'modifybook', 'BookDataHandler', 'modifyBookData', 'M'],
         ['GET', 'secondarydata\$1', 'BookDataGetter', 'getBookSecondaryData', 'A'],

@@ -33,7 +33,8 @@ final class PDOProcessorBuilder
 
     /**
      * return a PDO data source
-     * @return PDOSelectQueryDataSource data source
+     * @param string $type
+     * @return PDOSelectQueryDataSource|PDOUpdateQueryDataSource data source
      */
     public static function getDataSource(string $type): PDOSelectQueryDataSource|PDOUpdateQueryDataSource
     {

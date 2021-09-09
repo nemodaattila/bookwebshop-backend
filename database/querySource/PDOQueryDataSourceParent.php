@@ -69,7 +69,7 @@ abstract class PDOQueryDataSourceParent
     /**
      * adds new table to the data source
      * @param string $name table name
-     * @param string $alias table alias
+     * @param string|null $alias table alias
      * @example $dataSource->addTable('person','p');
      */
     public function addTable(string $name, ?string $alias = null)

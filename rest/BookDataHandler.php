@@ -5,6 +5,7 @@ namespace rest;
 use bookDataManipulator\BookDataModifier;
 use bookDataManipulator\BookUploader;
 use classDbHandler\AuthorDBHandler;
+use classDbHandler\bookData\BookDBHAndler;
 use classDbHandler\PublisherDBHandler;
 use classDbHandler\SeriesDBHandler;
 use classModel\RequestParameters;
@@ -45,6 +46,12 @@ class BookDataHandler
     public function modifyBookData(RequestParameters $requestParameters)
     {
         $result = (new BookDataModifier())->modifyBookData($requestParameters->getRequestData());
+        throw new HttpResponseTriggerException(true, $result);
+    }
+
+    public function deleteBook(RequestParameters $requestParameters)
+    {
+        $result = (new BookDBHAndler())->delete($requestParameters->getUrlParameters()[0]);
         throw new HttpResponseTriggerException(true, $result);
     }
 }

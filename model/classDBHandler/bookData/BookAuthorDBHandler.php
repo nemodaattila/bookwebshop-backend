@@ -38,4 +38,13 @@ class BookAuthorDBHandler extends DBHandlerParent
         $this->PDOLink->setValues([$isbn, $authorId]);
         return $this->PDOLink->execute();
     }
+
+    public function delete(string $isbn, int $authorId)
+    {
+        $this->createPDO('delete');
+        $this->PDOLink->setCommand('DELETE FROM book_author WHERE isbn = ? AND author_id = ?');
+        $this->PDOLink->setValues([$isbn, $authorId]);
+        return $this->PDOLink->execute();
+
+    }
 }

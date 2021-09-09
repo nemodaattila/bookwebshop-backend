@@ -3,6 +3,7 @@
 namespace classDbHandler\bookData;
 
 use classDbHandler\DBHandlerParent;
+use database\PDOProcessorBuilder;
 use exception\HttpResponseTriggerException;
 
 /**
@@ -39,5 +40,19 @@ class BookDescriptionDBHandler extends DBHandlerParent
                               language_id, year, page_number, format_id,weight,physical_size, short_description) VALUES (?,?,?,?,?,?,?,?,?,?)');
         $this->PDOLink->setValues(func_get_args());
         return $this->PDOLink->execute();
+    }
+
+    public function update(array $data, string $isbn)
+    {
+        if (empty($data)) return;
+//        print_r($data);
+        [$pdo, $dataSource] = PDOProcessorBuilder::getProcessorAndDataSource('update');
+        $dataSource->addTable('book_description');
+        $dataSource->addAttributes('book_description', array_keys($data));
+        $dataSource->addWhereCondition('=', ['book_description.isbn', '?']);
+        foreach (array_values($data) as $value)
+            $dataSource->bindValue($value);
+        $dataSource->bindValue($isbn);
+        return $pdo->query($dataSource);
     }
 }

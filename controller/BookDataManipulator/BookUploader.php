@@ -34,7 +34,7 @@ class BookUploader
         array_map(function ($value) use ($book) {
             (new BookAuthorDBHandler())->insert($book->getIsbn(), $value);
         }, $book->getAuthorId());
-        (new BookDescriptionDBHandler())->insert(...$book->getPropertiesForBookDescriptionTable());
+        (new BookDescriptionDBHandler())->insert(...$book->getPropertiesForBookDescriptionTableInsert());
 
         array_map(function ($value) use ($book) {
             (new BookTagDBHandler())->insert($book->getIsbn(), $value);
@@ -44,7 +44,7 @@ class BookUploader
             (new BookSeriesDBHandler())->insert($book->getIsbn(), $book->getSeriesId());
         }
         if ($book->getDiscountType() !== 0) {
-            (new BookDiscountDBHandler())->insert(...$book->getPropertiesForDiscountTable());
+            (new BookDiscountDBHandler())->insert(...$book->getPropertiesForDiscountTableInsert());
         }
         (new BookUploadDateDBHandler())->insert($book->getIsbn(), time());
 
@@ -59,7 +59,7 @@ class BookUploader
 
         }
         $pdoConn->commit();
-        return get_object_vars($book);
+        return ['isbn' => $book->getIsbn()];
     }
 
 }

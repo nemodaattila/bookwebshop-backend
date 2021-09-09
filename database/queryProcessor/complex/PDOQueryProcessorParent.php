@@ -15,7 +15,7 @@ use PDO;
 abstract class PDOQueryProcessorParent implements IPDOQueryProcessorInterface
 {
     /**
-     * @var PDOSelectQueryDataSource datasource for PDO
+     * @var PDOSelectQueryDataSource|PDOUpdateQueryDataSource datasource for PDO
      */
     protected PDOSelectQueryDataSource|PDOUpdateQueryDataSource $source;
 
@@ -52,7 +52,7 @@ abstract class PDOQueryProcessorParent implements IPDOQueryProcessorInterface
         return $query;
     }
 
-    protected function runQuery(string $queryString): bool
+    protected function runQuery(string $queryString): bool|array
     {
         $query = $this->pdo->prepare($queryString);
         $values = $this->source->getBoundValues();
@@ -62,6 +62,7 @@ abstract class PDOQueryProcessorParent implements IPDOQueryProcessorInterface
                 $query->bindValue($id, $value[0], $value[1]);
             }
         }
+//        var_dump($queryString);
         return $query->execute();
     }
 

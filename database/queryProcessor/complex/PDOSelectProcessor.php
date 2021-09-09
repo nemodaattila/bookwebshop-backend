@@ -49,6 +49,21 @@ class PDOSelectProcessor extends PDOQueryProcessorParent
      * @return array result of query
      */
 
+    protected function runQuery(string $queryString): bool|array
+    {
+        $query = $this->pdo->prepare($queryString);
+        $values = $this->source->getBoundValues();
+        if (!empty($values)) {
+            foreach ($values as $key => $value) {
+                $id = ($value[2] !== null) ? $value[2] : $key + 1;
+                $query->bindValue($id, $value[0], $value[1]);
+            }
+        }
+        $query->execute();
+        $rt = $this->fetchType;
+        return $query->$rt($this->fetchMode);
+    }
+
     /**
      * creates and returns a query string from query data source
      * @return string query string

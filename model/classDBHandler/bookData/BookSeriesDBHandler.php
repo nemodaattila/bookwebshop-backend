@@ -38,4 +38,22 @@ class BookSeriesDBHandler extends DBHandlerParent
         $this->PDOLink->setValues([$isbn, $seriesId]);
         return $this->PDOLink->execute();
     }
+
+    public function update(int $series, string $isbn)
+    {
+//        if (empty($price)) return;
+        $this->createPDO('update');
+        $this->PDOLink->setCommand('UPDATE book_series SET series_id = ? WHERE isbn = ?');
+        $this->PDOLink->setValues([$series, $isbn]);
+        return $this->PDOLink->execute();
+    }
+
+    public function delete(string $isbn)
+    {
+        $this->createPDO('delete');
+        $this->PDOLink->setCommand('DELETE FROM book_series WHERE isbn = ? ');
+        $this->PDOLink->setValues([$isbn]);
+        return $this->PDOLink->execute();
+
+    }
 }

@@ -59,4 +59,29 @@ class BookDiscountDBHandler extends DBHandlerParent
         $this->PDOLink->setValues([$isbn, $discountId, $discountValue]);
         return $this->PDOLink->execute();
     }
+
+    public function updateDiscountType(int $discountType, string $isbn)
+    {
+        $this->createPDO('update');
+        $this->PDOLink->setCommand('UPDATE book_discount SET discount_id = ? WHERE isbn = ?');
+        $this->PDOLink->setValues([$discountType, $isbn]);
+        return $this->PDOLink->execute();
+    }
+
+    public function updateDiscountValue(int $discountValue, string $isbn)
+    {
+        $this->createPDO('update');
+        $this->PDOLink->setCommand('UPDATE book_discount SET discount_value = ? WHERE isbn = ?');
+        $this->PDOLink->setValues([$discountValue, $isbn]);
+        return $this->PDOLink->execute();
+    }
+
+    public function delete(string $isbn)
+    {
+        $this->createPDO('delete');
+        $this->PDOLink->setCommand('DELETE FROM book_discount WHERE isbn = ? ');
+        $this->PDOLink->setValues([$isbn]);
+        return $this->PDOLink->execute();
+
+    }
 }

@@ -43,4 +43,13 @@ class BookTagDBHandler extends DBHandlerParent
         $this->PDOLink->setValues([$isbn, $tagId]);
         return $this->PDOLink->execute();
     }
+
+    public function delete(string $isbn, int $tagID)
+    {
+        $this->createPDO('delete');
+        $this->PDOLink->setCommand('DELETE FROM book_tag WHERE isbn = ? AND tag_id = ?');
+        $this->PDOLink->setValues([$isbn, $tagID]);
+        return $this->PDOLink->execute();
+
+    }
 }

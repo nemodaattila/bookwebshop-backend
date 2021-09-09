@@ -37,6 +37,8 @@ class BookDBHAndler extends DBHandlerParent
 
     public function update(array $data, string $isbn)
     {
+        if (empty($data)) return;
+//        print_r($data);
         [$pdo, $dataSource] = PDOProcessorBuilder::getProcessorAndDataSource('update');
         $dataSource->addTable('book');
         $dataSource->addAttributes('book', array_keys($data));
@@ -53,6 +55,15 @@ class BookDBHAndler extends DBHandlerParent
         $this->PDOLink->setCommand('UPDATE book SET isbn = ? WHERE isbn=?');
         $this->PDOLink->setValues([$newIsbn, $originalIsbn]);
         $this->PDOLink->execute();
+    }
+
+    public function delete(string $isbn)
+    {
+        $this->createPDO('delete');
+        $this->PDOLink->setCommand('DELETE FROM book WHERE isbn = ? ');
+        $this->PDOLink->setValues([$isbn]);
+        return $this->PDOLink->execute();
+
     }
 
 }

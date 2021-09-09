@@ -46,4 +46,13 @@ class BookCoverDBHandler extends DBHandlerParent
         $this->PDOLink->setValues([$isbn, $extension, 0]);
         return $this->PDOLink->execute();
     }
+
+    public function delete(string $isbn)
+    {
+        $this->createPDO('delete');
+        $this->PDOLink->setCommand('DELETE FROM book_cover WHERE book_isbn = ? ');
+        $this->PDOLink->setValues([$isbn]);
+        return $this->PDOLink->execute();
+    }
+
 }
